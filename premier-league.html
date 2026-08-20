@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premier League Hub | Beyond 90 Minutes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="premier-league">
+    <header class="top-header">
+        <div class="logo-area">
+            <a href="index.html">
+                <div class="logo-placeholder">BEYOND 90</div>
+            </a>
+        </div>
+        <div class="header-controls">
+            <nav class="navigation" id="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="articles.html">Articles</a>
+                <a href="premier-league.html" class="active">Premier League</a>
+                <a href="ucl.html">UCL</a>
+                <a href="real-madrid.html">Real Madrid</a>
+            </nav>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+            <button class="hamburger-toggle" id="menu-toggle" aria-label="Toggle Navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <span class="section-label">England</span>
+        <h1>Premier League Hub</h1>
+        <p style="max-width: 60ch;">Live fixtures and standings from football-data.org, click any match for details.</p>
+
+        <section class="filter-controls">
+            <button
+                class="rm-nav-btn active"
+                data-refresh-league="Premier League"
+                data-refresh-fixtures="pl-fixtures-container"
+                data-refresh-standings="pl-standings-container"
+                data-refresh-status="pl-sync-status">
+                ↻ Refresh Data
+            </button>
+            <span id="pl-sync-status" style="font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.5px; color: var(--text-muted);">Status: Loading…</span>
+        </section>
+
+        <div class="page-layout" style="padding: 0;">
+            <section>
+                <h2>Upcoming Matches</h2>
+                <div id="pl-fixtures-container" style="margin-top: 15px;"></div>
+            </section>
+
+            <section>
+                <h2>League Table</h2>
+                <div id="pl-standings-container" style="margin-top: 15px;"></div>
+            </section>
+        </div>
+
+        <p style="margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted);">
+            <strong>Note:</strong> this page pulls live-ish fixtures and standings from
+            <a href="https://www.football-data.org" target="_blank" rel="noopener">football-data.org</a>'s free API
+            (data can lag real kickoffs by up to a minute or two — that's a free-tier limit, not a bug).
+            If a request ever fails, the page automatically falls back to sample data so it never looks broken.
+        </p>
+    </main>
+
+    <!-- Global Match Detail Modal -->
+    <div id="match-modal" class="modal-overlay">
+        <div class="modal-body">
+            <button class="modal-close" aria-label="Close">×</button>
+            <div id="modal-details-content"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <span><strong>Braulio Zelaya</strong> — Beyond 90 Minutes, a personal football analysis project</span>
+            <div class="footer-links">
+                <a href="https://github.com/EDIT-ME" class="edit-me">GitHub</a>
+                <a href="mailto:you@EDIT-ME.com" class="edit-me">Email</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Articles | Beyond 90 Minutes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="articles">
+    <header class="top-header">
+        <div class="logo-area">
+            <a href="index.html">
+                <div class="logo-placeholder">BEYOND 90</div>
+            </a>
+        </div>
+        <div class="header-controls">
+            <nav class="navigation" id="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="articles.html" class="active">Articles</a>
+                <a href="premier-league.html">Premier League</a>
+                <a href="ucl.html">UCL</a>
+                <a href="real-madrid.html">Real Madrid</a>
+            </nav>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+            <button class="hamburger-toggle" id="menu-toggle" aria-label="Toggle Navigation">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <span class="section-label">Articles</span>
+        <h1>Football Analysis &amp; Opinion</h1>
+        <p style="max-width: 60ch;">Original articles and tactical breakdowns. New pieces get added here as they're written — duplicate one of the existing article pages as a starting template.</p>
+
+        <section class="filter-controls">
+            <input
+                type="text"
+                id="article-search"
+                class="search-input"
+                placeholder="Search articles by title or keyword..."
+            >
+            <div id="category-filters" class="category-filters">
+                <button class="rm-nav-btn active" data-category="ALL">All</button>
+                <button class="rm-nav-btn" data-category="ANALYSIS">Analysis</button>
+                <button class="rm-nav-btn" data-category="WORLD CUP">World Cup</button>
+            </div>
+        </section>
+
+        <section class="articles-section">
+            <div class="article-grid" id="articles-list">
+                <article class="article-card" data-category="ANALYSIS" data-title="Real Madrid Midfield Analysis">
+                    <a href="article-real-madrid.html" style="text-decoration:none; color:inherit;">
+                        <div class="card-image"><span>Real Madrid</span></div>
+                        <div class="card-content">
+                            <span class="section-label">Analysis</span>
+                            <h3>Real Madrid Midfield Analysis</h3>
+                            <p>Has Real Madrid adequately replaced the game control of Kroos and Modrić?</p>
+                        </div>
+                    </a>
+                </article>
+
+                <article class="article-card" data-category="WORLD CUP" data-title="Is the World Cup a EURO + Brazil and Argentina?">
+                    <a href="article-world-cup.html" style="text-decoration:none; color:inherit;">
+                        <div class="card-image"><span>World Cup</span></div>
+                        <div class="card-content">
+                            <span class="section-label">World Cup</span>
+                            <h3>Is the World Cup a EURO + Brazil and Argentina?</h3>
+                            <p>Analyzing European dominance vs underdog success in international football.</p>
+                        </div>
+                    </a>
+                </article>
+            </div>
+            <div id="articles-empty-state" class="empty-state" style="display:none; margin-top: 1.5rem;">
+                No articles match your search. Try a different keyword or filter.
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-inner">
+            <span><strong>Braulio Zelaya</strong> — Beyond 90 Minutes, a personal football analysis project</span>
+            <div class="footer-links">
+                <a href="https://github.com/EDIT-ME" class="edit-me">GitHub</a>
+                <a href="mailto:you@EDIT-ME.com" class="edit-me">Email</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

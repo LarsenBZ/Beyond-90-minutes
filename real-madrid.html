@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Madrid Hub | Beyond 90 Minutes</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="real-madrid">
+    <header class="top-header">
+        <div class="logo-area"><a href="index.html"><div class="logo-placeholder">BEYOND 90</div></a></div>
+        <div class="header-controls">
+            <nav class="navigation" id="nav-menu">
+                <a href="index.html">Home</a>
+                <a href="articles.html">Articles</a>
+                <a href="premier-league.html">Premier League</a>
+                <a href="ucl.html">UCL</a>
+                <a href="real-madrid.html" class="active">Real Madrid</a>
+            </nav>
+            <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+            <button class="hamburger-toggle" id="menu-toggle" aria-label="Toggle Navigation">
+                <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+            </button>
+        </div>
+    </header>
+
+    <div class="rm-layout">
+        <nav class="rm-sub-nav">
+            <button class="rm-nav-btn active" data-tab="overview">Overview &amp; Matches</button>
+            <button class="rm-nav-btn" data-tab="lineup">Tactical Lineup</button>
+            <button class="rm-nav-btn" data-tab="stats">Season Stats</button>
+        </nav>
+
+        <main class="rm-main-content">
+            <div id="rm-tab-overview" class="rm-tab-page active">
+                <span class="section-label">Real Madrid CF</span>
+                <h1>Match Center</h1>
+                <div class="rm-dashboard-grid">
+                    <div>
+                        <section style="margin-bottom: 30px;">
+                            <h2>Upcoming Matches</h2>
+                            <div id="rm-fixtures-container" style="margin-top: 12px;"></div>
+                        </section>
+                        <section>
+                            <h2>Recent Results</h2>
+                            <div id="rm-results-container" style="margin-top: 12px;"></div>
+                        </section>
+                    </div>
+                    <div>
+                        <div class="compact-section">
+                            <h2>La Liga Standings</h2>
+                            <div id="rm-standings-container" style="margin-top: 12px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rm-tab-lineup" class="rm-tab-page">
+                <span class="section-label">Tactical Board</span>
+                <h1>Starting XI Setup</h1>
+                <p style="max-width: 60ch;">Hover a player card for a closer look. Edit names/numbers directly in <code>real-madrid.html</code> to update the XI.</p>
+                <div class="pitch-container">
+                    <div class="pitch">
+                        <div class="pitch-line center-line"></div>
+                        <div class="pitch-circle"></div>
+                        <div class="player-card pos-gk"><span class="num">1</span><span class="name">Courtois</span></div>
+                        <div class="player-card pos-lb"><span class="num">3</span><span class="name">Cucurella</span></div>
+                        <div class="player-card pos-lcb"><span class="num">24</span><span class="name">Huijsen</span></div>
+                        <div class="player-card pos-rcb"><span class="num">22</span><span class="name">Rüdiger</span></div>
+                        <div class="player-card pos-rb"><span class="num">2</span><span class="name">Dumfries</span></div>
+                        <div class="player-card pos-ldm"><span class="num">14</span><span class="name">Tchouaméni</span></div>
+                        <div class="player-card pos-rdm"><span class="num">8</span><span class="name">Valverde</span></div>
+                        <div class="player-card pos-lw"><span class="num">7</span><span class="name">Vinícius Jr</span></div>
+                        <div class="player-card pos-cam"><span class="num">5</span><span class="name">Bellingham</span></div>
+                        <div class="player-card pos-rw"><span class="num">20</span><span class="name">B. Silva</span></div>
+                        <div class="player-card pos-st"><span class="num">9</span><span class="name">Mbappé</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rm-tab-stats" class="rm-tab-page">
+                <span class="section-label">Data Hub</span>
+                <h1>Squad Performance Leaderboard</h1>
+                <div class="table-wrapper" style="margin-top: 20px;">
+                    <table class="standings-table">
+                        <thead>
+                            <tr><th style="text-align:left;">Player</th><th>Pos</th><th>Goals</th><th>Assists</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td class="team-cell">Kylian Mbappé</td><td>FW</td><td>6</td><td>2</td></tr>
+                            <tr><td class="team-cell">Vinícius Jr</td><td>FW</td><td>4</td><td>4</td></tr>
+                            <tr><td class="team-cell">Jude Bellingham</td><td>MF</td><td>3</td><td>3</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Global Match Detail Modal -->
+    <div id="match-modal" class="modal-overlay">
+        <div class="modal-body">
+            <button class="modal-close" aria-label="Close">×</button>
+            <div id="modal-details-content"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-inner">
+            <span><strong>Braulio Zelaya</strong> — Beyond 90 Minutes, a personal football analysis project</span>
+            <div class="footer-links">
+                <a href="https://github.com/EDIT-ME" class="edit-me">GitHub</a>
+                <a href="mailto:you@EDIT-ME.com" class="edit-me">Email</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
