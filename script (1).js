@@ -275,7 +275,11 @@ class Beyond90App {
             } catch (err) { /* localStorage unavailable — just fetch fresh */ }
         }
 
-        const response = await fetch(`${FOOTBALL_DATA_CONFIG.proxyBaseUrl}/v4${endpoint}`);
+        // Strip a trailing slash so pasting the Worker URL either way
+        // ("...workers.dev" or "...workers.dev/") never produces a
+        // double-slash path like ".dev//v4/..." — some servers 404 on that.
+        const base = FOOTBALL_DATA_CONFIG.proxyBaseUrl.replace(/\/+$/, '');
+        const response = await fetch(`${base}/v4${endpoint}`);
         if (!response.ok) {
             throw new Error(`Proxy request failed (${response.status}) for ${endpoint}`);
         }
