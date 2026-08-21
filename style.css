@@ -17,9 +17,18 @@
     --ink: #191D17;
     --ink-soft: #3A4038;
 
-    --pitch: #14432A;
-    --pitch-bright: #1E7A46;
+    /* Brand blue — this is the site's main accent color (nav, links,
+       buttons, highlights). Kept the variable names --pitch/-bright/
+       -line/-deep so nothing else in this file has to change. */
+    --pitch: #1B4B8F;
+    --pitch-bright: #2E76D9;
+    --pitch-deep: #0B2340;
     --pitch-line: rgba(246, 242, 233, 0.75);
+
+    /* True turf green — used ONLY for the literal grass tactical-pitch
+       diagram on the Real Madrid lineup tab, so it still looks like a
+       real field. Nothing else should reference this. */
+    --turf: #14432A;
 
     /* Fixed dark surface + fixed on-dark text — intentionally does NOT
        flip with dark mode, used for the header, footer, hero, tables,
@@ -55,7 +64,7 @@
     --brand-accent-hover: var(--pitch);
     --brand-light: #E7E2D3;
     --silver: var(--line);
-    --pitch-bg: var(--pitch);
+    --pitch-bg: var(--turf);
     --pitch-shadow: rgba(0, 0, 0, 0.35);
 
     /* Type */
@@ -90,6 +99,7 @@ body.dark-theme {
     --line: #303423;
     --line-strong: #454A34;
     --brand-light: #232819;
+    --pitch-bright: #5B9BEE;
     --pitch-line: rgba(241, 238, 226, 0.6);
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.45);
@@ -181,7 +191,7 @@ button { font-family: var(--font-body); cursor: pointer; }
     letter-spacing: 3px;
     color: var(--text-inverse);
     border-radius: var(--border-radius-sm);
-    background: linear-gradient(135deg, var(--pitch), #0B2917);
+    background: linear-gradient(135deg, var(--pitch), var(--pitch-deep));
     font-size: 0.85rem;
 }
 
@@ -305,7 +315,7 @@ button { font-family: var(--font-body); cursor: pointer; }
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(circle at 82% -10%, rgba(30, 122, 70, 0.55), transparent 55%),
+        radial-gradient(circle at 82% -10%, rgba(46, 118, 217, 0.55), transparent 55%),
         repeating-linear-gradient(90deg, var(--pitch-line) 0, var(--pitch-line) 1px, transparent 1px, transparent 64px);
     opacity: 0.5;
     pointer-events: none;
@@ -406,7 +416,7 @@ button { font-family: var(--font-body); cursor: pointer; }
    -------------------------------------------------------------------------- */
 .quick-links {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     gap: 1.25rem;
     margin-top: 2.5rem;
 }
@@ -445,7 +455,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 }
 
 .author-card {
-    background: linear-gradient(160deg, var(--pitch) 0%, #0C2416 100%);
+    background: linear-gradient(160deg, var(--pitch) 0%, var(--pitch-deep) 100%);
     border-radius: var(--border-radius-lg);
     padding: 2rem 1.5rem;
     text-align: center;
@@ -557,7 +567,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 .card-image {
     height: 150px;
     position: relative;
-    background: linear-gradient(135deg, var(--pitch) 0%, #0C2416 100%);
+    background: linear-gradient(135deg, var(--pitch) 0%, var(--pitch-deep) 100%);
     display: flex;
     align-items: flex-end;
     padding: 12px 16px;
@@ -597,7 +607,7 @@ button { font-family: var(--font-body); cursor: pointer; }
     height: 260px;
     border-radius: var(--border-radius-md);
     margin: 1.5rem 0;
-    background: linear-gradient(135deg, var(--pitch) 0%, #0C2416 60%, var(--gold) 220%);
+    background: linear-gradient(135deg, var(--pitch) 0%, var(--pitch-deep) 60%, var(--gold) 220%);
     position: relative;
     overflow: hidden;
 }
@@ -679,7 +689,7 @@ button { font-family: var(--font-body); cursor: pointer; }
     content: '';
     width: 7px; height: 7px; border-radius: 50%;
     background: var(--pitch-bright);
-    box-shadow: 0 0 0 3px rgba(30, 122, 70, 0.2);
+    box-shadow: 0 0 0 3px rgba(46, 118, 217, 0.2);
 }
 
 /* --------------------------------------------------------------------------
@@ -737,7 +747,7 @@ button { font-family: var(--font-body); cursor: pointer; }
     position: relative;
     width: 100%;
     height: 560px;
-    background: linear-gradient(180deg, var(--pitch) 0%, #103821 50%, var(--pitch) 100%);
+    background: linear-gradient(180deg, var(--turf) 0%, #103821 50%, var(--turf) 100%);
     border: 4px solid var(--paper-raised);
     border-radius: var(--border-radius-md);
     overflow: hidden;
@@ -894,7 +904,91 @@ footer {
 .footer-links a:hover { color: var(--gold-bright); }
 
 /* --------------------------------------------------------------------------
-   16. RESPONSIVE
+   16. MATCHDAY NAVIGATOR & LIVE INDICATOR
+   -------------------------------------------------------------------------- */
+.matchday-nav { display: flex; align-items: center; gap: 10px; }
+
+.md-arrow {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: var(--border-radius-full);
+    border: 1px solid var(--line);
+    background: var(--paper-raised);
+    color: var(--pitch);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+.md-arrow:hover:not(:disabled) { border-color: var(--pitch-bright); color: var(--pitch-bright); transform: translateY(-1px); }
+.md-arrow:disabled { opacity: 0.35; cursor: not-allowed; }
+
+.md-label {
+    font-family: var(--font-label);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    min-width: 130px;
+    text-align: center;
+}
+
+.hub-refresh-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-label);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--status-danger);
+}
+.live-pill::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--status-danger);
+    animation: livePulse 1.4s ease-in-out infinite;
+}
+@keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* --------------------------------------------------------------------------
+   17. MODAL — MY NOTES
+   -------------------------------------------------------------------------- */
+.modal-notes { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.modal-notes label {
+    display: block;
+    font-family: var(--font-label);
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+}
+.modal-notes textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 70px;
+    padding: 10px 12px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--text-primary);
+}
+.modal-notes textarea:focus { border-color: var(--pitch-bright); outline: none; }
+.modal-notes-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 0.6rem; }
+.modal-note-status { font-size: 0.78rem; color: var(--pitch-bright); }
+.modal-note-save { padding: 8px 16px; font-size: 0.72rem; }
+
+/* --------------------------------------------------------------------------
+   18. RESPONSIVE
    -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
     .hero-grid { grid-template-columns: 1fr; }
@@ -920,5 +1014,7 @@ footer {
     .page-layout, .rm-dashboard-grid { grid-template-columns: 1fr; }
     .quick-links { grid-template-columns: 1fr; }
     .filter-controls { flex-direction: column; align-items: stretch; }
+    .matchday-nav { justify-content: center; }
+    .hub-refresh-group { justify-content: space-between; }
     .hero-cover { padding: 2.25rem 6%; }
 }

@@ -18,6 +18,7 @@
                 <a href="index.html">Home</a>
                 <a href="articles.html">Articles</a>
                 <a href="premier-league.html">Premier League</a>
+                <a href="la-liga.html">La Liga</a>
                 <a href="ucl.html" class="active">UCL</a>
                 <a href="real-madrid.html">Real Madrid</a>
             </nav>
@@ -33,23 +34,24 @@
     <main class="main-content">
         <span class="section-label">Europe</span>
         <h1>UEFA Champions League</h1>
-        <p style="max-width: 60ch;">League-phase standings and upcoming European fixtures. Click any match for details.</p>
+        <p style="max-width: 60ch;">League-phase standings and European fixtures. Click any match for details.</p>
 
         <section class="filter-controls">
-            <button
-                class="rm-nav-btn active"
-                data-refresh-league="UEFA Champions League"
-                data-refresh-fixtures="ucl-fixtures-container"
-                data-refresh-standings="ucl-standings-container"
-                data-refresh-status="ucl-sync-status">
-                ↻ Refresh Data
-            </button>
-            <span id="ucl-sync-status" style="font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.5px; color: var(--text-muted);">Status: Loading…</span>
+            <div class="matchday-nav">
+                <button id="ucl-md-prev" class="md-arrow" aria-label="Previous matchday">←</button>
+                <span id="ucl-md-label" class="md-label">Loading…</span>
+                <button id="ucl-md-next" class="md-arrow" aria-label="Next matchday">→</button>
+            </div>
+            <div class="hub-refresh-group">
+                <span id="ucl-sync-status" style="font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.5px; color: var(--text-muted);">Status: Loading…</span>
+                <button id="ucl-refresh-btn" class="rm-nav-btn">↻ Refresh</button>
+            </div>
         </section>
 
         <div class="page-layout" style="padding: 0;">
             <section>
-                <h2>Upcoming Fixtures</h2>
+                <h2>Matchday Fixtures</h2>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -0.5rem;">Browse the league phase matchday by matchday — the arrows keep going into the knockout rounds once the league phase ends.</p>
                 <div id="ucl-fixtures-container" style="margin-top: 15px;"></div>
             </section>
 
