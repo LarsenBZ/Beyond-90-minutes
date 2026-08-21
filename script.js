@@ -765,5 +765,5 @@ class CompetitionHub {
         if (this.statusEl) this.statusEl.textContent = "Status: Showing sample data";
     }
 }
-
+Fix script.js filename
 const app = new Beyond90App();
