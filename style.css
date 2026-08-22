@@ -694,6 +694,26 @@ button { font-family: var(--font-body); cursor: pointer; }
     margin-bottom: 1.5rem;
 }
 
+.article-sources {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+}
+.article-sources ul {
+    list-style: none;
+    margin: 0.75rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.article-sources a {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--line-strong);
+}
+.article-sources a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
 /* --------------------------------------------------------------------------
    10. STANDINGS & DATA TABLES
    -------------------------------------------------------------------------- */

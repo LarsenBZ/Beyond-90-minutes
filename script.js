@@ -186,6 +186,32 @@ class Beyond90App {
             this.setupRmTabs();
             this.setupModal();
             this.autoLoadPageData();
+            this.setupVisibilityRefresh();
+        });
+    }
+
+    // Browsers throttle setInterval timers hard in a backgrounded tab —
+    // sometimes pausing them almost entirely — so the 60s live-polling used
+    // throughout this file can go stale for as long as the tab isn't in
+    // focus, only catching up once something forces a fresh run. This is
+    // that something: the moment the tab becomes visible again, everything
+    // currently on screen refreshes immediately instead of waiting on
+    // whatever's left of its throttled timer.
+    setupVisibilityRefresh() {
+        let lastRefresh = Date.now();
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState !== "visible") return;
+            const now = Date.now();
+            if (now - lastRefresh < 10000) return; // debounce rapid tab-switching
+            lastRefresh = now;
+
+            if (this.plHub) this.plHub.loadRound(true);
+            if (this.laLigaHub) this.laLigaHub.loadRound(true);
+            if (this.uclHub) this.uclHub.loadRound(true);
+
+            const page = document.body.getAttribute("data-page");
+            if (page === "real-madrid") this.loadRmOverviewLive(true);
+            else if (page === "home") this.loadHomeSidebarLive();
         });
     }
 
@@ -630,16 +656,27 @@ class Beyond90App {
             const events = await this.fetchRmMatches(forceRefresh);
             const now = new Date();
 
-            const fixtures = events
-                .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
-                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
-                .slice(0, 5);
+            // Live matches were vanishing from both lists here: once kickoff
+            // passes, a live match's kickoff time is in the past (fails the
+            // "upcoming" check) but its status isn't "FINISHED" yet either
+            // (fails the "recent result" check) — so it fell through both
+            // filters and just disappeared mid-match. Pulling live matches
+            // out as their own bucket first, and always including them in
+            // "Upcoming Matches" regardless of kickoff time, fixes that.
+            const live = events.filter(e => e.isLive);
+            const upcoming = events
+                .filter(e => !e.isLive && e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
+                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
+            const fixtures = [...live, ...upcoming].slice(0, 5);
 
             const results = events
-                .filter(e => e.status === "FINISHED")
+                .filter(e => !e.isLive && e.status === "FINISHED")
                 .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
                 .slice(0, 3)
                 .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id] || null; return m; });
+
+            const fixturesHeading = document.getElementById("rm-fixtures-heading");
+            if (fixturesHeading) fixturesHeading.textContent = live.length ? "Live Now" : "Upcoming Matches";
 
             if (fixturesEl) {
                 fixturesEl.innerHTML = fixtures.length
