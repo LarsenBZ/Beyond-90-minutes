@@ -65,7 +65,7 @@ const API_FOOTBALL_CONFIG = {
     // blank and the site still works fine — fixtures/standings/schedules
     // (ESPN) all still load live, you just won't get top scorers, lineups,
     // or match stats until this is set.
-    proxyBaseUrl: "", // <-- EDIT ME once your Worker is deployed (PROXY-SETUP.md Step 7), e.g. "https://beyond90-proxy.YOURNAME.workers.dev"
+    proxyBaseUrl: "https://beyond90-proxy.braulioz147.workers.dev",
     leagues: {
         premierLeague: 39,
         laLiga: 140,
