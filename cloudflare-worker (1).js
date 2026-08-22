@@ -62,11 +62,25 @@ export default {
       const body = await apiResponse.text();
 
       // Finished-match fixture lookups (fixtures?id=...) never change once
-      // the match is over, so those get a long cache. Everything else
-      // (topscorers, squad stats, "last fixture" lookups) gets a shorter
-      // one so the numbers don't go stale for too long mid-season.
+      // the match is over, so those get a long cache. But a LIVE match's
+      // fixture-by-id lookup changes minute to minute — caching that for
+      // 24 hours the way a finished one is cached would freeze the score,
+      // lineup, and stats at whatever they looked like when the first
+      // visitor loaded the page. So for fixture-by-id specifically, peek at
+      // the match status in the response body and only apply the long
+      // cache once it's actually final.
       const isFixtureById = url.pathname === "/fixtures" && url.searchParams.has("id");
-      const maxAgeSeconds = isFixtureById ? 60 * 60 * 24 : 60 * 60 * 3; // 24h vs 3h
+      let maxAgeSeconds = 60 * 60 * 3; // default: 3h (topscorers, squad stats, "last fixture" lookups)
+      if (isFixtureById) {
+        const finishedStatuses = ["FT", "AET", "PEN", "AWD", "WO"];
+        let statusShort = null;
+        try {
+          const parsed = JSON.parse(body);
+          const fixture = parsed.response && parsed.response[0];
+          statusShort = fixture && fixture.fixture && fixture.fixture.status && fixture.fixture.status.short;
+        } catch (err) { /* couldn't parse — fall through to the short cache below */ }
+        maxAgeSeconds = finishedStatuses.includes(statusShort) ? 60 * 60 * 24 : 60; // 24h once final, 60s otherwise (live/upcoming)
+      }
 
       const response = new Response(body, {
         status: apiResponse.status,

@@ -1061,6 +1061,16 @@ footer {
     font-style: italic;
 }
 
+/* Compact goal/card line on a match card — straight from ESPN, updates
+   live while a match is in progress since it comes off the same poll as
+   the score. */
+.match-events-strip {
+    margin-top: 0.6rem;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
 .modal-synopsis { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 .modal-synopsis-label {
     display: block;

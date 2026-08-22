@@ -378,8 +378,42 @@ class Beyond90App {
     espnStandingsUrl(leagueSlug) {
         return `https://site.api.espn.com/apis/v2/sports/soccer/${leagueSlug}/standings`;
     }
-    espnTeamScheduleUrl(leagueSlug, teamId) {
-        return `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/teams/${teamId}/schedule`;
+
+    // Real Madrid's fixtures/results — built from the SAME scoreboard
+    // endpoint the league hubs use (verified working), filtered down to
+    // matches involving Real Madrid, rather than the separate
+    // teams/{id}/schedule resource. That endpoint is real and documented,
+    // but soccer isn't guaranteed to return the same shape American sports
+    // do — that's very likely why this page was coming up empty. Scoreboard
+    // is a shape we've already confirmed with real data, so this leans on
+    // the safer bet. Covers La Liga + Champions League; doesn't currently
+    // include Copa del Rey (ESPN slug esp.copa_del_rey, if you want to add
+    // it — same pattern, just another league to fetch and merge).
+    async fetchRmMatches(forceRefresh = false) {
+        const now = new Date();
+        const start = new Date(now); start.setUTCDate(start.getUTCDate() - 30);
+        const end = new Date(now); end.setUTCDate(end.getUTCDate() + 60);
+        const fmt = d => `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`;
+        const datesParam = `${fmt(start)}-${fmt(end)}`;
+
+        const leagueSlugs = [ESPN_CONFIG.leagues.laLiga, ESPN_CONFIG.leagues.championsLeague];
+        const responses = await Promise.allSettled(
+            leagueSlugs.map(slug => this.fetchEspn(this.espnScoreboardUrl(slug, datesParam), ESPN_CONFIG.cacheMinutes, forceRefresh))
+        );
+
+        const rmId = String(ESPN_CONFIG.realMadridTeamId);
+        const matches = [];
+        responses.forEach((result, i) => {
+            if (result.status !== "fulfilled") {
+                console.warn(`ESPN fetch failed for ${leagueSlugs[i]} while building Real Madrid's schedule:`, result.reason);
+                return;
+            }
+            (result.value.events || []).forEach(e => {
+                const mapped = this.mapEspnEvent(e);
+                if (mapped.homeId === rmId || mapped.awayId === rmId) matches.push(mapped);
+            });
+        });
+        return matches;
     }
 
     /* ---- API-FOOTBALL FETCH + CACHE (via your Cloudflare Worker) -------- */
@@ -421,6 +455,8 @@ class Beyond90App {
         const competitors = comp.competitors || [];
         const home = competitors.find(c => c.homeAway === "home") || {};
         const away = competitors.find(c => c.homeAway === "away") || {};
+        const homeId = home.team && home.team.id;
+        const awayId = away.team && away.team.id;
 
         const rawDate = comp.date || event.date || null;
         const date = new Date(rawDate);
@@ -445,16 +481,41 @@ class Beyond90App {
             statusLabel = "Suspended";
         }
 
+        // Goals + cards, straight from ESPN — no API-Football call needed,
+        // and no daily quota either. ESPN embeds this list (competitions[0]
+        // .details) right on the same scoreboard payload we already fetch,
+        // and it updates live as a match progresses, same as the score does.
+        // Confirmed field names against a real finished match's response.
+        const events = (comp.details || [])
+            .filter(d => d && (d.scoringPlay || d.yellowCard || d.redCard))
+            .map(d => {
+                const athlete = d.athletesInvolved && d.athletesInvolved[0];
+                const teamId = d.team && d.team.id;
+                return {
+                    seconds: (d.clock && d.clock.value) || 0,
+                    minute: (d.clock && d.clock.displayValue) || "",
+                    type: d.redCard ? "red" : (d.yellowCard ? "yellow" : "goal"),
+                    teamSide: teamId === homeId ? "home" : (teamId === awayId ? "away" : null),
+                    player: (athlete && (athlete.shortName || athlete.displayName)) || "Unknown",
+                    ownGoal: Boolean(d.ownGoal),
+                    penalty: Boolean(d.penaltyKick)
+                };
+            })
+            .sort((a, b) => a.seconds - b.seconds);
+
         return {
             id: event.id || null,
             home: (home.team && (home.team.shortDisplayName || home.team.displayName)) || "TBD",
             away: (away.team && (away.team.shortDisplayName || away.team.displayName)) || "TBD",
+            homeId: homeId || null,
+            awayId: awayId || null,
             time,
             score,
             venue: (comp.venue && comp.venue.fullName) || "Venue TBC",
             status: completed ? "FINISHED" : (isLive ? "IN_PLAY" : "SCHEDULED"),
             isLive,
             statusLabel,
+            events,
             halftime: null,
             matchday: null,
             stage: null,
@@ -566,11 +627,7 @@ class Beyond90App {
         if (scorersEl) scorersEl.innerHTML = this.skeletonBlock(3);
 
         try {
-            const scheduleData = await this.fetchEspn(
-                this.espnTeamScheduleUrl(ESPN_CONFIG.leagues.laLiga, ESPN_CONFIG.realMadridTeamId),
-                ESPN_CONFIG.cacheMinutes, forceRefresh
-            );
-            const events = (scheduleData.events || []).map(e => this.mapEspnEvent(e));
+            const events = await this.fetchRmMatches(forceRefresh);
             const now = new Date();
 
             const fixtures = events
@@ -641,10 +698,9 @@ class Beyond90App {
         const sidebar = document.getElementById("latest-match-sidebar");
         if (!sidebar) return;
         try {
-            const scheduleData = await this.fetchEspn(this.espnTeamScheduleUrl(ESPN_CONFIG.leagues.laLiga, ESPN_CONFIG.realMadridTeamId));
+            const events = await this.fetchRmMatches();
             const now = new Date();
-            const next = (scheduleData.events || [])
-                .map(e => this.mapEspnEvent(e))
+            const next = events
                 .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
                 .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
                 .slice(0, 1);
@@ -689,23 +745,47 @@ class Beyond90App {
        leaderboard. All optional — each quietly leaves the existing static
        example markup in place if API-Football isn't configured or fails.
     ------------------------------------------------------------------ */
-    async loadRmMatchReport() {
+    // Statuses API-Football uses for a match that's actually in progress —
+    // used both to decide whether to prefer "today's fixture" over the last
+    // finished one, and to know whether to keep polling for fresh events.
+    static LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT", "LIVE"];
+
+    async loadRmMatchReport(forceRefresh = false) {
         if (!this.isApiFootballEnabled()) return;
         try {
             const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
-            const last = await this.fetchApiFootball(`fixtures?team=${teamId}&last=1`);
-            const fx = last.response && last.response[0];
+
+            // Prefer today's fixture if Real Madrid are playing right now (or
+            // about to) — that's when a lineup and a live events/stats panel
+            // actually matter. Falls back to the last finished match otherwise.
+            let fx = null;
+            const todayStr = new Date().toISOString().slice(0, 10);
+            try {
+                const todayResp = await this.fetchApiFootball(`fixtures?team=${teamId}&date=${todayStr}`, forceRefresh);
+                fx = (todayResp.response || [])[0] || null;
+            } catch (err) { /* fine — fall through to the last finished match */ }
+
+            if (!fx) {
+                const last = await this.fetchApiFootball(`fixtures?team=${teamId}&last=1`);
+                fx = (last.response || [])[0] || null;
+            }
             if (!fx) {
                 console.warn(`API-Football returned no fixtures for team=${teamId} — double-check API_FOOTBALL_CONFIG.realMadridTeamId against the dashboard.`);
                 return;
             }
 
-            const detail = await this.fetchApiFootball(`fixtures?id=${fx.fixture.id}`);
+            const isLive = Beyond90App.LIVE_STATUSES.includes(fx.fixture.status.short);
+            const detail = await this.fetchApiFootball(`fixtures?id=${fx.fixture.id}`, forceRefresh || isLive);
             const match = detail.response && detail.response[0];
             if (!match) return;
 
             this.renderLineupOnPitch(match);
-            this.renderMatchReportPanel(match);
+            this.renderMatchReportPanel(match, isLive);
+
+            if (this.rmReportPollTimer) { clearInterval(this.rmReportPollTimer); this.rmReportPollTimer = null; }
+            if (isLive) {
+                this.rmReportPollTimer = setInterval(() => this.loadRmMatchReport(true), 60000);
+            }
         } catch (err) {
             console.warn("API-Football match report failed — leaving the example lineup/stats in place:", err);
         }
@@ -763,7 +843,7 @@ class Beyond90App {
         return html;
     }
 
-    renderMatchReportPanel(match) {
+    renderMatchReportPanel(match, isLive) {
         const el = document.getElementById("rm-match-report");
         if (!el) return;
 
@@ -807,9 +887,9 @@ class Beyond90App {
             </div>`;
 
         el.innerHTML = `
-            <span class="section-label">Via API-Football</span>
-            <h2>Last Match Report</h2>
-            <p class="article-byline">Real Madrid ${rmGoals} – ${oppGoals} ${this.escapeHtml(opponent)}</p>
+            <span class="section-label">Via API-Football${isLive ? ' — updating every 60s' : ''}</span>
+            <h2>${isLive ? 'Live Match Report' : 'Last Match Report'}</h2>
+            <p class="article-byline">${isLive ? '<span class="live-pill">LIVE</span> ' : ''}Real Madrid ${rmGoals} – ${oppGoals} ${this.escapeHtml(opponent)}</p>
             ${eventsHtml}
             ${statsHtml}
         `;
@@ -854,11 +934,29 @@ class Beyond90App {
     }
 
     /* ---- RENDER HELPERS ---------------------------------------- */
+    // Compact goal/card line for a match card: "⚽ Saka 23' · 🟨 Yirenkyi 27'".
+    // Caps at 6 so a blowout doesn't take over the card; full list goes in
+    // the modal instead. Sample data has no .events, so this quietly no-ops.
+    formatEventsStrip(events, limit) {
+        if (!events || !events.length) return '';
+        const shown = limit ? events.slice(0, limit) : events;
+        const icon = { goal: '⚽', yellow: '🟨', red: '🟥' };
+        const items = shown.map(e => {
+            const tag = e.ownGoal ? ' (OG)' : (e.penalty ? ' (pen)' : '');
+            return `${icon[e.type] || '⚽'} ${this.escapeHtml(e.player)} ${e.minute}${tag}`;
+        });
+        const extra = limit && events.length > limit ? ` +${events.length - limit} more` : '';
+        return items.join(' · ') + extra;
+    }
+
     renderMatchCard(match, leagueKey) {
         const payload = encodeURIComponent(JSON.stringify({ ...match, league: leagueKey }));
         const timeLabel = match.isLive
             ? `<span class="live-pill">${match.statusLabel || 'LIVE'}</span>`
             : (match.statusLabel || match.time || "Full-time");
+
+        const eventsStrip = this.formatEventsStrip(match.events, 6);
+        const eventsBlock = eventsStrip ? `<div class="match-events-strip">${eventsStrip}</div>` : '';
 
         let synopsisBlock = '';
         if (leagueKey === "Real Madrid" && match.status === "FINISHED") {
@@ -880,6 +978,7 @@ class Beyond90App {
                     <span class="teams-name">${match.home} vs ${match.away}</span>
                     <span class="match-score">${match.score}</span>
                 </div>
+                ${eventsBlock}
                 ${synopsisBlock}
             </div>
         `;
@@ -992,6 +1091,16 @@ class Beyond90App {
 
         const groupRow = match.group ? `<div class="modal-detail-row"><span>Group</span><span>${match.group}</span></div>` : '';
 
+        const eventsRow = (match.events && match.events.length) ? `
+            <ul class="match-report-timeline">
+                ${match.events.map(e => {
+                    const icon = e.type === "goal" ? "⚽" : (e.type === "red" ? "🟥" : "🟨");
+                    const tag = e.ownGoal ? " (OG)" : (e.penalty ? " (pen)" : "");
+                    const side = e.teamSide === "home" ? match.home : (e.teamSide === "away" ? match.away : "");
+                    return `<li><strong>${e.minute}</strong> ${icon} ${this.escapeHtml(e.player)}${tag}${side ? ` — ${this.escapeHtml(side)}` : ""}</li>`;
+                }).join('')}
+            </ul>` : '';
+
         const synopsisRow = match.synopsis
             ? `<div class="modal-synopsis">
                    <span class="modal-synopsis-label">Match Synopsis</span>
@@ -1009,6 +1118,7 @@ class Beyond90App {
             ${stageRow}
             ${groupRow}
             ${match.venue ? `<div class="modal-detail-row"><span>Venue</span><span>${match.venue}</span></div>` : ''}
+            ${eventsRow}
             ${synopsisRow}
         `;
 
