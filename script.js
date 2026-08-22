@@ -2,25 +2,24 @@
    Beyond 90 Minutes — Core JavaScript
    Handles: navigation, dark mode, article search/filter, live league data
    (football-data.org), matchday-by-matchday browsing with live polling,
-   the match detail modal (with your own saved notes), and the Real
-   Madrid tab switching.
+   league Top Scorers lists, the match detail modal, Real Madrid post-match
+   synopses, and the Real Madrid tab switching.
 
    A NOTE ON THE FREE FOOTBALL-DATA.ORG TIER, so future-you isn't
-   surprised: the free plan gives you fixtures, results, scores, and
-   standings for PL / La Liga / UCL and a few others — but NOT lineups,
-   substitutions, cards, or shot/possession stats. Those are a paid
-   add-on. So the match modal below shows everything the free API can
-   give us (score, half-time score, status/live minute, matchday,
-   venue) plus a "My Notes" box where YOU can type a synopsis or
-   prediction by hand.
+   surprised: the free plan gives you fixtures, results, scores,
+   standings, AND a season-long Top Scorers list (goals/assists per
+   player) for PL / La Liga / UCL and a few others. What it does NOT
+   give you — lineups, substitutions, cards, or a specific match's own
+   goal-scorer/event timeline — is a paid add-on ("deep data pack").
+   So there's no way to have the API tell us who scored in a specific
+   Real Madrid match; that's exactly what RM_MATCH_SYNOPSES below is
+   for — you write that part by hand, same way a real analyst would.
 
-   A NOTE ON "MY NOTES": these save to localStorage, which means
-   they're saved in that one browser, on that one device — they are
-   NOT pushed to GitHub and won't show up for someone else visiting
-   the live site. Think of it as your own scratchpad. Once you're
-   happy with a note, copy/paste it into the actual HTML (e.g. into
-   the "add your own observations" spot on an article) so it's
-   permanently visible to anyone who visits.
+   A NOTE ON REAL MADRID SYNOPSES: see RM_MATCH_SYNOPSES below. Unlike
+   an older version of this file which saved notes to localStorage
+   (private, one device only), synopses now live in this file itself.
+   That means they deploy with the rest of the site to GitHub Pages
+   and are visible to every visitor, not just you.
    ========================================================================== */
 
 const FOOTBALL_DATA_CONFIG = {
@@ -34,6 +33,22 @@ const FOOTBALL_DATA_CONFIG = {
         championsLeague: "CL",
         laLiga: "PD"
     }
+};
+
+/* ---- REAL MADRID POST-MATCH SYNOPSES -------------------------------------
+   HOW TO USE THIS, after a Real Madrid match finishes:
+     1. Open the live site's Real Madrid page and look under "Recent Results".
+        A finished match with no synopsis yet shows a small hint line like
+        "No synopsis added yet — match ID 546987".
+     2. Copy that number and add a line below: "546987": "Your synopsis..."
+     3. Save, commit, and push to GitHub like normal. Once it deploys, your
+        synopsis replaces the hint for every visitor — not just you, and not
+        just on this device.
+   Text can be as long as you want (a full paragraph or several) — it'll
+   wrap naturally under the match card and in the match's detail popup.
+   ---------------------------------------------------------------------- */
+const RM_MATCH_SYNOPSES = {
+    // "546987": "Real Madrid controlled midfield for the first hour before Barcelona's press forced a mistake. Mbappé's second-half brace..."
 };
 
 class Beyond90App {
@@ -54,6 +69,11 @@ class Beyond90App {
                     { pos: 1, team: "Arsenal", mp: 5, w: 4, d: 1, l: 0, gd: 9, pts: 13 },
                     { pos: 2, team: "Liverpool", mp: 5, w: 4, d: 0, l: 1, gd: 7, pts: 12 },
                     { pos: 3, team: "Manchester City", mp: 5, w: 3, d: 1, l: 1, gd: 5, pts: 10 }
+                ],
+                scorers: [
+                    { player: "Erling Haaland", team: "Manchester City", goals: 7, assists: 1 },
+                    { player: "Mohamed Salah", team: "Liverpool", goals: 6, assists: 3 },
+                    { player: "Bukayo Saka", team: "Arsenal", goals: 4, assists: 2 }
                 ]
             },
             "UEFA Champions League": {
@@ -66,6 +86,11 @@ class Beyond90App {
                     { pos: 1, team: "Real Madrid", mp: 2, w: 2, d: 0, l: 0, gd: 4, pts: 6 },
                     { pos: 2, team: "Bayern Munich", mp: 2, w: 2, d: 0, l: 0, gd: 3, pts: 6 },
                     { pos: 3, team: "PSG", mp: 2, w: 1, d: 1, l: 0, gd: 2, pts: 4 }
+                ],
+                scorers: [
+                    { player: "Kylian Mbappé", team: "Real Madrid", goals: 5, assists: 1 },
+                    { player: "Harry Kane", team: "Bayern Munich", goals: 4, assists: 2 },
+                    { player: "Ousmane Dembélé", team: "PSG", goals: 3, assists: 3 }
                 ]
             },
             "La Liga": {
@@ -78,6 +103,11 @@ class Beyond90App {
                     { pos: 1, team: "Real Madrid", mp: 6, w: 5, d: 1, l: 0, gd: 12, pts: 16 },
                     { pos: 2, team: "Barcelona", mp: 6, w: 5, d: 0, l: 1, gd: 10, pts: 15 },
                     { pos: 3, team: "Atlético Madrid", mp: 6, w: 4, d: 1, l: 1, gd: 6, pts: 13 }
+                ],
+                scorers: [
+                    { player: "Kylian Mbappé", team: "Real Madrid", goals: 8, assists: 2 },
+                    { player: "Robert Lewandowski", team: "Barcelona", goals: 6, assists: 1 },
+                    { player: "Vinícius Jr", team: "Real Madrid", goals: 5, assists: 4 }
                 ]
             },
             "Real Madrid": {
@@ -90,6 +120,11 @@ class Beyond90App {
                 standings: [
                     { pos: 1, team: "Real Madrid", mp: 6, w: 5, d: 1, l: 0, gd: 12, pts: 16 },
                     { pos: 2, team: "Barcelona", mp: 6, w: 5, d: 0, l: 1, gd: 10, pts: 15 }
+                ],
+                scorers: [
+                    { player: "Kylian Mbappé", team: "Real Madrid", goals: 8, assists: 2 },
+                    { player: "Robert Lewandowski", team: "Barcelona", goals: 6, assists: 1 },
+                    { player: "Vinícius Jr", team: "Real Madrid", goals: 5, assists: 4 }
                 ]
             }
         };
@@ -209,6 +244,7 @@ class Beyond90App {
                 leagueKey: "Premier League",
                 fixturesId: "pl-fixtures-container",
                 standingsId: "pl-standings-container",
+                scorersId: "pl-scorers-container",
                 statusId: "pl-sync-status",
                 labelId: "pl-md-label",
                 prevId: "pl-md-prev",
@@ -222,6 +258,7 @@ class Beyond90App {
                 leagueKey: "UEFA Champions League",
                 fixturesId: "ucl-fixtures-container",
                 standingsId: "ucl-standings-container",
+                scorersId: "ucl-scorers-container",
                 statusId: "ucl-sync-status",
                 labelId: "ucl-md-label",
                 prevId: "ucl-md-prev",
@@ -235,6 +272,7 @@ class Beyond90App {
                 leagueKey: "La Liga",
                 fixturesId: "ll-fixtures-container",
                 standingsId: "ll-standings-container",
+                scorersId: "ll-scorers-container",
                 statusId: "ll-sync-status",
                 labelId: "ll-md-label",
                 prevId: "ll-md-prev",
@@ -363,23 +401,35 @@ class Beyond90App {
         const fixturesEl = document.getElementById("rm-fixtures-container");
         const resultsEl = document.getElementById("rm-results-container");
         const standingsEl = document.getElementById("rm-standings-container");
+        const scorersEl = document.getElementById("rm-scorers-container");
 
         if (fixturesEl) fixturesEl.innerHTML = this.skeletonBlock(1);
         if (resultsEl) resultsEl.innerHTML = this.skeletonBlock(1);
         if (standingsEl) standingsEl.innerHTML = this.skeletonBlock(3);
+        if (scorersEl) scorersEl.innerHTML = this.skeletonBlock(3);
 
         try {
             const teamId = FOOTBALL_DATA_CONFIG.teams.realMadrid;
-            const [scheduled, finished, standings] = await Promise.all([
+            const [scheduled, finished, standings, scorers] = await Promise.all([
                 this.fetchFootballData(`/teams/${teamId}/matches?status=SCHEDULED&limit=5`, forceRefresh),
                 this.fetchFootballData(`/teams/${teamId}/matches?status=FINISHED&limit=3`, forceRefresh),
-                this.fetchFootballData(`/competitions/${FOOTBALL_DATA_CONFIG.competitions.laLiga}/standings`, forceRefresh)
+                this.fetchFootballData(`/competitions/${FOOTBALL_DATA_CONFIG.competitions.laLiga}/standings`, forceRefresh),
+                this.fetchFootballData(`/competitions/${FOOTBALL_DATA_CONFIG.competitions.laLiga}/scorers?limit=10`, forceRefresh)
             ]);
 
             const fixtures = (scheduled.matches || []).map(m => this.mapMatch(m));
-            const results = (finished.matches || []).slice(-3).reverse().map(m => this.mapMatch(m));
+
+            // Attach each finished match's public synopsis (RM_MATCH_SYNOPSES,
+            // near the top of this file) so renderMatchCard can show it.
+            const results = (finished.matches || []).slice(-3).reverse().map(m => {
+                const mapped = this.mapMatch(m);
+                mapped.synopsis = RM_MATCH_SYNOPSES[mapped.id] || null;
+                return mapped;
+            });
+
             const totalTable = (standings.standings || []).find(s => s.type === "TOTAL") || (standings.standings || [])[0] || { table: [] };
             const table = totalTable.table.map(r => this.mapStandingsRow(r));
+            const scorersList = (scorers.scorers || []).map(s => this.mapScorer(s));
 
             if (fixturesEl) {
                 fixturesEl.innerHTML = fixtures.length
@@ -392,6 +442,7 @@ class Beyond90App {
                     : `<div class="empty-state">No recent results returned right now.</div>`;
             }
             if (standingsEl) standingsEl.innerHTML = this.renderStandingsTable(table, "Real Madrid");
+            if (scorersEl) scorersEl.innerHTML = this.renderScorersTable(scorersList);
 
             // Live polling: if Real Madrid is mid-match right now, refresh every 60s.
             if (this.rmPollTimer) { clearInterval(this.rmPollTimer); this.rmPollTimer = null; }
@@ -432,6 +483,7 @@ class Beyond90App {
         const fixturesEl = document.getElementById("rm-fixtures-container");
         const standingsEl = document.getElementById("rm-standings-container");
         const resultsEl = document.getElementById("rm-results-container");
+        const scorersEl = document.getElementById("rm-scorers-container");
         const data = this.mockData["Real Madrid"];
         if (!data) return;
 
@@ -443,8 +495,13 @@ class Beyond90App {
         if (standingsEl) standingsEl.innerHTML = this.renderStandingsTable(data.standings, "Real Madrid");
         if (resultsEl) {
             resultsEl.innerHTML = data.results.map(r => this.renderMatchCard(
-                { home: r.home, away: r.away, score: r.score, time: "Full-time", venue: r.venue }, "Real Madrid"
+                { home: r.home, away: r.away, score: r.score, time: "Full-time", venue: r.venue, status: "FINISHED" }, "Real Madrid"
             )).join('');
+        }
+        if (scorersEl) {
+            scorersEl.innerHTML = data.scorers
+                ? this.renderScorersTable(data.scorers)
+                : `<div class="empty-state">Sample data — connect live data to see real scorers.</div>`;
         }
     }
 
@@ -454,6 +511,25 @@ class Beyond90App {
         const timeLabel = match.isLive
             ? `<span class="live-pill">${match.statusLabel || 'LIVE'}</span>`
             : (match.statusLabel || match.time || "Full-time");
+
+        // Real Madrid post-match synopsis (RM_MATCH_SYNOPSES near the top of
+        // this file). Shown right on the card so every visitor sees it, not
+        // hidden behind a click. A finished RM match with nothing added yet
+        // shows a small hint with the match ID instead, so you know what key
+        // to use.
+        let synopsisBlock = '';
+        if (leagueKey === "Real Madrid" && match.status === "FINISHED") {
+            if (match.synopsis) {
+                synopsisBlock = `
+                    <div class="match-synopsis">
+                        <span class="match-synopsis-label">Match Synopsis</span>
+                        <p>${this.escapeHtml(match.synopsis)}</p>
+                    </div>`;
+            } else if (match.id) {
+                synopsisBlock = `<div class="match-synopsis-hint">No synopsis added yet — match ID ${match.id}</div>`;
+            }
+        }
+
         return `
             <div class="match-card" tabindex="0" role="button" data-match='${payload}'>
                 <div class="match-time">${timeLabel}</div>
@@ -461,8 +537,43 @@ class Beyond90App {
                     <span class="teams-name">${match.home} vs ${match.away}</span>
                     <span class="match-score">${match.score}</span>
                 </div>
+                ${synopsisBlock}
             </div>
         `;
+    }
+
+    renderScorersTable(scorers) {
+        if (!scorers.length) {
+            return `<div class="empty-state">No scorer data returned right now.</div>`;
+        }
+        return `
+            <div class="table-wrapper">
+                <table class="standings-table">
+                    <thead>
+                        <tr><th style="text-align:left;">Player</th><th style="text-align:left;">Team</th><th>Goals</th><th>Assists</th></tr>
+                    </thead>
+                    <tbody>
+                        ${scorers.map(s => `
+                            <tr>
+                                <td class="team-cell">${s.player}</td>
+                                <td>${s.team}</td>
+                                <td><strong>${s.goals}</strong></td>
+                                <td>${s.assists ?? '—'}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    mapScorer(row) {
+        return {
+            player: (row.player && row.player.name) || "Unknown",
+            team: (row.team && (row.team.shortName || row.team.name)) || "Unknown",
+            goals: row.goals ?? 0,
+            assists: row.assists
+        };
     }
 
     renderStandingsTable(standings, highlightTeam) {
@@ -496,12 +607,6 @@ class Beyond90App {
 
     escapeHtml(str) {
         return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    }
-
-    noteKeyFor(match) {
-        if (match.id) return `b90_note_${match.id}`;
-        const raw = `${match.league || ''}_${match.home}_${match.away}_${match.time}`.replace(/\s+/g, '_');
-        return `b90_note_${raw}`;
     }
 
     /* ---- MATCH DETAIL MODAL ---------------------------------------- */
@@ -542,10 +647,6 @@ class Beyond90App {
         let match;
         try { match = JSON.parse(decodeURIComponent(payload)); } catch (err) { return; }
 
-        const noteKey = this.noteKeyFor(match);
-        let savedNote = "";
-        try { savedNote = localStorage.getItem(noteKey) || ""; } catch (err) { /* ignore */ }
-
         const statusRow = match.isLive
             ? `<div class="modal-detail-row"><span>Status</span><span class="live-pill">${match.statusLabel || 'LIVE'}</span></div>`
             : (match.statusLabel ? `<div class="modal-detail-row"><span>Status</span><span>${match.statusLabel}</span></div>` : '');
@@ -559,6 +660,13 @@ class Beyond90App {
 
         const groupRow = match.group ? `<div class="modal-detail-row"><span>Group</span><span>${match.group}</span></div>` : '';
 
+        const synopsisRow = match.synopsis
+            ? `<div class="modal-synopsis">
+                   <span class="modal-synopsis-label">Match Synopsis</span>
+                   <p>${this.escapeHtml(match.synopsis)}</p>
+               </div>`
+            : '';
+
         content.innerHTML = `
             <div class="modal-competition">${match.league || "Match Details"}</div>
             <div class="modal-fixture">${match.home} vs ${match.away}</div>
@@ -569,32 +677,8 @@ class Beyond90App {
             ${stageRow}
             ${groupRow}
             ${match.venue ? `<div class="modal-detail-row"><span>Venue</span><span>${match.venue}</span></div>` : ''}
-            <div class="modal-notes">
-                <label for="modal-note-input">My Notes (saved on this device only)</label>
-                <textarea id="modal-note-input" rows="3" placeholder="Add your own scouting notes, a prediction, or a post-match synopsis...">${this.escapeHtml(savedNote)}</textarea>
-                <div class="modal-notes-row">
-                    <span id="modal-note-status" class="modal-note-status"></span>
-                    <button type="button" class="btn btn-primary modal-note-save" id="modal-note-save">Save Note</button>
-                </div>
-            </div>
+            ${synopsisRow}
         `;
-
-        const saveBtn = content.querySelector("#modal-note-save");
-        const noteStatus = content.querySelector("#modal-note-status");
-        if (saveBtn) {
-            saveBtn.addEventListener("click", () => {
-                const val = content.querySelector("#modal-note-input").value;
-                try {
-                    localStorage.setItem(noteKey, val);
-                    if (noteStatus) {
-                        noteStatus.textContent = "Saved ✓";
-                        window.setTimeout(() => { noteStatus.textContent = ""; }, 2000);
-                    }
-                } catch (err) {
-                    if (noteStatus) noteStatus.textContent = "Couldn't save (storage unavailable)";
-                }
-            });
-        }
 
         modal.classList.add("active");
         document.body.style.overflow = "hidden";
@@ -629,6 +713,7 @@ class CompetitionHub {
         this.leagueKey = config.leagueKey;
         this.fixturesEl = document.getElementById(config.fixturesId);
         this.standingsEl = document.getElementById(config.standingsId);
+        this.scorersEl = document.getElementById(config.scorersId);
         this.statusEl = document.getElementById(config.statusId);
         this.labelEl = document.getElementById(config.labelId);
         this.prevBtn = document.getElementById(config.prevId);
@@ -649,6 +734,7 @@ class CompetitionHub {
     async load(forceRefresh = false) {
         if (this.fixturesEl) this.fixturesEl.innerHTML = this.app.skeletonBlock(3);
         if (this.standingsEl) this.standingsEl.innerHTML = this.app.skeletonBlock(6);
+        if (this.scorersEl) this.scorersEl.innerHTML = this.app.skeletonBlock(5);
         if (this.statusEl) this.statusEl.textContent = "Status: Fetching from football-data.org…";
 
         if (!this.app.isLiveDataEnabled()) {
@@ -657,13 +743,15 @@ class CompetitionHub {
         }
 
         try {
-            const [matchesData, standingsData] = await Promise.all([
+            const [matchesData, standingsData, scorersData] = await Promise.all([
                 this.app.fetchFootballData(`/competitions/${this.code}/matches`, forceRefresh),
-                this.app.fetchFootballData(`/competitions/${this.code}/standings`, forceRefresh)
+                this.app.fetchFootballData(`/competitions/${this.code}/standings`, forceRefresh),
+                this.app.fetchFootballData(`/competitions/${this.code}/scorers?limit=10`, forceRefresh)
             ]);
 
             this.buildPages(matchesData.matches || []);
             this.renderStandings(standingsData);
+            this.renderScorers(scorersData);
             this.renderPage();
 
             const count = (matchesData.matches || []).length;
@@ -740,6 +828,12 @@ class CompetitionHub {
         this.standingsEl.innerHTML = this.app.renderStandingsTable(table, null);
     }
 
+    renderScorers(scorersData) {
+        if (!this.scorersEl) return;
+        const scorers = (scorersData.scorers || []).map(s => this.app.mapScorer(s));
+        this.scorersEl.innerHTML = this.app.renderScorersTable(scorers);
+    }
+
     manageLivePolling() {
         if (this.pollTimer) { clearInterval(this.pollTimer); this.pollTimer = null; }
         const page = this.pages[this.pageIndex];
@@ -762,6 +856,11 @@ class CompetitionHub {
             this.fixturesEl.innerHTML = data.fixtures.map(f => this.app.renderMatchCard(f, this.leagueKey)).join('');
         }
         if (this.standingsEl) this.standingsEl.innerHTML = this.app.renderStandingsTable(data.standings, null);
+        if (this.scorersEl) {
+            this.scorersEl.innerHTML = data.scorers
+                ? this.app.renderScorersTable(data.scorers)
+                : `<div class="empty-state">Sample data — connect live data to see real scorers.</div>`;
+        }
         if (this.statusEl) this.statusEl.textContent = "Status: Showing sample data";
     }
 }
