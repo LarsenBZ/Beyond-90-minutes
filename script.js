@@ -1,46 +1,93 @@
 /* ==========================================================================
    Beyond 90 Minutes — Core JavaScript
-   Handles: navigation, dark mode, article search/filter, live league data
-   (football-data.org), matchday-by-matchday browsing with live polling,
-   league Top Scorers lists, the match detail modal, Real Madrid post-match
-   synopses, and the Real Madrid tab switching.
+   Handles: navigation, dark mode, article search/filter, live league data,
+   round-by-round browsing with live polling, league Top Scorers lists, the
+   match detail modal, Real Madrid post-match synopses, and Real Madrid tab
+   switching.
 
-   A NOTE ON THE FREE FOOTBALL-DATA.ORG TIER, so future-you isn't
-   surprised: the free plan gives you fixtures, results, scores,
-   standings, AND a season-long Top Scorers list (goals/assists per
-   player) for PL / La Liga / UCL and a few others. What it does NOT
-   give you — lineups, substitutions, cards, or a specific match's own
-   goal-scorer/event timeline — is a paid add-on ("deep data pack").
-   So there's no way to have the API tell us who scored in a specific
-   Real Madrid match; that's exactly what RM_MATCH_SYNOPSES below is
-   for — you write that part by hand, same way a real analyst would.
+   WHERE THE DATA COMES FROM (two APIs, split by what each is good at):
 
-   A NOTE ON REAL MADRID SYNOPSES: see RM_MATCH_SYNOPSES below. Unlike
-   an older version of this file which saved notes to localStorage
-   (private, one device only), synopses now live in this file itself.
-   That means they deploy with the rest of the site to GitHub Pages
-   and are visible to every visitor, not just you.
+   1. ESPN's public site API (site.api.espn.com) — scoreboard, standings,
+      and team schedules. No API key, no rate limit, no proxy needed — your
+      browser talks to it directly. This is why fixtures/standings just work
+      the moment you load the page, with nothing to configure.
+
+      Gotcha we ran into: soccer standings return an empty {} on the
+      "/apis/site/v2/" path. You have to use "/apis/v2/" instead — see
+      espnStandingsUrl() below. Also: ESPN doesn't give soccer a "Matchday
+      12" style number the way football-data.org did, so browsing is done
+      by date-range "rounds" instead (see buildRoundsFromCalendar) — the
+      label reads like "Aug 21 – Aug 24" rather than "Matchday 12".
+
+   2. API-Football (v3.football.api-sports.io) — everything ESPN's soccer
+      coverage doesn't reliably give: season top scorers, a finished match's
+      lineups/formation, and match stats (shots, possession, cards) and
+      events (who scored, when). This one DOES need a key, so it's routed
+      through your Cloudflare Worker proxy (cloudflare-worker.js) exactly
+      like football-data.org used to be — the key stays server-side, never
+      in this file or your public repo.
+
+      IMPORTANT — free-tier quota: API-Football's free plan is 100
+      requests/DAY, and that's ONE shared quota across every visitor to
+      your site (not 100 per visitor). Two things protect that budget:
+        a) This file caches every API-Football response in localStorage for
+           API_FOOTBALL_CONFIG.cacheMinutes (long, on purpose).
+        b) The Worker itself caches responses at Cloudflare's edge (see
+           cloudflare-worker.js), so even a brand new visitor with an empty
+           cache usually gets a cached copy instead of spending a request.
+      If the scorers/lineups/stats sections ever show "unavailable right
+      now", the quota probably ran dry for the day — everything else on the
+      site (fixtures, standings, schedules) keeps working regardless, since
+      that's all ESPN and has no daily limit.
+
+   A NOTE ON REAL MADRID SYNOPSES: see RM_MATCH_SYNOPSES below. Synopses
+   live in this file itself, keyed by match ID, so they deploy with the
+   rest of the site and are visible to every visitor. One thing changed
+   with this rewrite: match IDs are now ESPN's event IDs (still just
+   numbers, e.g. "645191"), not football-data.org's — if you'd already
+   started adding synopses under the old ID scheme, you'll need to re-find
+   the match by date on the live site and grab its new ID from the hint
+   text under a finished match with no synopsis yet.
    ========================================================================== */
 
-const FOOTBALL_DATA_CONFIG = {
-    proxyBaseUrl: "https://beyond90-proxy.braulioz147.workers.dev/",
-    cacheMinutes: 5,  // how long to reuse a response before asking the API again
-    teams: {
-        realMadrid: 86
+const ESPN_CONFIG = {
+    leagues: {
+        premierLeague: "eng.1",
+        laLiga: "esp.1",
+        championsLeague: "uefa.champions"
     },
-    competitions: {
-        premierLeague: "PL",
-        championsLeague: "CL",
-        laLiga: "PD"
-    }
+    realMadridTeamId: 86, // ESPN's internal team ID for Real Madrid
+    cacheMinutes: 5
+};
+
+const API_FOOTBALL_CONFIG = {
+    // Paste your Cloudflare Worker URL here (see PROXY-SETUP.md). Leave it
+    // blank and the site still works fine — fixtures/standings/schedules
+    // (ESPN) all still load live, you just won't get top scorers, lineups,
+    // or match stats until this is set.
+    proxyBaseUrl: "", // <-- EDIT ME once your Worker is deployed (PROXY-SETUP.md Step 7), e.g. "https://beyond90-proxy.YOURNAME.workers.dev"
+    leagues: {
+        premierLeague: 39,
+        laLiga: 140,
+        championsLeague: 2
+    },
+    // API-Football's team ID for Real Madrid. Team IDs are stable, but if
+    // the match report or squad stats sections ever come back empty, this
+    // is the first thing worth double-checking against
+    // https://dashboard.api-football.com (Ids → Teams → search "Real Madrid").
+    realMadridTeamId: 541,
+    // Deliberately long — the free plan is 100 requests/DAY, shared by every
+    // visitor, so we lean hard on caching. The Worker also caches at
+    // Cloudflare's edge on top of this, see cloudflare-worker.js.
+    cacheMinutes: 180
 };
 
 /* ---- REAL MADRID POST-MATCH SYNOPSES -------------------------------------
    HOW TO USE THIS, after a Real Madrid match finishes:
      1. Open the live site's Real Madrid page and look under "Recent Results".
         A finished match with no synopsis yet shows a small hint line like
-        "No synopsis added yet — match ID 546987".
-     2. Copy that number and add a line below: "546987": "Your synopsis..."
+        "No synopsis added yet — match ID 645191".
+     2. Copy that number and add a line below: "645191": "Your synopsis..."
      3. Save, commit, and push to GitHub like normal. Once it deploys, your
         synopsis replaces the hint for every visitor — not just you, and not
         just on this device.
@@ -48,19 +95,18 @@ const FOOTBALL_DATA_CONFIG = {
    wrap naturally under the match card and in the match's detail popup.
    ---------------------------------------------------------------------- */
 const RM_MATCH_SYNOPSES = {
-    // "546987": "Real Madrid controlled midfield for the first hour before Barcelona's press forced a mistake. Mbappé's second-half brace..."
+    // "645191": "Real Madrid controlled midfield for the first hour before Barcelona's press forced a mistake. Mbappé's second-half brace..."
 };
 
 class Beyond90App {
     constructor() {
         /* ---- SAMPLE / FALLBACK DATA -----------------------------------
-           Shown immediately if the live fetch fails, or if you clear out
-           proxyBaseUrl above. Keeping this around means the site always
-           has something to show instead of a blank page.
+           Shown if a live fetch fails (network hiccup, ESPN/API-Football
+           having a bad day, etc.) so the site never looks broken.
         ------------------------------------------------------------------ */
         this.mockData = {
             "Premier League": {
-                matchdayLabel: "Sample Matchday",
+                matchdayLabel: "Sample",
                 fixtures: [
                     { home: "Arsenal", away: "Chelsea", time: "Sat, 15:00", score: "VS", venue: "Emirates Stadium" },
                     { home: "Manchester City", away: "Liverpool", time: "Sun, 16:30", score: "VS", venue: "Etihad Stadium" }
@@ -77,7 +123,7 @@ class Beyond90App {
                 ]
             },
             "UEFA Champions League": {
-                matchdayLabel: "Sample Matchday",
+                matchdayLabel: "Sample",
                 fixtures: [
                     { home: "Real Madrid", away: "Bayern Munich", time: "Tue, 20:00", score: "VS", venue: "Santiago Bernabéu" },
                     { home: "PSG", away: "Inter Milan", time: "Wed, 20:00", score: "VS", venue: "Parc des Princes" }
@@ -94,7 +140,7 @@ class Beyond90App {
                 ]
             },
             "La Liga": {
-                matchdayLabel: "Sample Matchday",
+                matchdayLabel: "Sample",
                 fixtures: [
                     { home: "Real Madrid", away: "Barcelona", time: "Sun, 21:00", score: "VS", venue: "Santiago Bernabéu" },
                     { home: "Atlético Madrid", away: "Sevilla", time: "Sat, 18:30", score: "VS", venue: "Cívitas Metropolitano" }
@@ -240,7 +286,8 @@ class Beyond90App {
 
         if (page === "premier-league") {
             this.plHub = new CompetitionHub(this, {
-                code: FOOTBALL_DATA_CONFIG.competitions.premierLeague,
+                espnLeague: ESPN_CONFIG.leagues.premierLeague,
+                apiFootballLeagueId: API_FOOTBALL_CONFIG.leagues.premierLeague,
                 leagueKey: "Premier League",
                 fixturesId: "pl-fixtures-container",
                 standingsId: "pl-standings-container",
@@ -254,7 +301,8 @@ class Beyond90App {
             this.plHub.init();
         } else if (page === "ucl") {
             this.uclHub = new CompetitionHub(this, {
-                code: FOOTBALL_DATA_CONFIG.competitions.championsLeague,
+                espnLeague: ESPN_CONFIG.leagues.championsLeague,
+                apiFootballLeagueId: API_FOOTBALL_CONFIG.leagues.championsLeague,
                 leagueKey: "UEFA Champions League",
                 fixturesId: "ucl-fixtures-container",
                 standingsId: "ucl-standings-container",
@@ -268,7 +316,8 @@ class Beyond90App {
             this.uclHub.init();
         } else if (page === "la-liga") {
             this.laLigaHub = new CompetitionHub(this, {
-                code: FOOTBALL_DATA_CONFIG.competitions.laLiga,
+                espnLeague: ESPN_CONFIG.leagues.laLiga,
+                apiFootballLeagueId: API_FOOTBALL_CONFIG.leagues.laLiga,
                 leagueKey: "La Liga",
                 fixturesId: "ll-fixtures-container",
                 standingsId: "ll-standings-container",
@@ -281,110 +330,218 @@ class Beyond90App {
             });
             this.laLigaHub.init();
         } else if (page === "real-madrid") {
-            this.isLiveDataEnabled() ? this.loadRmOverviewLive() : this.loadRmOverview();
+            this.loadRmOverviewLive();
         } else if (page === "home") {
-            this.isLiveDataEnabled() ? this.loadHomeSidebarLive() : this.loadHomeSidebar();
+            this.loadHomeSidebarLive();
         }
     }
 
-    isLiveDataEnabled() {
-        return Boolean(FOOTBALL_DATA_CONFIG.proxyBaseUrl && FOOTBALL_DATA_CONFIG.proxyBaseUrl.trim().length > 8);
+    isApiFootballEnabled() {
+        return Boolean(API_FOOTBALL_CONFIG.proxyBaseUrl && API_FOOTBALL_CONFIG.proxyBaseUrl.trim().length > 8);
     }
 
-    /* ---- FOOTBALL-DATA.ORG FETCH (via your proxy) + CACHE -----------------
-       Caches each response in localStorage for a few minutes so switching
-       between pages, or reloading, doesn't burn through the 10-req/min
-       free-tier limit. Pass forceRefresh=true (the Refresh button, and the
-       live-polling timer, both do this) to skip the cache and ask the
-       proxy directly.
-    ------------------------------------------------------------------ */
-    async fetchFootballData(endpoint, forceRefresh = false) {
-        const cacheKey = `fd_cache_${endpoint}`;
+    // European club seasons start around July — before that, "this year" is
+    // still last year's season as far as the APIs are concerned.
+    currentEuropeanSeasonYear() {
+        const now = new Date();
+        return now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1;
+    }
 
+    /* ---- ESPN FETCH + CACHE ---------------------------------------------
+       No key, no proxy — straight to ESPN, cached in localStorage for a
+       few minutes so flipping between pages doesn't re-fetch constantly.
+    ------------------------------------------------------------------ */
+    async fetchEspn(url, cacheMinutes = ESPN_CONFIG.cacheMinutes, forceRefresh = false) {
+        const cacheKey = `espn_cache_${url}`;
         if (!forceRefresh) {
             try {
                 const cached = localStorage.getItem(cacheKey);
                 if (cached) {
                     const { timestamp, data } = JSON.parse(cached);
-                    if (Date.now() - timestamp < FOOTBALL_DATA_CONFIG.cacheMinutes * 60000) {
-                        return data;
-                    }
+                    if (Date.now() - timestamp < cacheMinutes * 60000) return data;
                 }
             } catch (err) { /* localStorage unavailable — just fetch fresh */ }
         }
-
-        // Strip a trailing slash so pasting the Worker URL either way
-        // ("...workers.dev" or "...workers.dev/") never produces a
-        // double-slash path like ".dev//v4/..." — some servers 404 on that.
-        const base = FOOTBALL_DATA_CONFIG.proxyBaseUrl.replace(/\/+$/, '');
-        const response = await fetch(`${base}/v4${endpoint}`);
-        if (!response.ok) {
-            throw new Error(`Proxy request failed (${response.status}) for ${endpoint}`);
-        }
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`ESPN request failed (${response.status}) for ${url}`);
         const data = await response.json();
-
-        try {
-            localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data }));
-        } catch (err) { /* storage full or unavailable — not fatal */ }
-
+        try { localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data })); } catch (err) { /* storage full — not fatal */ }
         return data;
     }
 
-    /* ---- API RESPONSE → CARD/TABLE SHAPE ---------------------------------- */
-    mapMatch(match) {
-        const date = new Date(match.utcDate);
-        const status = match.status || "SCHEDULED";
-        const isLive = status === "IN_PLAY" || status === "PAUSED";
-        const finished = status === "FINISHED";
+    espnScoreboardUrl(leagueSlug, datesParam) {
+        const base = `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/scoreboard`;
+        return datesParam ? `${base}?dates=${datesParam}` : base;
+    }
+    // NOTE: soccer standings return an empty {} on /apis/site/v2/ — has to
+    // be /apis/v2/ instead. See the comment block at the top of this file.
+    espnStandingsUrl(leagueSlug) {
+        return `https://site.api.espn.com/apis/v2/sports/soccer/${leagueSlug}/standings`;
+    }
+    espnTeamScheduleUrl(leagueSlug, teamId) {
+        return `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/teams/${teamId}/schedule`;
+    }
+
+    /* ---- API-FOOTBALL FETCH + CACHE (via your Cloudflare Worker) -------- */
+    async fetchApiFootball(path, forceRefresh = false) {
+        const cacheKey = `af_cache_${path}`;
+        if (!forceRefresh) {
+            try {
+                const cached = localStorage.getItem(cacheKey);
+                if (cached) {
+                    const { timestamp, data } = JSON.parse(cached);
+                    if (Date.now() - timestamp < API_FOOTBALL_CONFIG.cacheMinutes * 60000) return data;
+                }
+            } catch (err) { /* localStorage unavailable — just fetch fresh */ }
+        }
+        const base = API_FOOTBALL_CONFIG.proxyBaseUrl.replace(/\/+$/, '');
+        const response = await fetch(`${base}/${path}`);
+        if (!response.ok) throw new Error(`API-Football proxy request failed (${response.status}) for ${path}`);
+        const data = await response.json();
+        try { localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data })); } catch (err) { /* not fatal */ }
+        return data;
+    }
+
+    /* ---- ESPN RESPONSE → CARD/TABLE SHAPE --------------------------------
+       Mapped into the same shape the old football-data.org version used
+       (id/home/away/time/score/venue/status/isLive/statusLabel/etc.) so
+       renderMatchCard, the modal, and RM_MATCH_SYNOPSES all keep working
+       unchanged. matchday/stage/group are always null now — ESPN doesn't
+       expose a matchday number for soccer — so those modal rows just don't
+       render (see openMatchModal's conditionals further down).
+    ------------------------------------------------------------------ */
+    mapEspnEvent(event) {
+        const comp = (event.competitions && event.competitions[0]) || {};
+        const status = comp.status || event.status || {};
+        const statusType = status.type || {};
+        const state = statusType.state; // "pre" | "in" | "post"
+        const completed = Boolean(statusType.completed);
+        const isLive = state === "in";
+
+        const competitors = comp.competitors || [];
+        const home = competitors.find(c => c.homeAway === "home") || {};
+        const away = competitors.find(c => c.homeAway === "away") || {};
+
+        const rawDate = comp.date || event.date || null;
+        const date = new Date(rawDate);
         const time = isNaN(date.getTime())
             ? "TBD"
             : date.toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
         let score = "VS";
-        if ((finished || isLive) && match.score && match.score.fullTime && match.score.fullTime.home !== null) {
-            score = `${match.score.fullTime.home} - ${match.score.fullTime.away}`;
+        if ((completed || isLive) && home.score != null && away.score != null) {
+            score = `${home.score} - ${away.score}`;
         }
 
+        const desc = statusType.description || "";
         let statusLabel = null;
-        if (isLive) statusLabel = status === "PAUSED" ? "HT" : (match.minute ? `LIVE ${match.minute}'` : "LIVE");
-        else if (status === "POSTPONED") statusLabel = "Postponed";
-        else if (status === "SUSPENDED") statusLabel = "Suspended";
-        else if (status === "CANCELLED") statusLabel = "Cancelled";
-        else if (status === "AWARDED") statusLabel = "Awarded";
-
-        const halftime = (match.score && match.score.halfTime && match.score.halfTime.home !== null)
-            ? `${match.score.halfTime.home} - ${match.score.halfTime.away}`
-            : null;
+        if (isLive) {
+            statusLabel = status.displayClock && status.displayClock !== "0'" ? `LIVE ${status.displayClock}` : "LIVE";
+        } else if (/postponed/i.test(desc)) {
+            statusLabel = "Postponed";
+        } else if (/cancel/i.test(desc)) {
+            statusLabel = "Cancelled";
+        } else if (/suspend/i.test(desc)) {
+            statusLabel = "Suspended";
+        }
 
         return {
-            id: match.id || null,
-            home: (match.homeTeam && (match.homeTeam.shortName || match.homeTeam.name)) || "TBD",
-            away: (match.awayTeam && (match.awayTeam.shortName || match.awayTeam.name)) || "TBD",
+            id: event.id || null,
+            home: (home.team && (home.team.shortDisplayName || home.team.displayName)) || "TBD",
+            away: (away.team && (away.team.shortDisplayName || away.team.displayName)) || "TBD",
             time,
             score,
-            venue: match.venue || "Venue TBC",
-            status,
+            venue: (comp.venue && comp.venue.fullName) || "Venue TBC",
+            status: completed ? "FINISHED" : (isLive ? "IN_PLAY" : "SCHEDULED"),
             isLive,
             statusLabel,
-            halftime,
-            matchday: (match.matchday !== undefined && match.matchday !== null) ? match.matchday : null,
-            stage: match.stage || null,
-            group: match.group || null,
-            rawDate: match.utcDate || null
+            halftime: null,
+            matchday: null,
+            stage: null,
+            group: null,
+            rawDate
         };
     }
 
-    mapStandingsRow(row) {
-        return {
-            pos: row.position,
-            team: (row.team && (row.team.shortName || row.team.name)) || "Unknown",
-            mp: row.playedGames,
-            w: row.won,
-            d: row.draw,
-            l: row.lost,
-            gd: row.goalDifference,
-            pts: row.points
+    extractEspnStandingsEntries(data) {
+        if (data && data.children && data.children[0] && data.children[0].standings && data.children[0].standings.entries) {
+            return data.children[0].standings.entries;
+        }
+        if (data && data.standings && data.standings.entries) return data.standings.entries;
+        return [];
+    }
+
+    mapEspnStandingsRow(entry) {
+        const stat = (name) => {
+            const found = (entry.stats || []).find(s => s.name === name);
+            return found ? found.value : null;
         };
+        return {
+            pos: stat("rank"),
+            team: (entry.team && (entry.team.shortDisplayName || entry.team.displayName)) || "Unknown",
+            mp: stat("gamesPlayed"),
+            w: stat("wins"),
+            d: stat("ties"),
+            l: stat("losses"),
+            gd: stat("pointDifferential"),
+            pts: stat("points")
+        };
+    }
+
+    mapApiFootballScorer(row) {
+        const stats = (row.statistics && row.statistics[0]) || {};
+        return {
+            player: (row.player && row.player.name) || "Unknown",
+            team: (stats.team && stats.team.name) || "Unknown",
+            goals: (stats.goals && stats.goals.total) || 0,
+            assists: (stats.goals && stats.goals.assists) ?? null
+        };
+    }
+
+    /* ---- ROUND (MATCHDAY-EQUIVALENT) BUILDING ----------------------------
+       ESPN gives us the full season's match-dates up front (the scoreboard
+       response's leagues[0].calendar array). We cluster consecutive dates
+       into "rounds" — a new round starts whenever there's a gap of more
+       than 4 days since the last match-date. That naturally separates
+       Premier League weekends from each other, UCL midweek rounds from
+       each other, and skips over international breaks, without needing an
+       explicit "Matchday 12" number that ESPN doesn't give us for soccer.
+    ------------------------------------------------------------------ */
+    buildRoundsFromCalendar(calendarDates) {
+        if (!calendarDates || !calendarDates.length) return [];
+        const dates = calendarDates.map(d => new Date(d)).sort((a, b) => a - b);
+        const rounds = [];
+        let current = [dates[0]];
+        for (let i = 1; i < dates.length; i++) {
+            const gapDays = (dates[i] - dates[i - 1]) / 86400000;
+            // A typical Monday-of-one-round to Friday-of-the-next gap is
+            // exactly 4 days, so the boundary has to sit just under that —
+            // gapDays > 3 — or back-to-back weekend rounds merge into one.
+            if (gapDays > 3) {
+                rounds.push(current);
+                current = [dates[i]];
+            } else {
+                current.push(dates[i]);
+            }
+        }
+        rounds.push(current);
+        return rounds.map(group => ({ start: group[0], end: group[group.length - 1] }));
+    }
+
+    formatRoundLabel(round) {
+        const opts = { month: "short", day: "numeric" };
+        const startStr = round.start.toLocaleDateString(undefined, opts);
+        const endStr = round.end.toLocaleDateString(undefined, opts);
+        return startStr === endStr ? startStr : `${startStr} – ${endStr}`;
+    }
+
+    // ESPN wants YYYYMMDD-YYYYMMDD. Widen by a day on each side so a match
+    // near midnight in the visitor's timezone doesn't get trimmed off.
+    formatDatesParam(round) {
+        const fmt = d => `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`;
+        const start = new Date(round.start); start.setUTCDate(start.getUTCDate() - 1);
+        const end = new Date(round.end); end.setUTCDate(end.getUTCDate() + 1);
+        return `${fmt(start)}-${fmt(end)}`;
     }
 
     formatStage(stage) {
@@ -396,7 +553,7 @@ class Beyond90App {
         return `<div class="skeleton-wrapper">${Array.from({ length: count }).map(() => '<div class="skeleton-card"></div>').join('')}</div>`;
     }
 
-    /* ---- REAL MADRID (team-scoped, not matchday-paged) ---------------------- */
+    /* ---- REAL MADRID OVERVIEW (team-scoped) ------------------------------ */
     async loadRmOverviewLive(forceRefresh = false) {
         const fixturesEl = document.getElementById("rm-fixtures-container");
         const resultsEl = document.getElementById("rm-results-container");
@@ -409,27 +566,23 @@ class Beyond90App {
         if (scorersEl) scorersEl.innerHTML = this.skeletonBlock(3);
 
         try {
-            const teamId = FOOTBALL_DATA_CONFIG.teams.realMadrid;
-            const [scheduled, finished, standings, scorers] = await Promise.all([
-                this.fetchFootballData(`/teams/${teamId}/matches?status=SCHEDULED&limit=5`, forceRefresh),
-                this.fetchFootballData(`/teams/${teamId}/matches?status=FINISHED&limit=3`, forceRefresh),
-                this.fetchFootballData(`/competitions/${FOOTBALL_DATA_CONFIG.competitions.laLiga}/standings`, forceRefresh),
-                this.fetchFootballData(`/competitions/${FOOTBALL_DATA_CONFIG.competitions.laLiga}/scorers?limit=10`, forceRefresh)
-            ]);
+            const scheduleData = await this.fetchEspn(
+                this.espnTeamScheduleUrl(ESPN_CONFIG.leagues.laLiga, ESPN_CONFIG.realMadridTeamId),
+                ESPN_CONFIG.cacheMinutes, forceRefresh
+            );
+            const events = (scheduleData.events || []).map(e => this.mapEspnEvent(e));
+            const now = new Date();
 
-            const fixtures = (scheduled.matches || []).map(m => this.mapMatch(m));
+            const fixtures = events
+                .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
+                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
+                .slice(0, 5);
 
-            // Attach each finished match's public synopsis (RM_MATCH_SYNOPSES,
-            // near the top of this file) so renderMatchCard can show it.
-            const results = (finished.matches || []).slice(-3).reverse().map(m => {
-                const mapped = this.mapMatch(m);
-                mapped.synopsis = RM_MATCH_SYNOPSES[mapped.id] || null;
-                return mapped;
-            });
-
-            const totalTable = (standings.standings || []).find(s => s.type === "TOTAL") || (standings.standings || [])[0] || { table: [] };
-            const table = totalTable.table.map(r => this.mapStandingsRow(r));
-            const scorersList = (scorers.scorers || []).map(s => this.mapScorer(s));
+            const results = events
+                .filter(e => e.status === "FINISHED")
+                .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
+                .slice(0, 3)
+                .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id] || null; return m; });
 
             if (fixturesEl) {
                 fixturesEl.innerHTML = fixtures.length
@@ -441,37 +594,70 @@ class Beyond90App {
                     ? results.map(r => this.renderMatchCard(r, "Real Madrid")).join('')
                     : `<div class="empty-state">No recent results returned right now.</div>`;
             }
-            if (standingsEl) standingsEl.innerHTML = this.renderStandingsTable(table, "Real Madrid");
-            if (scorersEl) scorersEl.innerHTML = this.renderScorersTable(scorersList);
 
-            // Live polling: if Real Madrid is mid-match right now, refresh every 60s.
             if (this.rmPollTimer) { clearInterval(this.rmPollTimer); this.rmPollTimer = null; }
-            if (fixtures.some(f => f.isLive)) {
+            if (fixtures.some(f => f.isLive) || results.some(r => r.isLive)) {
                 this.rmPollTimer = setInterval(() => this.loadRmOverviewLive(true), 60000);
             }
         } catch (err) {
-            console.warn("Live Real Madrid fetch failed, showing sample data instead:", err);
+            console.warn("ESPN Real Madrid schedule fetch failed, showing sample data instead:", err);
             this.loadRmOverview();
         }
+
+        // Standings/scorers reuse the same La Liga cache key as the La Liga
+        // hub page, so visiting both usually costs zero extra requests.
+        try {
+            const standingsData = await this.fetchEspn(this.espnStandingsUrl(ESPN_CONFIG.leagues.laLiga), ESPN_CONFIG.cacheMinutes, forceRefresh);
+            const table = this.extractEspnStandingsEntries(standingsData).map(e => this.mapEspnStandingsRow(e));
+            if (standingsEl) standingsEl.innerHTML = this.renderStandingsTable(table, "Real Madrid");
+        } catch (err) {
+            console.warn("ESPN La Liga standings failed on the Real Madrid page:", err);
+            if (standingsEl) standingsEl.innerHTML = `<div class="empty-state">Standings unavailable right now.</div>`;
+        }
+
+        if (this.isApiFootballEnabled()) {
+            try {
+                const season = this.currentEuropeanSeasonYear();
+                const scorersData = await this.fetchApiFootball(`players/topscorers?league=${API_FOOTBALL_CONFIG.leagues.laLiga}&season=${season}`);
+                const scorersList = (scorersData.response || []).slice(0, 10).map(s => this.mapApiFootballScorer(s));
+                if (scorersEl) scorersEl.innerHTML = this.renderScorersTable(scorersList);
+            } catch (err) {
+                console.warn("API-Football La Liga scorers failed on the Real Madrid page:", err);
+                if (scorersEl) scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now.</div>`;
+            }
+        } else if (scorersEl) {
+            scorersEl.innerHTML = `<div class="empty-state">Add your Cloudflare Worker URL to see top scorers (see PROXY-SETUP.md).</div>`;
+        }
+
+        // Bonus layer, API-Football only: last match's lineup/stats + a
+        // squad goals/assists leaderboard. Both quietly no-op (leaving the
+        // static example markup in real-madrid.html in place) if the Worker
+        // isn't configured yet, or if the daily quota's run dry.
+        this.loadRmMatchReport();
+        this.loadRmSquadStats();
     }
 
     async loadHomeSidebarLive() {
         const sidebar = document.getElementById("latest-match-sidebar");
         if (!sidebar) return;
         try {
-            const teamId = FOOTBALL_DATA_CONFIG.teams.realMadrid;
-            const data = await this.fetchFootballData(`/teams/${teamId}/matches?status=SCHEDULED&limit=1`);
-            const fixtures = (data.matches || []).slice(0, 1).map(m => this.mapMatch(m));
-            sidebar.innerHTML = fixtures.length
-                ? fixtures.map(f => this.renderMatchCard(f, "Real Madrid")).join('')
+            const scheduleData = await this.fetchEspn(this.espnTeamScheduleUrl(ESPN_CONFIG.leagues.laLiga, ESPN_CONFIG.realMadridTeamId));
+            const now = new Date();
+            const next = (scheduleData.events || [])
+                .map(e => this.mapEspnEvent(e))
+                .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
+                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
+                .slice(0, 1);
+            sidebar.innerHTML = next.length
+                ? next.map(f => this.renderMatchCard(f, "Real Madrid")).join('')
                 : `<div class="empty-state">No upcoming fixture found.</div>`;
         } catch (err) {
-            console.warn("Live homepage fetch failed, showing sample data instead:", err);
+            console.warn("ESPN homepage fetch failed, showing sample data instead:", err);
             this.loadHomeSidebar();
         }
     }
 
-    /* ---- SAMPLE-DATA LOADERS (fallback + used when no proxy URL set) ------- */
+    /* ---- SAMPLE-DATA LOADERS (fallback on fetch failure) ------------------ */
     loadHomeSidebar() {
         const sidebar = document.getElementById("latest-match-sidebar");
         const data = this.mockData["Real Madrid"];
@@ -481,9 +667,7 @@ class Beyond90App {
 
     loadRmOverview() {
         const fixturesEl = document.getElementById("rm-fixtures-container");
-        const standingsEl = document.getElementById("rm-standings-container");
         const resultsEl = document.getElementById("rm-results-container");
-        const scorersEl = document.getElementById("rm-scorers-container");
         const data = this.mockData["Real Madrid"];
         if (!data) return;
 
@@ -492,16 +676,180 @@ class Beyond90App {
                 ? data.fixtures.map(f => this.renderMatchCard(f, "Real Madrid")).join('')
                 : `<div class="empty-state">No fixtures scheduled right now.</div>`;
         }
-        if (standingsEl) standingsEl.innerHTML = this.renderStandingsTable(data.standings, "Real Madrid");
         if (resultsEl) {
             resultsEl.innerHTML = data.results.map(r => this.renderMatchCard(
                 { home: r.home, away: r.away, score: r.score, time: "Full-time", venue: r.venue, status: "FINISHED" }, "Real Madrid"
             )).join('');
         }
-        if (scorersEl) {
-            scorersEl.innerHTML = data.scorers
-                ? this.renderScorersTable(data.scorers)
-                : `<div class="empty-state">Sample data — connect live data to see real scorers.</div>`;
+    }
+
+    /* ---- REAL MADRID BONUS LAYER (API-Football) --------------------------
+       Last finished match's lineup drawn onto the tactical pitch, plus a
+       compact stats + goal/card timeline panel, and a squad goals/assists
+       leaderboard. All optional — each quietly leaves the existing static
+       example markup in place if API-Football isn't configured or fails.
+    ------------------------------------------------------------------ */
+    async loadRmMatchReport() {
+        if (!this.isApiFootballEnabled()) return;
+        try {
+            const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
+            const last = await this.fetchApiFootball(`fixtures?team=${teamId}&last=1`);
+            const fx = last.response && last.response[0];
+            if (!fx) {
+                console.warn(`API-Football returned no fixtures for team=${teamId} — double-check API_FOOTBALL_CONFIG.realMadridTeamId against the dashboard.`);
+                return;
+            }
+
+            const detail = await this.fetchApiFootball(`fixtures?id=${fx.fixture.id}`);
+            const match = detail.response && detail.response[0];
+            if (!match) return;
+
+            this.renderLineupOnPitch(match);
+            this.renderMatchReportPanel(match);
+        } catch (err) {
+            console.warn("API-Football match report failed — leaving the example lineup/stats in place:", err);
+        }
+    }
+
+    renderLineupOnPitch(match) {
+        const pitchEl = document.querySelector("#rm-tab-lineup .pitch");
+        if (!pitchEl || !match.lineups || !match.lineups.length) return;
+
+        const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
+        const rm = match.lineups.find(l => l.team && l.team.id === teamId) || match.lineups[0];
+        if (!rm || !rm.startXI || !rm.startXI.length) return;
+
+        pitchEl.querySelectorAll('.player-card').forEach(el => el.remove());
+        pitchEl.insertAdjacentHTML('beforeend', this.buildPitchCardsHtml(rm.startXI));
+
+        const label = document.getElementById("rm-formation-label");
+        if (label) {
+            const isHome = match.teams.home.id === teamId;
+            const opponent = isHome ? match.teams.away.name : match.teams.home.name;
+            label.textContent = `vs ${opponent}${rm.formation ? ' — ' + rm.formation : ''}`;
+        }
+    }
+
+    // Converts API-Football's "row:col" grid positions into a percentage
+    // top/left for each player card. Row 1 is always the goalkeeper (placed
+    // near the bottom of the pitch); higher row numbers move up toward
+    // attack. Columns are spread evenly across whatever players share a row.
+    buildPitchCardsHtml(startXI) {
+        const players = (startXI || []).map(p => p.player).filter(p => p && p.grid);
+        const rows = {};
+        players.forEach(p => {
+            const parts = p.grid.split(':').map(Number);
+            const row = parts[0], col = parts[1];
+            if (!rows[row]) rows[row] = [];
+            rows[row].push({ ...p, col });
+        });
+        const rowNumbers = Object.keys(rows).map(Number).sort((a, b) => a - b);
+        const maxRow = rowNumbers[rowNumbers.length - 1] || 1;
+
+        let html = '';
+        rowNumbers.forEach(row => {
+            const rowPlayers = rows[row].sort((a, b) => a.col - b.col);
+            const count = rowPlayers.length;
+            const top = maxRow <= 1 ? 90 : 92 - ((row - 1) / (maxRow - 1)) * 82;
+            rowPlayers.forEach((p, i) => {
+                const left = ((i + 1) / (count + 1)) * 100;
+                html += `
+                    <div class="player-card" style="top:${top}%; left:${left}%;">
+                        <span class="num">${p.number ?? ''}</span>
+                        <span class="name">${this.escapeHtml(p.name || '')}</span>
+                    </div>`;
+            });
+        });
+        return html;
+    }
+
+    renderMatchReportPanel(match) {
+        const el = document.getElementById("rm-match-report");
+        if (!el) return;
+
+        const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
+        const isHome = match.teams.home.id === teamId;
+        const rmGoals = isHome ? match.goals.home : match.goals.away;
+        const oppGoals = isHome ? match.goals.away : match.goals.home;
+        const opponent = isHome ? match.teams.away.name : match.teams.home.name;
+
+        const events = (match.events || [])
+            .filter(e => e.type === "Goal" || e.type === "Card")
+            .sort((a, b) => (a.time.elapsed + (a.time.extra || 0)) - (b.time.elapsed + (b.time.extra || 0)));
+
+        const eventsHtml = events.length ? `
+            <ul class="match-report-timeline">
+                ${events.map(e => {
+                    const minute = `${e.time.elapsed}${e.time.extra ? '+' + e.time.extra : ''}'`;
+                    const icon = e.type === "Goal" ? "⚽" : (e.detail === "Red Card" ? "🟥" : "🟨");
+                    const assist = e.assist && e.assist.name ? ` (assist: ${this.escapeHtml(e.assist.name)})` : "";
+                    return `<li><strong>${minute}</strong> ${icon} ${this.escapeHtml((e.player && e.player.name) || '')}${assist} — ${this.escapeHtml((e.team && e.team.name) || '')}</li>`;
+                }).join('')}
+            </ul>` : `<p class="empty-state">No goal or card events returned for this match.</p>`;
+
+        const statsBlocks = match.statistics || [];
+        const rmStats = statsBlocks.find(s => s.team && s.team.id === teamId);
+        const oppStats = statsBlocks.find(s => s.team && s.team.id !== teamId);
+        const wantedStats = ["Ball Possession", "Total Shots", "Shots on Goal", "Corner Kicks", "Fouls", "Yellow Cards", "Red Cards"];
+        const statVal = (block, type) => {
+            if (!block) return "—";
+            const found = (block.statistics || []).find(s => s.type === type);
+            return (found && found.value !== null && found.value !== undefined) ? found.value : "—";
+        };
+        const statsHtml = `
+            <div class="table-wrapper">
+                <table class="standings-table">
+                    <thead><tr><th style="text-align:left;">Stat</th><th>Real Madrid</th><th>${this.escapeHtml(opponent)}</th></tr></thead>
+                    <tbody>
+                        ${wantedStats.map(type => `<tr><td class="team-cell">${type}</td><td>${statVal(rmStats, type)}</td><td>${statVal(oppStats, type)}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>`;
+
+        el.innerHTML = `
+            <span class="section-label">Via API-Football</span>
+            <h2>Last Match Report</h2>
+            <p class="article-byline">Real Madrid ${rmGoals} – ${oppGoals} ${this.escapeHtml(opponent)}</p>
+            ${eventsHtml}
+            ${statsHtml}
+        `;
+    }
+
+    async loadRmSquadStats() {
+        const el = document.getElementById("rm-squad-stats-container");
+        if (!el || !this.isApiFootballEnabled()) return;
+
+        el.innerHTML = this.skeletonBlock(4);
+        try {
+            const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
+            const season = this.currentEuropeanSeasonYear();
+            const [page1, page2] = await Promise.all([
+                this.fetchApiFootball(`players?team=${teamId}&season=${season}&page=1`),
+                this.fetchApiFootball(`players?team=${teamId}&season=${season}&page=2`)
+            ]);
+            const rows = [...(page1.response || []), ...(page2.response || [])]
+                .map(row => {
+                    const stats = row.statistics || [];
+                    const goals = stats.reduce((sum, s) => sum + ((s.goals && s.goals.total) || 0), 0);
+                    const assists = stats.reduce((sum, s) => sum + ((s.goals && s.goals.assists) || 0), 0);
+                    const position = (stats[0] && stats[0].games && stats[0].games.position) || "—";
+                    return { player: row.player.name, pos: position, goals, assists };
+                })
+                .filter(r => r.goals > 0 || r.assists > 0)
+                .sort((a, b) => (b.goals - a.goals) || (b.assists - a.assists))
+                .slice(0, 10);
+
+            el.innerHTML = rows.length ? `
+                <div class="table-wrapper">
+                    <table class="standings-table">
+                        <thead><tr><th style="text-align:left;">Player</th><th>Pos</th><th>Goals</th><th>Assists</th></tr></thead>
+                        <tbody>
+                            ${rows.map(r => `<tr><td class="team-cell">${this.escapeHtml(r.player)}</td><td>${r.pos}</td><td><strong>${r.goals}</strong></td><td>${r.assists}</td></tr>`).join('')}
+                        </tbody>
+                    </table>
+                </div>` : `<div class="empty-state">No player stats returned yet this season.</div>`;
+        } catch (err) {
+            console.warn("API-Football squad stats failed, leaving the example table in place:", err);
         }
     }
 
@@ -512,11 +860,6 @@ class Beyond90App {
             ? `<span class="live-pill">${match.statusLabel || 'LIVE'}</span>`
             : (match.statusLabel || match.time || "Full-time");
 
-        // Real Madrid post-match synopsis (RM_MATCH_SYNOPSES near the top of
-        // this file). Shown right on the card so every visitor sees it, not
-        // hidden behind a click. A finished RM match with nothing added yet
-        // shows a small hint with the match ID instead, so you know what key
-        // to use.
         let synopsisBlock = '';
         if (leagueKey === "Real Madrid" && match.status === "FINISHED") {
             if (match.synopsis) {
@@ -567,15 +910,6 @@ class Beyond90App {
         `;
     }
 
-    mapScorer(row) {
-        return {
-            player: (row.player && row.player.name) || "Unknown",
-            team: (row.team && (row.team.shortName || row.team.name)) || "Unknown",
-            goals: row.goals ?? 0,
-            assists: row.assists
-        };
-    }
-
     renderStandingsTable(standings, highlightTeam) {
         return `
             <div class="table-wrapper">
@@ -614,8 +948,6 @@ class Beyond90App {
         const modal = document.getElementById("match-modal");
         if (!modal) return;
 
-        // Event delegation: catches match-cards even though they're
-        // injected into the page later by the loaders above.
         document.addEventListener("click", (e) => {
             const card = e.target.closest("[data-match]");
             if (card) this.openMatchModal(card.getAttribute("data-match"));
@@ -694,22 +1026,17 @@ class Beyond90App {
 
 /* ==========================================================================
    COMPETITION HUB
-   Powers the Premier League, UCL, and La Liga pages: matchday-by-matchday
-   browsing with ← → arrows, a full always-current league table, and live
-   polling while a match is in progress.
-
-   How the matchday paging works: one API call gets EVERY match in the
-   competition's season (not one call per matchday — that would burn
-   through the 10-requests/minute free-tier limit fast). The matches are
-   then grouped client-side by matchday number. For competitions that
-   have a knockout stage without matchday numbers (Champions League
-   Round of 16 onward), matches are grouped by stage name instead, so
-   the arrows keep working right through to the final.
+   Powers the Premier League, UCL, and La Liga pages: round-by-round
+   browsing with ← → arrows (grouped from ESPN's season calendar — see
+   buildRoundsFromCalendar), a full always-current league table (ESPN), a
+   Top Scorers list (API-Football, if configured), and live polling while a
+   match in the visible round is in progress.
    ========================================================================== */
 class CompetitionHub {
     constructor(app, config) {
         this.app = app;
-        this.code = config.code;
+        this.espnLeague = config.espnLeague;
+        this.apiFootballLeagueId = config.apiFootballLeagueId;
         this.leagueKey = config.leagueKey;
         this.fixturesEl = document.getElementById(config.fixturesId);
         this.standingsEl = document.getElementById(config.standingsId);
@@ -719,142 +1046,125 @@ class CompetitionHub {
         this.prevBtn = document.getElementById(config.prevId);
         this.nextBtn = document.getElementById(config.nextId);
         this.refreshBtn = document.getElementById(config.refreshId);
-        this.pages = [];
-        this.pageIndex = 0;
+        this.rounds = [];
+        this.roundIndex = 0;
         this.pollTimer = null;
     }
 
     async init() {
         if (this.prevBtn) this.prevBtn.addEventListener("click", () => this.go(-1));
         if (this.nextBtn) this.nextBtn.addEventListener("click", () => this.go(1));
-        if (this.refreshBtn) this.refreshBtn.addEventListener("click", () => this.load(true));
-        await this.load();
-    }
+        if (this.refreshBtn) this.refreshBtn.addEventListener("click", () => this.loadRound(true));
 
-    async load(forceRefresh = false) {
         if (this.fixturesEl) this.fixturesEl.innerHTML = this.app.skeletonBlock(3);
         if (this.standingsEl) this.standingsEl.innerHTML = this.app.skeletonBlock(6);
         if (this.scorersEl) this.scorersEl.innerHTML = this.app.skeletonBlock(5);
-        if (this.statusEl) this.statusEl.textContent = "Status: Fetching from football-data.org…";
-
-        if (!this.app.isLiveDataEnabled()) {
-            this.loadSample();
-            return;
-        }
+        if (this.statusEl) this.statusEl.textContent = "Status: Fetching from ESPN…";
 
         try {
-            const [matchesData, standingsData, scorersData] = await Promise.all([
-                this.app.fetchFootballData(`/competitions/${this.code}/matches`, forceRefresh),
-                this.app.fetchFootballData(`/competitions/${this.code}/standings`, forceRefresh),
-                this.app.fetchFootballData(`/competitions/${this.code}/scorers?limit=10`, forceRefresh)
-            ]);
+            const seasonScoreboard = await this.app.fetchEspn(this.app.espnScoreboardUrl(this.espnLeague));
+            const calendar = (seasonScoreboard.leagues && seasonScoreboard.leagues[0] && seasonScoreboard.leagues[0].calendar) || [];
+            this.rounds = this.app.buildRoundsFromCalendar(calendar);
 
-            this.buildPages(matchesData.matches || []);
-            this.renderStandings(standingsData);
-            this.renderScorers(scorersData);
-            this.renderPage();
+            const now = new Date();
+            let idx = this.rounds.findIndex(r => r.end >= now);
+            if (idx === -1) idx = Math.max(this.rounds.length - 1, 0);
+            this.roundIndex = idx;
 
-            const count = (matchesData.matches || []).length;
-            if (this.statusEl) this.statusEl.textContent = `Status: Synced with football-data.org (${count} matches loaded)`;
-            this.manageLivePolling();
+            await this.loadRound();
         } catch (err) {
-            console.warn(`Live fetch failed for ${this.leagueKey}, showing sample data instead:`, err);
+            console.warn(`ESPN fetch failed for ${this.leagueKey}, showing sample data instead:`, err);
             this.loadSample();
-            if (this.statusEl) this.statusEl.textContent = "Status: Showing sample data — check your Cloudflare Worker URL and API key (see PROXY-SETUP.md)";
-        }
-    }
-
-    buildPages(matches) {
-        const groups = new Map();
-        matches.forEach(m => {
-            const hasMatchday = m.matchday !== undefined && m.matchday !== null;
-            const key = hasMatchday ? `MD-${m.matchday}` : `ST-${m.stage}`;
-            if (!groups.has(key)) {
-                groups.set(key, {
-                    key,
-                    label: hasMatchday ? `Matchday ${m.matchday}` : this.app.formatStage(m.stage),
-                    matches: [],
-                    earliest: m.utcDate
-                });
-            }
-            const g = groups.get(key);
-            g.matches.push(m);
-            if (new Date(m.utcDate) < new Date(g.earliest)) g.earliest = m.utcDate;
-        });
-
-        this.pages = Array.from(groups.values()).sort((a, b) => new Date(a.earliest) - new Date(b.earliest));
-
-        // Default to the first page that isn't entirely finished (i.e. the
-        // "current" matchday), falling back to the last page if the whole
-        // season is already done.
-        const openStatuses = new Set(["SCHEDULED", "TIMED", "IN_PLAY", "PAUSED", "SUSPENDED"]);
-        let idx = this.pages.findIndex(p => p.matches.some(m => openStatuses.has(m.status)));
-        this.pageIndex = idx === -1 ? Math.max(this.pages.length - 1, 0) : idx;
-    }
-
-    renderPage() {
-        if (!this.fixturesEl) return;
-        if (!this.pages.length) {
-            this.fixturesEl.innerHTML = `<div class="empty-state">No fixtures returned right now.</div>`;
-            if (this.labelEl) this.labelEl.textContent = "—";
             return;
         }
 
-        const page = this.pages[this.pageIndex];
-        if (this.labelEl) this.labelEl.textContent = page.label;
-        if (this.prevBtn) this.prevBtn.disabled = this.pageIndex === 0;
-        if (this.nextBtn) this.nextBtn.disabled = this.pageIndex === this.pages.length - 1;
+        this.loadStandings();
+        this.loadScorers();
+    }
 
-        const cards = page.matches
-            .slice()
-            .sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate))
-            .map(m => this.app.renderMatchCard(this.app.mapMatch(m), this.leagueKey));
+    async loadRound(forceRefresh = false) {
+        if (!this.rounds.length) return;
+        const round = this.rounds[this.roundIndex];
+        if (this.labelEl) this.labelEl.textContent = this.app.formatRoundLabel(round);
+        if (this.prevBtn) this.prevBtn.disabled = this.roundIndex === 0;
+        if (this.nextBtn) this.nextBtn.disabled = this.roundIndex === this.rounds.length - 1;
+        if (this.fixturesEl) this.fixturesEl.innerHTML = this.app.skeletonBlock(3);
 
-        this.fixturesEl.innerHTML = cards.join('') || `<div class="empty-state">No matches found for this matchday.</div>`;
+        try {
+            const data = await this.app.fetchEspn(
+                this.app.espnScoreboardUrl(this.espnLeague, this.app.formatDatesParam(round)),
+                ESPN_CONFIG.cacheMinutes, forceRefresh
+            );
+            const events = (data.events || []).map(e => this.app.mapEspnEvent(e))
+                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
+
+            if (this.fixturesEl) {
+                this.fixturesEl.innerHTML = events.length
+                    ? events.map(m => this.app.renderMatchCard(m, this.leagueKey)).join('')
+                    : `<div class="empty-state">No matches found for this window.</div>`;
+            }
+            const count = events.length;
+            if (this.statusEl) this.statusEl.textContent = `Status: Synced with ESPN (${count} match${count === 1 ? '' : 'es'} loaded)`;
+            this.manageLivePolling(events);
+        } catch (err) {
+            console.warn(`ESPN round fetch failed for ${this.leagueKey}:`, err);
+            if (this.fixturesEl) this.fixturesEl.innerHTML = `<div class="empty-state">Couldn't load this window right now — try Refresh.</div>`;
+            if (this.statusEl) this.statusEl.textContent = "Status: ESPN fetch failed";
+        }
+    }
+
+    async loadStandings() {
+        if (!this.standingsEl) return;
+        try {
+            const data = await this.app.fetchEspn(this.app.espnStandingsUrl(this.espnLeague));
+            const table = this.app.extractEspnStandingsEntries(data).map(e => this.app.mapEspnStandingsRow(e));
+            this.standingsEl.innerHTML = this.app.renderStandingsTable(table, null);
+        } catch (err) {
+            console.warn(`ESPN standings failed for ${this.leagueKey}:`, err);
+            this.standingsEl.innerHTML = `<div class="empty-state">Standings unavailable right now.</div>`;
+        }
+    }
+
+    async loadScorers() {
+        if (!this.scorersEl) return;
+        if (!this.app.isApiFootballEnabled()) {
+            this.scorersEl.innerHTML = `<div class="empty-state">Add your Cloudflare Worker URL to see top scorers (see PROXY-SETUP.md).</div>`;
+            return;
+        }
+        try {
+            const season = this.app.currentEuropeanSeasonYear();
+            const data = await this.app.fetchApiFootball(`players/topscorers?league=${this.apiFootballLeagueId}&season=${season}`);
+            const scorers = (data.response || []).slice(0, 10).map(r => this.app.mapApiFootballScorer(r));
+            this.scorersEl.innerHTML = this.app.renderScorersTable(scorers);
+        } catch (err) {
+            console.warn(`API-Football scorers failed for ${this.leagueKey}:`, err);
+            this.scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now — API-Football's free plan is 100 requests/day shared by every visitor, so this can run dry. Try again later.</div>`;
+        }
     }
 
     go(delta) {
-        const next = this.pageIndex + delta;
-        if (next < 0 || next >= this.pages.length) return;
-        this.pageIndex = next;
-        this.renderPage();
-        this.manageLivePolling();
+        const next = this.roundIndex + delta;
+        if (next < 0 || next >= this.rounds.length) return;
+        this.roundIndex = next;
+        this.loadRound();
     }
 
-    renderStandings(standingsData) {
-        if (!this.standingsEl) return;
-        const totalTable = (standingsData.standings || []).find(s => s.type === "TOTAL") || (standingsData.standings || [])[0] || { table: [] };
-        const table = totalTable.table.map(r => this.app.mapStandingsRow(r));
-        this.standingsEl.innerHTML = this.app.renderStandingsTable(table, null);
-    }
-
-    renderScorers(scorersData) {
-        if (!this.scorersEl) return;
-        const scorers = (scorersData.scorers || []).map(s => this.app.mapScorer(s));
-        this.scorersEl.innerHTML = this.app.renderScorersTable(scorers);
-    }
-
-    manageLivePolling() {
+    manageLivePolling(events) {
         if (this.pollTimer) { clearInterval(this.pollTimer); this.pollTimer = null; }
-        const page = this.pages[this.pageIndex];
-        const isLive = page && page.matches.some(m => m.status === "IN_PLAY" || m.status === "PAUSED");
+        const isLive = events.some(m => m.isLive);
         if (isLive) {
             if (this.statusEl) this.statusEl.textContent = "Status: Live — updating every 60 seconds";
-            this.pollTimer = setInterval(() => this.load(true), 60000);
+            this.pollTimer = setInterval(() => this.loadRound(true), 60000);
         }
     }
 
     loadSample() {
         const data = this.app.mockData[this.leagueKey];
         if (!data) return;
-        this.pages = [{ key: "sample", label: data.matchdayLabel || "Sample Matchday", matches: [] }];
-        this.pageIndex = 0;
-        if (this.labelEl) this.labelEl.textContent = this.pages[0].label;
+        if (this.labelEl) this.labelEl.textContent = data.matchdayLabel || "Sample";
         if (this.prevBtn) this.prevBtn.disabled = true;
         if (this.nextBtn) this.nextBtn.disabled = true;
-        if (this.fixturesEl) {
-            this.fixturesEl.innerHTML = data.fixtures.map(f => this.app.renderMatchCard(f, this.leagueKey)).join('');
-        }
+        if (this.fixturesEl) this.fixturesEl.innerHTML = data.fixtures.map(f => this.app.renderMatchCard(f, this.leagueKey)).join('');
         if (this.standingsEl) this.standingsEl.innerHTML = this.app.renderStandingsTable(data.standings, null);
         if (this.scorersEl) {
             this.scorersEl.innerHTML = data.scorers
@@ -864,4 +1174,5 @@ class CompetitionHub {
         if (this.statusEl) this.statusEl.textContent = "Status: Showing sample data";
     }
 }
+
 const app = new Beyond90App();

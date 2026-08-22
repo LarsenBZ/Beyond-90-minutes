@@ -51,7 +51,7 @@
         <div class="page-layout" style="padding: 0;">
             <section>
                 <h2>Matchday Fixtures</h2>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -0.5rem;">Browse matchday 1 through 38 with the arrows above. Defaults to the current matchday.</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: -0.5rem;">Browse round by round with the arrows above — grouped by match date rather than an official matchday number, since ESPN doesn't expose one for soccer. Defaults to the current round.</p>
                 <div id="ll-fixtures-container" style="margin-top: 15px;"></div>
             </section>
 
@@ -69,9 +69,9 @@
         </div>
 
         <p style="margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted);">
-            <strong>Note:</strong> this page pulls live-ish fixtures and standings from
-            <a href="https://www.football-data.org" target="_blank" rel="noopener">football-data.org</a>'s free API
-            (data can lag real kickoffs by up to a minute or two — that's a free-tier limit, not a bug).
+            <strong>Note:</strong> fixtures and standings come live from
+            <a href="https://www.espn.com/soccer/" target="_blank" rel="noopener">ESPN</a>, and the Top Scorers
+            table from <a href="https://www.api-football.com/" target="_blank" rel="noopener">API-Football</a>.
             If a request ever fails, the page automatically falls back to sample data so it never looks broken.
         </p>
     </main>
