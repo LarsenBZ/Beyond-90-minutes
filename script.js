@@ -486,6 +486,16 @@ class Beyond90App {
     }
 
     /* ---- API-FOOTBALL FETCH + CACHE (via your Cloudflare Worker) -------- */
+    // Turns a failed API-Football fetch into a small, visible technical
+    // detail (the HTTP status + endpoint, or "Failed to fetch" for a
+    // network/CORS problem) so a failure is diagnosable right there on the
+    // page — without needing to open DevTools. Meant to sit under a
+    // friendlier one-line explanation, not replace it.
+    apiFootballFailureNote(err) {
+        const msg = (err && err.message) || "unknown error";
+        return `<div style="margin-top:6px; font-size:0.8em; opacity:0.7;">(${this.escapeHtml(msg)})</div>`;
+    }
+
     async fetchApiFootball(path, forceRefresh = false) {
         const cacheKey = `af_cache_${path}`;
         if (!forceRefresh) {
@@ -856,7 +866,7 @@ class Beyond90App {
                 if (scorersEl) scorersEl.innerHTML = this.renderScorersTable(scorersList);
             } catch (err) {
                 console.warn("API-Football La Liga scorers failed on the Real Madrid page:", err);
-                if (scorersEl) scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now.</div>`;
+                if (scorersEl) scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now.${this.apiFootballFailureNote(err)}</div>`;
             }
         } else if (scorersEl) {
             scorersEl.innerHTML = `<div class="empty-state">Add your Cloudflare Worker URL to see top scorers (see PROXY-SETUP.md).</div>`;
@@ -950,13 +960,17 @@ class Beyond90App {
             }
             if (!fx) {
                 console.warn(`API-Football returned no fixtures for team=${teamId} — double-check API_FOOTBALL_CONFIG.realMadridTeamId against the dashboard.`);
+                this.markRmLineupUnavailable(`No fixtures came back for Real Madrid — worth double-checking API_FOOTBALL_CONFIG.realMadridTeamId (currently ${teamId}) against the dashboard. Showing an example for now.`);
                 return;
             }
 
             const isLive = Beyond90App.LIVE_STATUSES.includes(fx.fixture.status.short);
             const detail = await this.fetchApiFootball(`fixtures?id=${fx.fixture.id}`, forceRefresh || isLive);
             const match = detail.response && detail.response[0];
-            if (!match) return;
+            if (!match) {
+                this.markRmLineupUnavailable("The fixture came back without match details — try again shortly. Showing an example for now.");
+                return;
+            }
 
             this.renderLineupOnPitch(match);
             this.renderMatchReportPanel(match, isLive);
@@ -967,7 +981,10 @@ class Beyond90App {
             }
         } catch (err) {
             console.warn("API-Football match report failed — leaving the example lineup/stats in place:", err);
-            this.markRmLineupUnavailable("Live lineup unavailable right now — this can mean the Cloudflare Worker needs a check (see PROXY-SETUP.md) or the daily 100-request quota ran dry. Showing an example for now.");
+            this.markRmLineupUnavailable(
+                "Live lineup unavailable right now — this can mean the Cloudflare Worker needs a check (see PROXY-SETUP.md) or the daily 100-request quota ran dry. Showing an example for now.",
+                this.apiFootballFailureNote(err)
+            );
         }
     }
 
@@ -975,12 +992,13 @@ class Beyond90App {
     // couldn't load, so the static example XI on the pitch is never mistaken
     // for live data. Reuses the existing #rm-formation-label element (a
     // small muted caption already sitting right above the pitch) rather
-    // than adding new markup.
-    markRmLineupUnavailable(message) {
+    // than adding new markup. detailHtml is optional — the small technical
+    // reason (HTTP status, etc.) from apiFootballFailureNote().
+    markRmLineupUnavailable(message, detailHtml = '') {
         const label = document.getElementById("rm-formation-label");
         if (label) label.textContent = message;
         const reportEl = document.getElementById("rm-match-report");
-        if (reportEl) reportEl.innerHTML = `<div class="empty-state">${this.escapeHtml(message)}</div>`;
+        if (reportEl) reportEl.innerHTML = `<div class="empty-state">${this.escapeHtml(message)}${detailHtml}</div>`;
     }
 
     renderLineupOnPitch(match) {
@@ -1125,7 +1143,7 @@ class Beyond90App {
             // This used to leave the shimmering loading skeleton on screen
             // forever on failure — replacing it with a clear message is the
             // actual fix, not just the console.warn.
-            el.innerHTML = `<div class="empty-state">Squad stats unavailable right now — this can mean the Cloudflare Worker needs a check (see PROXY-SETUP.md) or the daily 100-request quota ran dry. Try again later.</div>`;
+            el.innerHTML = `<div class="empty-state">Squad stats unavailable right now — this can mean the Cloudflare Worker needs a check (see PROXY-SETUP.md) or the daily 100-request quota ran dry. Try again later.${this.apiFootballFailureNote(err)}</div>`;
         }
     }
 
@@ -1462,7 +1480,7 @@ class CompetitionHub {
             this.scorersEl.innerHTML = this.app.renderScorersTable(scorers);
         } catch (err) {
             console.warn(`API-Football scorers failed for ${this.leagueKey}:`, err);
-            this.scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now — API-Football's free plan is 100 requests/day shared by every visitor, so this can run dry. Try again later.</div>`;
+            this.scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now — API-Football's free plan is 100 requests/day shared by every visitor, so this can run dry. Try again later.${this.app.apiFootballFailureNote(err)}</div>`;
         }
     }
 

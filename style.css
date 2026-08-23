@@ -188,7 +188,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 .logo-placeholder {
     font-family: var(--font-script);
     font-weight: 700;
-    font-size: 1.75rem;
+    font-size: 2.3rem;
     letter-spacing: 0.5px;
     color: var(--text-inverse);
     white-space: nowrap;
@@ -734,7 +734,13 @@ button { font-family: var(--font-body); cursor: pointer; }
    other articles and hubs, which also gives a college-admissions reader
    an easy way to see more of the work instead of dead-ending. */
 .article-page-layout { align-items: start; }
-.article-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+.article-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: sticky;
+    top: 96px; /* clears the sticky header (~70px) plus breathing room */
+}
 .sidebar-card {
     background: var(--paper-raised);
     border: 1px solid var(--line);
