@@ -599,6 +599,8 @@ button { font-family: var(--font-body); cursor: pointer; }
     height: 150px;
     position: relative;
     background: linear-gradient(135deg, var(--pitch) 0%, var(--pitch-deep) 100%);
+    background-size: cover;
+    background-position: center;
     display: flex;
     align-items: flex-end;
     padding: 12px 16px;
@@ -608,6 +610,16 @@ button { font-family: var(--font-body); cursor: pointer; }
     color: rgba(246, 242, 233, 0.85);
     text-transform: uppercase;
     overflow: hidden;
+}
+/* Dark scrim behind the label so it stays legible over a photo. Sits above
+   the photo but below the touchline stripe (z-index 2). */
+.card-image::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 75%;
+    background: linear-gradient(to top, rgba(8, 14, 11, 0.8) 0%, rgba(8, 14, 11, 0) 100%);
+    z-index: 1;
 }
 /* A touchline dash along the bottom edge — the same rule used for the
    section divider elsewhere on the site — instead of a faint full-bleed
@@ -624,8 +636,9 @@ button { font-family: var(--font-body); cursor: pointer; }
         transparent 16px, transparent 30px
     );
     opacity: 0.8;
+    z-index: 2;
 }
-.card-image span { position: relative; }
+.card-image span { position: relative; z-index: 2; }
 
 .card-content { padding: 1.25rem 1.4rem 1.5rem; display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
 .card-content h3 { font-size: 1.05rem; }
@@ -648,6 +661,8 @@ button { font-family: var(--font-body); cursor: pointer; }
     border-radius: var(--border-radius-md);
     margin: 1.5rem 0;
     background: linear-gradient(135deg, var(--pitch) 0%, var(--pitch-deep) 60%, var(--gold) 220%);
+    background-size: cover;
+    background-position: center;
     position: relative;
     overflow: hidden;
 }
