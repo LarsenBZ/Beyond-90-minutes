@@ -95,7 +95,23 @@ const API_FOOTBALL_CONFIG = {
    wrap naturally under the match card and in the match's detail popup.
    ---------------------------------------------------------------------- */
 const RM_MATCH_SYNOPSES = {
-    // "645191": "Real Madrid controlled midfield for the first hour before Barcelona's press forced a mistake. Mbappé's second-half brace..."
+    // Espanyol 1-2 Real Madrid, La Liga Round 2, Aug 22 2026 (Mourinho's second spell begins)
+    "401882912": `Espanyol vs Real Madrid
+La Liga round 2
+The start of the second Jose Mourinho era
+
+First half 1-1
+Formation: 4-2-3-1
+Real Madrid debuted with a defense formed by Carreras, Huijsen, Konate, and Dumfries. Through this lineup Mourinho has shown that if you play not a high level you will be benched in the case if Rudiger and Trent. Carreras most likely started because of the break Cucurella had after the World Cup. Mourinho formed a midfield with Bernardo Silva, Fede Valverde, and Bellingham. Valverde showed himself as a defensive pivot while Bernardo controlled the ball. Bellingham played as a box to box midfielder keeping high intensity and pressure while entering the box supporting the attack. Arda Guler most likely played in the right due to Dumfries playing as Arda Guler isn't a winger similar to Vinicus letting Dumfries overlap and progress in attack. Vinicius and Mbappe showed themselves as the stars in attack.
+
+The score would be opened by Bellingham with a header after a free kick assist by Arda Guler. The attack flowed through both of them and they were the best players on the pitch. The first half was marked by conflict between Vinicius and the Espanyol fans with many fouls and yellow cards given and not given. Espanyol would score through their striker as Fede Valverde had not followed his mark leaving the striker alone against Courtois.
+
+Second Half 2-1
+Formation: 4-2-3-1
+The match would continue as Espanyol would continue to create plays while Real Madrid were not able to score against a low block defense. Yan Diomande and Marc Cucurella would substitute Arda Guler and Alvaro Carreras at the 64th minute. Cucurella played a safe game while Diomande showed a lot of his flair as a creative fast player. At the 80th minute Mourinho with the score 1-1 would make substitutions that were important to the goal scored in the 90th minute. One of the substitutions was Carlos Espi for Bellingham. Carlos Espi would score in a play created by Yan Diomande with a pass to Mbappe in the box. carlos Espi would find the ball and score a really important goal for the player.
+
+Post-Match
+Mourinho's team won a difficult match with not a great Vini, but this game showed that Bellingham and Arda Guler can work together at least in league matches.`
 };
 
 class Beyond90App {
@@ -998,10 +1014,14 @@ class Beyond90App {
         let synopsisBlock = '';
         if (leagueKey === "Real Madrid" && match.status === "FINISHED") {
             if (match.synopsis) {
+                // Only a short teaser lives on the card itself — the full
+                // write-up (which can run long) shows in the modal when the
+                // card is clicked/tapped, same as everything else on it.
                 synopsisBlock = `
                     <div class="match-synopsis">
                         <span class="match-synopsis-label">Match Synopsis</span>
-                        <p>${this.escapeHtml(match.synopsis)}</p>
+                        <p>${this.escapeHtml(this.truncateSynopsis(match.synopsis))}</p>
+                        <span class="match-synopsis-cta">Tap to read the full write-up →</span>
                     </div>`;
             } else if (match.id) {
                 synopsisBlock = `<div class="match-synopsis-hint">No synopsis added yet — match ID ${match.id}</div>`;
@@ -1077,6 +1097,14 @@ class Beyond90App {
 
     escapeHtml(str) {
         return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    // Flattens a (possibly multi-paragraph) synopsis into a one-line teaser
+    // for the compact match card. The full text still renders in the modal.
+    truncateSynopsis(text, maxLen = 140) {
+        const flat = String(text).replace(/\s+/g, ' ').trim();
+        if (flat.length <= maxLen) return flat;
+        return flat.slice(0, maxLen).replace(/\s+\S*$/, '') + '…';
     }
 
     /* ---- MATCH DETAIL MODAL ---------------------------------------- */

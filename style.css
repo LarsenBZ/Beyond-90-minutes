@@ -1071,6 +1071,15 @@ footer {
     margin-bottom: 0.35rem;
 }
 .match-synopsis p { font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 0; }
+.match-synopsis-cta {
+    display: block;
+    margin-top: 0.5rem;
+    font-family: var(--font-label);
+    font-size: 0.72rem;
+    letter-spacing: 0.4px;
+    color: var(--gold);
+    font-weight: 600;
+}
 
 .match-synopsis-hint {
     margin-top: 0.85rem;
@@ -1101,7 +1110,7 @@ footer {
     color: var(--gold);
     margin-bottom: 0.5rem;
 }
-.modal-synopsis p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0; }
+.modal-synopsis p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0; white-space: pre-line; }
 
 /* --------------------------------------------------------------------------
    18. RESPONSIVE
