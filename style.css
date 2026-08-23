@@ -5,7 +5,7 @@
    condensed face for numbers, and a serif for editorial headlines.
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Oswald:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Oswald:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,500;0,600;1,400&family=Dancing+Script:wght@600;700&display=swap');
 
 /* --------------------------------------------------------------------------
    1. DESIGN TOKENS
@@ -71,6 +71,7 @@
     --font-display: 'Fraunces', Georgia, serif;
     --font-label: 'Oswald', 'Arial Narrow', sans-serif;
     --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-script: 'Dancing Script', cursive;
 
     /* Layout */
     --max-width-site: 1240px;
@@ -185,16 +186,13 @@ button { font-family: var(--font-body); cursor: pointer; }
 .logo-area a { display: flex; align-items: center; gap: 0.6rem; }
 
 .logo-placeholder {
-    font-family: var(--font-label);
-    border: 2px solid var(--text-inverse);
-    padding: 5px 12px;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-family: var(--font-script);
+    font-weight: 700;
+    font-size: 1.75rem;
+    letter-spacing: 0.5px;
     color: var(--text-inverse);
-    border-radius: var(--border-radius-sm);
-    background: linear-gradient(135deg, var(--pitch), var(--pitch-deep));
-    font-size: 0.8rem;
     white-space: nowrap;
+    line-height: 1;
 }
 
 .header-controls { display: flex; align-items: center; gap: 12px; }
@@ -728,6 +726,40 @@ button { font-family: var(--font-body); cursor: pointer; }
     border-bottom: 1px dotted var(--line-strong);
 }
 .article-sources a:hover { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* Article reading page — right rail. Uses the same .page-layout grid as
+   the league hub pages (1fr / 340px) so the empty space that used to sit
+   to the right of a narrow article column is replaced with something
+   useful instead — an "about the author" card plus links to the site's
+   other articles and hubs, which also gives a college-admissions reader
+   an easy way to see more of the work instead of dead-ending. */
+.article-page-layout { align-items: start; }
+.article-sidebar { display: flex; flex-direction: column; gap: 1.5rem; }
+.sidebar-card {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--border-radius-md);
+    padding: 1.4rem;
+    box-shadow: var(--shadow-sm);
+}
+.sidebar-author { display: flex; align-items: center; gap: 12px; margin: 0.75rem 0 1rem; }
+.sidebar-author-badge {
+    width: 42px; height: 42px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, var(--pitch) 0%, var(--pitch-deep) 100%);
+    color: var(--text-inverse);
+    font-family: var(--font-label);
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: var(--border-radius-full);
+}
+.sidebar-author-name { font-family: var(--font-display); font-weight: 600; font-size: 1rem; color: var(--text-primary); }
+.sidebar-author-role { font-family: var(--font-label); font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
+.sidebar-link { display: inline-block; font-family: var(--font-label); font-size: 0.75rem; letter-spacing: 0.5px; font-weight: 600; color: var(--pitch-bright); }
+.sidebar-link:hover { color: var(--gold); }
+.sidebar-article-list { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; margin: 0.75rem 0 1rem; }
+.sidebar-article-list a { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.4; display: block; }
+.sidebar-article-list a:hover { color: var(--pitch-bright); }
 
 /* --------------------------------------------------------------------------
    10. STANDINGS & DATA TABLES

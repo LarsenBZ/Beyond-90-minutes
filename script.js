@@ -14,10 +14,12 @@
 
       Gotcha we ran into: soccer standings return an empty {} on the
       "/apis/site/v2/" path. You have to use "/apis/v2/" instead — see
-      espnStandingsUrl() below. Also: ESPN doesn't give soccer a "Matchday
-      12" style number the way football-data.org did, so browsing is done
-      by date-range "rounds" instead (see buildRoundsFromCalendar) — the
-      label reads like "Aug 21 – Aug 24" rather than "Matchday 12".
+      espnStandingsUrl() below. Also: ESPN doesn't give soccer an explicit
+      "Matchday 12" field the way football-data.org did, so rounds are
+      built by clustering the season's own match-dates and numbering them
+      in order instead (see buildRounds/buildStageRounds further down) —
+      the label reads "Matchday 12", figured out from the schedule itself
+      rather than read off a field ESPN doesn't provide.
 
    2. API-Football (v3.football.api-sports.io) — everything ESPN's soccer
       coverage doesn't reliably give: season top scorers, a finished match's
@@ -201,8 +203,32 @@ class Beyond90App {
             this.setupArticleSearch();
             this.setupRmTabs();
             this.setupModal();
+            this.setupImageFallback();
             this.autoLoadPageData();
             this.setupVisibilityRefresh();
+        });
+    }
+
+    /* ---- IMAGE FALLBACK --------------------------------------------------
+       Cover photos (article covers, article-grid card images) are set as
+       an inline CSS background-image. If a photo file is missing or
+       misnamed — a common gotcha: GitHub Pages is case-sensitive, so
+       "Julian-Alvarez.jpg" and "julian-alvarez.jpg" are different files
+       there even though they're the same file on Windows/Mac — a broken
+       background-image just leaves a blank box. Unlike an <img> tag, a CSS
+       background has no built-in onerror. This probes each one with a
+       throwaway Image() and, if it 404s, clears the inline style so the
+       gradient placeholder already defined in style.css shows through
+       instead of a blank void.
+    ------------------------------------------------------------------ */
+    setupImageFallback() {
+        const els = document.querySelectorAll('.article-cover[style*="background-image"], .card-image[style*="background-image"]');
+        els.forEach(el => {
+            const match = el.style.backgroundImage.match(/url\(["']?(.*?)["']?\)/);
+            if (!match || !match[1]) return;
+            const probe = new Image();
+            probe.onerror = () => { el.style.backgroundImage = ""; };
+            probe.src = match[1];
         });
     }
 
@@ -411,9 +437,10 @@ class Beyond90App {
         return data;
     }
 
-    espnScoreboardUrl(leagueSlug, datesParam) {
+    espnScoreboardUrl(leagueSlug, datesParam, limit) {
         const base = `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/scoreboard`;
-        return datesParam ? `${base}?dates=${datesParam}` : base;
+        if (!datesParam) return base;
+        return `${base}?dates=${datesParam}${limit ? `&limit=${limit}` : ''}`;
     }
     // NOTE: soccer standings return an empty {} on /apis/site/v2/ — has to
     // be /apis/v2/ instead. See the comment block at the top of this file.
@@ -601,41 +628,137 @@ class Beyond90App {
         };
     }
 
-    /* ---- ROUND (MATCHDAY-EQUIVALENT) BUILDING ----------------------------
-       ESPN gives us the full season's match-dates up front (the scoreboard
-       response's leagues[0].calendar array). We cluster consecutive dates
-       into "rounds" — a new round starts whenever there's a gap of more
-       than 4 days since the last match-date. That naturally separates
-       Premier League weekends from each other, UCL midweek rounds from
-       each other, and skips over international breaks, without needing an
-       explicit "Matchday 12" number that ESPN doesn't give us for soccer.
+    /* ---- ROUND (MATCHDAY) BUILDING ----------------------------------------
+       ESPN's scoreboard response describes a season's calendar in one of
+       TWO different shapes depending on the competition — confirmed
+       against real fetches, Aug 23 2026:
+
+         "day"  — a flat array of match-date strings for the whole season.
+                  This is what Premier League and La Liga use. Since every
+                  team plays every round with no byes, we can cluster
+                  consecutive dates into weekly rounds (clusterDates below)
+                  and just number them in order — round 1 IS Matchday 1,
+                  round 2 IS Matchday 2, etc. Accurate as long as a fixture
+                  reschedule doesn't shift a match into a totally different
+                  week's cluster.
+
+         "list" — ONE wrapper entry whose own `entries` array is the
+                  competition's actual named STAGES, each with a real
+                  start/end date and ESPN's own official label. This is
+                  UCL's new format: League Phase, Knockout Round Playoffs,
+                  Round of 16, Quarterfinals, Semifinals, Final. We use
+                  those labels directly (far better than a guessed date
+                  range), and for any stage that spans more than one
+                  matchday/leg — the League Phase, or a two-legged
+                  knockout tie — we fetch just that stage's own date
+                  window and cluster IT too, producing labels like
+                  "League Phase — Matchday 3" or "Round of 16 — Leg 2".
+
+       Before this fix, every competition was run through the "day" logic
+       above, including "list"-shaped ones. `new Date()` on a stage OBJECT
+       (not a date string) produces Invalid Date, which collapsed UCL's
+       entire season into one unusable "round" spanning the whole year —
+       the real cause behind UCL's matchday browsing not working right.
     ------------------------------------------------------------------ */
-    buildRoundsFromCalendar(calendarDates) {
-        if (!calendarDates || !calendarDates.length) return [];
-        const dates = calendarDates.map(d => new Date(d)).sort((a, b) => a - b);
+    async buildRounds(seasonScoreboard, espnLeague) {
+        const leagueObj = (seasonScoreboard.leagues && seasonScoreboard.leagues[0]) || {};
+        const calendarType = leagueObj.calendarType;
+        const calendar = leagueObj.calendar || [];
+
+        if (calendarType === "list") {
+            return this.buildStageRounds(calendar, espnLeague);
+        }
+
+        // Flat day-list (Premier League, La Liga, …) — cluster into weekly
+        // rounds and number them in order.
+        const dates = (calendar || []).map(d => new Date(d)).filter(d => !isNaN(d.getTime()));
+        return this.clusterDates(dates).map((r, i) => ({
+            start: r.start,
+            end: r.end,
+            label: `Matchday ${i + 1}`
+        }));
+    }
+
+    // Stage-shaped competitions (UCL). Each named stage becomes at least
+    // one browsable round; stages spanning multiple matchdays or legs get
+    // sub-divided using the same date-clustering technique.
+    async buildStageRounds(calendar, espnLeague) {
+        const stageEntries = (calendar[0] && calendar[0].entries) || [];
+        if (!stageEntries.length) return [];
+
+        const results = await Promise.allSettled(stageEntries.map(stage => {
+            const start = new Date(stage.startDate);
+            const end = new Date(stage.endDate);
+            const datesParam = `${this.formatYmd(start)}-${this.formatYmd(end)}`;
+            return this.fetchEspn(this.espnScoreboardUrl(espnLeague, datesParam, 1000));
+        }));
+
         const rounds = [];
-        let current = [dates[0]];
-        for (let i = 1; i < dates.length; i++) {
-            const gapDays = (dates[i] - dates[i - 1]) / 86400000;
-            // A typical Monday-of-one-round to Friday-of-the-next gap is
-            // exactly 4 days, so the boundary has to sit just under that —
-            // gapDays > 3 — or back-to-back weekend rounds merge into one.
-            if (gapDays > 3) {
-                rounds.push(current);
-                current = [dates[i]];
+        stageEntries.forEach((stage, i) => {
+            const result = results[i];
+            const stageEvents = (result.status === "fulfilled" && result.value.events) || [];
+            if (result.status !== "fulfilled") {
+                console.warn(`ESPN fetch failed for stage "${stage.label}":`, result.reason);
+            }
+            const eventDates = stageEvents.map(e => {
+                const comp = (e.competitions && e.competitions[0]) || {};
+                return new Date(comp.date || e.date);
+            }).filter(d => !isNaN(d.getTime()));
+
+            const subRounds = this.clusterDates(eventDates);
+            const stageLabel = stage.label || "Round";
+            const fallbackStart = new Date(stage.startDate);
+            const fallbackEnd = new Date(stage.endDate);
+
+            if (!subRounds.length) {
+                // No events fetched (fetch failed, or nothing scheduled yet
+                // for a future stage) — still show it as a browsable round
+                // using the stage's own date window, so the arrows don't
+                // just skip a whole stage of the competition.
+                rounds.push({ start: fallbackStart, end: fallbackEnd, label: stageLabel });
+            } else if (subRounds.length === 1) {
+                rounds.push({ start: subRounds[0].start, end: subRounds[0].end, label: stageLabel });
+            } else if (/league phase|group stage/i.test(stageLabel)) {
+                subRounds.forEach((sr, j) => rounds.push({ start: sr.start, end: sr.end, label: `${stageLabel} — Matchday ${j + 1}` }));
+            } else if (subRounds.length === 2) {
+                rounds.push({ start: subRounds[0].start, end: subRounds[0].end, label: `${stageLabel} — Leg 1` });
+                rounds.push({ start: subRounds[1].start, end: subRounds[1].end, label: `${stageLabel} — Leg 2` });
             } else {
-                current.push(dates[i]);
+                subRounds.forEach((sr, j) => rounds.push({ start: sr.start, end: sr.end, label: `${stageLabel} (${j + 1})` }));
+            }
+        });
+        return rounds;
+    }
+
+    // Groups a list of Dates into rounds — a new round starts whenever
+    // there's a gap of more than 3 days since the previous match-date.
+    // That naturally separates one weekend/midweek round from the next
+    // (and skips over international breaks) without needing an explicit
+    // matchday number from ESPN.
+    clusterDates(dates) {
+        if (!dates.length) return [];
+        const sorted = [...dates].sort((a, b) => a - b);
+        const groups = [];
+        let current = [sorted[0]];
+        for (let i = 1; i < sorted.length; i++) {
+            const gapDays = (sorted[i] - sorted[i - 1]) / 86400000;
+            if (gapDays > 3) {
+                groups.push(current);
+                current = [sorted[i]];
+            } else {
+                current.push(sorted[i]);
             }
         }
-        rounds.push(current);
-        return rounds.map(group => ({ start: group[0], end: group[group.length - 1] }));
+        groups.push(current);
+        return groups.map(g => ({ start: g[0], end: g[g.length - 1] }));
+    }
+
+    formatYmd(d) {
+        return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`;
     }
 
     formatRoundLabel(round) {
-        const opts = { month: "short", day: "numeric" };
-        const startStr = round.start.toLocaleDateString(undefined, opts);
-        const endStr = round.end.toLocaleDateString(undefined, opts);
-        return startStr === endStr ? startStr : `${startStr} – ${endStr}`;
+        return round.label;
     }
 
     // ESPN wants YYYYMMDD-YYYYMMDD. Widen by a day on each side so a match
@@ -804,7 +927,10 @@ class Beyond90App {
     static LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT", "LIVE"];
 
     async loadRmMatchReport(forceRefresh = false) {
-        if (!this.isApiFootballEnabled()) return;
+        if (!this.isApiFootballEnabled()) {
+            this.markRmLineupUnavailable("Add your Cloudflare Worker URL to see the real lineup (see PROXY-SETUP.md) — showing an example for now.");
+            return;
+        }
         try {
             const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
 
@@ -841,7 +967,20 @@ class Beyond90App {
             }
         } catch (err) {
             console.warn("API-Football match report failed — leaving the example lineup/stats in place:", err);
+            this.markRmLineupUnavailable("Live lineup unavailable right now — this can mean the Cloudflare Worker needs a check (see PROXY-SETUP.md) or the daily 100-request quota ran dry. Showing an example for now.");
         }
+    }
+
+    // Makes it visible (not just a console warning) when the real lineup
+    // couldn't load, so the static example XI on the pitch is never mistaken
+    // for live data. Reuses the existing #rm-formation-label element (a
+    // small muted caption already sitting right above the pitch) rather
+    // than adding new markup.
+    markRmLineupUnavailable(message) {
+        const label = document.getElementById("rm-formation-label");
+        if (label) label.textContent = message;
+        const reportEl = document.getElementById("rm-match-report");
+        if (reportEl) reportEl.innerHTML = `<div class="empty-state">${this.escapeHtml(message)}</div>`;
     }
 
     renderLineupOnPitch(match) {
@@ -982,7 +1121,11 @@ class Beyond90App {
                     </table>
                 </div>` : `<div class="empty-state">No player stats returned yet this season.</div>`;
         } catch (err) {
-            console.warn("API-Football squad stats failed, leaving the example table in place:", err);
+            console.warn("API-Football squad stats failed:", err);
+            // This used to leave the shimmering loading skeleton on screen
+            // forever on failure — replacing it with a clear message is the
+            // actual fix, not just the console.warn.
+            el.innerHTML = `<div class="empty-state">Squad stats unavailable right now — this can mean the Cloudflare Worker needs a check (see PROXY-SETUP.md) or the daily 100-request quota ran dry. Try again later.</div>`;
         }
     }
 
@@ -1003,6 +1146,13 @@ class Beyond90App {
     }
 
     renderMatchCard(match, leagueKey) {
+        // NOTE: this attribute MUST use double quotes, not single quotes.
+        // encodeURIComponent leaves apostrophes (') unescaped by spec — so
+        // any text containing one (e.g. a synopsis with "Mourinho's") would
+        // prematurely close a single-quoted attribute and corrupt the
+        // surrounding HTML, silently breaking that card's click-to-expand.
+        // This was a real bug: the one synopsis on the site so far contains
+        // "Mourinho's", which is exactly what broke it.
         const payload = encodeURIComponent(JSON.stringify({ ...match, league: leagueKey }));
         const timeLabel = match.isLive
             ? `<span class="live-pill">${match.statusLabel || 'LIVE'}</span>`
@@ -1029,7 +1179,7 @@ class Beyond90App {
         }
 
         return `
-            <div class="match-card" tabindex="0" role="button" data-match='${payload}'>
+            <div class="match-card" tabindex="0" role="button" data-match="${payload}">
                 <div class="match-time">${timeLabel}</div>
                 <div class="match-teams">
                     <span class="teams-name">${match.home} vs ${match.away}</span>
@@ -1203,9 +1353,9 @@ class Beyond90App {
    COMPETITION HUB
    Powers the Premier League, UCL, and La Liga pages: round-by-round
    browsing with ← → arrows (grouped from ESPN's season calendar — see
-   buildRoundsFromCalendar), a full always-current league table (ESPN), a
-   Top Scorers list (API-Football, if configured), and live polling while a
-   match in the visible round is in progress.
+   buildRounds/buildStageRounds), a full always-current league table
+   (ESPN), a Top Scorers list (API-Football, if configured), and live
+   polling while a match in the visible round is in progress.
    ========================================================================== */
 class CompetitionHub {
     constructor(app, config) {
@@ -1238,8 +1388,7 @@ class CompetitionHub {
 
         try {
             const seasonScoreboard = await this.app.fetchEspn(this.app.espnScoreboardUrl(this.espnLeague));
-            const calendar = (seasonScoreboard.leagues && seasonScoreboard.leagues[0] && seasonScoreboard.leagues[0].calendar) || [];
-            this.rounds = this.app.buildRoundsFromCalendar(calendar);
+            this.rounds = await this.app.buildRounds(seasonScoreboard, this.espnLeague);
 
             const now = new Date();
             let idx = this.rounds.findIndex(r => r.end >= now);
