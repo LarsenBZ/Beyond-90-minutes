@@ -33,8 +33,8 @@
     /* Fixed dark surface + fixed on-dark text — intentionally does NOT
        flip with dark mode, used for the header, footer, hero, tables,
        and pitch, which should stay a dark "under the lights" tone in
-       both themes. */
-    --surface-dark: #14170F;
+       both themes. Neutral near-black (R=G=B) — no color cast. */
+    --surface-dark: #0B0B0B;
     --on-dark: #F6F2E9;
 
     --gold: #B8912E;
@@ -88,18 +88,20 @@
     --shadow-lg: 0 16px 40px rgba(25, 29, 23, 0.16);
 }
 
-/* Dark theme override — toggled via body.dark-theme */
+/* Dark theme override — toggled via body.dark-theme. Neutral near-black
+   surfaces throughout (no green/olive cast) — matches --surface-dark
+   above so the header blends straight into the page background. */
 body.dark-theme {
-    --paper: #14170F;
-    --paper-raised: #1C201A;
+    --paper: #0B0B0B;
+    --paper-raised: #1A1A1A;
     --ink: #F1EEE2;
     --ink-soft: #C9C5B4;
     --text-primary: #F1EEE2;
     --text-secondary: #B4B09C;
     --text-muted: #837F6C;
-    --line: #303423;
-    --line-strong: #454A34;
-    --brand-light: #232819;
+    --line: #2A2A2A;
+    --line-strong: #3D3D3D;
+    --brand-light: #1F1F1F;
     --pitch-bright: #5B9BEE;
     --pitch-line: rgba(241, 238, 226, 0.6);
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);

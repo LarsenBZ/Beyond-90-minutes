@@ -81,7 +81,18 @@ const API_FOOTBALL_CONFIG = {
     // Deliberately long — the free plan is 100 requests/DAY, shared by every
     // visitor, so we lean hard on caching. The Worker also caches at
     // Cloudflare's edge on top of this, see cloudflare-worker.js.
-    cacheMinutes: 180
+    cacheMinutes: 180,
+    // CONFIRMED Aug 2026 by hitting the Worker URL directly: API-Football's
+    // free plan returns { "errors": { "plan": "Free plans do not have
+    // access to this season, try from 2022 to 2024." } } for season=2026.
+    // This isn't a bug in this site's code — the free plan simply doesn't
+    // cover the current 2025/26 season at all. Season-scoped calls (top
+    // scorers, squad stats) fall back to this year instead, so the site
+    // shows real data rather than a permanent "unavailable" message — the
+    // UI labels it as that season wherever it's used so it's never
+    // mistaken for current. Bump this the day API-Football's free plan
+    // actually covers the current season again.
+    maxFreeSeason: 2024
 };
 
 /* ---- REAL MADRID POST-MATCH SYNOPSES -------------------------------------
@@ -415,6 +426,23 @@ class Beyond90App {
         return now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1;
     }
 
+    // The season to actually request from API-Football — clamped to the
+    // free plan's real coverage (see the maxFreeSeason comment above). Use
+    // this instead of currentEuropeanSeasonYear() for any API-Football
+    // call; keep using currentEuropeanSeasonYear() directly for anything
+    // ESPN-based, which has no such restriction.
+    apiFootballSeasonYear() {
+        return Math.min(this.currentEuropeanSeasonYear(), API_FOOTBALL_CONFIG.maxFreeSeason);
+    }
+
+    // True when we had to fall back to an older season than the live one
+    // because of the free-plan restriction — callers use this to decide
+    // whether to label a heading with the season, so it's never confused
+    // for current data.
+    isApiFootballSeasonCapped() {
+        return this.apiFootballSeasonYear() < this.currentEuropeanSeasonYear();
+    }
+
     /* ---- ESPN FETCH + CACHE ---------------------------------------------
        No key, no proxy — straight to ESPN, cached in localStorage for a
        few minutes so flipping between pages doesn't re-fetch constantly.
@@ -491,6 +519,19 @@ class Beyond90App {
     // network/CORS problem) so a failure is diagnosable right there on the
     // page — without needing to open DevTools. Meant to sit under a
     // friendlier one-line explanation, not replace it.
+    // Updates a heading to show which season is actually on screen, but
+    // only when it differs from the live current one (the free-plan season
+    // cap) — e.g. "Top Scorers (2023/24)". Leaves the heading alone once
+    // the cap no longer applies, so this quietly stops doing anything the
+    // day the free plan (or a paid upgrade) covers the current season.
+    labelSeasonHeading(elementId, baseLabel, seasonUsed) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        el.textContent = seasonUsed < this.currentEuropeanSeasonYear()
+            ? `${baseLabel} (${seasonUsed}/${String(seasonUsed + 1).slice(2)})`
+            : baseLabel;
+    }
+
     apiFootballFailureNote(err) {
         const msg = (err && err.message) || "unknown error";
         return `<div style="margin-top:6px; font-size:0.8em; opacity:0.7;">(${this.escapeHtml(msg)})</div>`;
@@ -860,10 +901,11 @@ class Beyond90App {
 
         if (this.isApiFootballEnabled()) {
             try {
-                const season = this.currentEuropeanSeasonYear();
+                const season = this.apiFootballSeasonYear();
                 const scorersData = await this.fetchApiFootball(`players/topscorers?league=${API_FOOTBALL_CONFIG.leagues.laLiga}&season=${season}`);
                 const scorersList = (scorersData.response || []).slice(0, 10).map(s => this.mapApiFootballScorer(s));
                 if (scorersEl) scorersEl.innerHTML = this.renderScorersTable(scorersList);
+                this.labelSeasonHeading("rm-scorers-heading", "La Liga Top Scorers", season);
             } catch (err) {
                 console.warn("API-Football La Liga scorers failed on the Real Madrid page:", err);
                 if (scorersEl) scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now.${this.apiFootballFailureNote(err)}</div>`;
@@ -960,7 +1002,7 @@ class Beyond90App {
             }
             if (!fx) {
                 console.warn(`API-Football returned no fixtures for team=${teamId} — double-check API_FOOTBALL_CONFIG.realMadridTeamId against the dashboard.`);
-                this.markRmLineupUnavailable(`No fixtures came back for Real Madrid — worth double-checking API_FOOTBALL_CONFIG.realMadridTeamId (currently ${teamId}) against the dashboard. Showing an example for now.`);
+                this.markRmLineupUnavailable(`No fixtures came back for Real Madrid — most likely API-Football's free plan not covering the current season (confirmed: it only covers up to ${API_FOOTBALL_CONFIG.maxFreeSeason}). Could also be worth double-checking API_FOOTBALL_CONFIG.realMadridTeamId (currently ${teamId}) against the dashboard. Showing an example for now.`);
                 return;
             }
 
@@ -982,7 +1024,7 @@ class Beyond90App {
         } catch (err) {
             console.warn("API-Football match report failed — leaving the example lineup/stats in place:", err);
             this.markRmLineupUnavailable(
-                "Live lineup unavailable right now — this can mean the Cloudflare Worker needs a check (see PROXY-SETUP.md) or the daily 100-request quota ran dry. Showing an example for now.",
+                `Live lineup unavailable right now — most likely API-Football's free plan not covering the current season (confirmed: only up to ${API_FOOTBALL_CONFIG.maxFreeSeason}). Could also be the Cloudflare Worker (see PROXY-SETUP.md) or the daily 100-request quota. Showing an example for now.`,
                 this.apiFootballFailureNote(err)
             );
         }
@@ -1112,7 +1154,7 @@ class Beyond90App {
         el.innerHTML = this.skeletonBlock(4);
         try {
             const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
-            const season = this.currentEuropeanSeasonYear();
+            const season = this.apiFootballSeasonYear();
             const [page1, page2] = await Promise.all([
                 this.fetchApiFootball(`players?team=${teamId}&season=${season}&page=1`),
                 this.fetchApiFootball(`players?team=${teamId}&season=${season}&page=2`)
@@ -1138,6 +1180,17 @@ class Beyond90App {
                         </tbody>
                     </table>
                 </div>` : `<div class="empty-state">No player stats returned yet this season.</div>`;
+
+            // API-Football's free plan doesn't cover the current season (see
+            // API_FOOTBALL_CONFIG.maxFreeSeason) — say so plainly right on
+            // the page instead of quietly passing off older stats as
+            // current.
+            const introEl = document.getElementById("rm-stats-intro");
+            if (introEl) {
+                introEl.textContent = this.isApiFootballSeasonCapped()
+                    ? `Goals and assists for the ${season}/${String(season + 1).slice(2)} season — API-Football's free plan doesn't cover the current season yet, via API-Football.`
+                    : "Goals and assists across all competitions this season, via API-Football.";
+            }
         } catch (err) {
             console.warn("API-Football squad stats failed:", err);
             // This used to leave the shimmering loading skeleton on screen
@@ -1474,10 +1527,11 @@ class CompetitionHub {
             return;
         }
         try {
-            const season = this.app.currentEuropeanSeasonYear();
+            const season = this.app.apiFootballSeasonYear();
             const data = await this.app.fetchApiFootball(`players/topscorers?league=${this.apiFootballLeagueId}&season=${season}`);
             const scorers = (data.response || []).slice(0, 10).map(r => this.app.mapApiFootballScorer(r));
             this.scorersEl.innerHTML = this.app.renderScorersTable(scorers);
+            this.app.labelSeasonHeading(this.scorersEl.id.replace("-container", "-heading"), "Top Scorers", season);
         } catch (err) {
             console.warn(`API-Football scorers failed for ${this.leagueKey}:`, err);
             this.scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now — API-Football's free plan is 100 requests/day shared by every visitor, so this can run dry. Try again later.${this.app.apiFootballFailureNote(err)}</div>`;

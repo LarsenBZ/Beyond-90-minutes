@@ -97,6 +97,21 @@ a broken page — everything else on the site is unaffected.
 
 ## Troubleshooting
 
+- **Confirmed, Aug 2026: the free plan doesn't cover the current season at
+  all.** Hitting the Worker URL directly (e.g.
+  `https://your-worker.workers.dev/players/topscorers?league=140&season=2026`)
+  returns `{"errors":{"plan":"Free plans do not have access to this
+  season, try from 2022 to 2024."}}`. This isn't a bug — it's a real
+  limit of the free API-Football plan. The site now automatically falls
+  back to the most recent season the free plan *does* cover
+  (`API_FOOTBALL_CONFIG.maxFreeSeason` in script.js, currently 2024) for
+  Top Scorers and squad stats, and clearly labels the season shown (e.g.
+  "Top Scorers (2023/24)") so older data is never mistaken for current.
+  The Real Madrid live lineup/match-report feature can't be faked the same
+  way (an old match isn't a meaningful stand-in for "last match"), so it
+  just shows an honest "unavailable" message instead. The only real fix
+  for current-season data is a paid API-Football plan — this is worth
+  knowing before spending time debugging the Worker or the code further.
 - **Scorers/lineups still showing "unavailable"?** Open your browser's
   DevTools (F12) → Console tab, and reload the page. Any warning there will
   say what failed (wrong URL, missing key, empty response, daily quota
