@@ -996,12 +996,24 @@ button { font-family: var(--font-body); cursor: pointer; }
     padding: 1rem;
 }
 .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+/* .modal-body used to have no max-height/overflow, so a long synopsis or
+   match report would just grow past the viewport with no way to scroll to
+   it — the × (positioned absolute at the top of the card) scrolled off
+   along with it, leaving clicking the dark backdrop or hitting Escape as
+   the only way out. Fix: cap the card's height to the viewport and make
+   ONLY the inner content area (#modal-details-content, a sibling of
+   .modal-close, not an ancestor) scroll — that way the × stays pinned in
+   view at all times since it's positioned against .modal-body, which no
+   longer scrolls itself. */
 .modal-body {
     background: var(--paper-raised);
     padding: 2rem;
     border-radius: var(--border-radius-lg);
     max-width: 460px;
     width: 100%;
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
     position: relative;
     box-shadow: var(--shadow-lg);
 }
@@ -1009,8 +1021,16 @@ button { font-family: var(--font-body); cursor: pointer; }
     position: absolute; top: 14px; right: 16px;
     background: none; border: none; font-size: 1.4rem;
     color: var(--text-muted); line-height: 1;
+    z-index: 1;
 }
 .modal-close:hover { color: var(--text-primary); }
+#modal-details-content {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    min-height: 0; /* lets this flex child actually shrink+scroll instead of stretching .modal-body past max-height */
+    padding-right: 6px; /* small gutter so text/scrollbar don't collide */
+}
 .modal-competition {
     font-family: var(--font-label);
     font-size: 0.72rem;
