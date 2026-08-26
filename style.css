@@ -931,6 +931,17 @@ button { font-family: var(--font-body); cursor: pointer; }
 .pos-st  { top: 10%; left: 50%; }
 
 /* --------------------------------------------------------------------------
+   12a. LAST MATCH CARD (Real Madrid Overview tab) — Starting XI pitch sits
+   next to the match report here instead of on its own separate tab.
+   -------------------------------------------------------------------------- */
+.rm-lastmatch-grid { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; align-items: start; }
+.pitch-container--compact { max-width: 300px; margin: 0 auto; }
+.pitch-container--compact .pitch { height: 360px; }
+.pitch-container--compact .player-card { padding: 3px 8px; }
+.pitch-container--compact .player-card .num { width: 16px; height: 16px; font-size: 0.58rem; }
+.pitch-container--compact .player-card .name { font-size: 0.62rem; }
+
+/* --------------------------------------------------------------------------
    12b. MATCH REPORT (Real Madrid hub, API-Football)
    -------------------------------------------------------------------------- */
 #rm-formation-label {
@@ -1211,7 +1222,7 @@ footer {
     }
     .navigation.active { display: flex; }
     .navigation a { padding: 12px 10px; }
-    .page-layout, .rm-dashboard-grid { grid-template-columns: 1fr; }
+    .page-layout, .rm-dashboard-grid, .rm-lastmatch-grid { grid-template-columns: 1fr; }
     .quick-links { grid-template-columns: 1fr; }
     .filter-controls { flex-direction: column; align-items: stretch; }
     .matchday-nav { justify-content: center; }

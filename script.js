@@ -42,27 +42,25 @@
       site (fixtures, standings, schedules) keeps working regardless, since
       that's all ESPN and has no daily limit.
 
-   A NOTE ON THE TACTICAL LINEUP TAB (Real Madrid page): this used to be
-   100% API-Football, which turned out to be a dead end for lineups —
-   API-Football's free plan doesn't cover the current season's matches at
-   all (see maxFreeSeason below), so it could never draw a real current XI.
-   As of this update the pitch is drawn from ESPN's own summary endpoint
-   instead (site.api.espn.com/.../summary?event={id}, documented to return
-   a "lineups" field for soccer) — same free/unlimited/no-key source as
-   everything else on the site. See loadRmLineup() + findRmLineupBlock() +
-   extractLineupStarters() further down. Caveat, in the interest of being
-   straight about it: the exact shape of ESPN's soccer "lineups" payload
-   wasn't something a live match/finished match round-trip could fully
-   confirm field-by-field while building this, so the parser tries several
-   plausible field names defensively and logs the raw block to the console
-   if it can't find starters, rather than pretending it's 100% verified.
-   If the pitch shows "showing an example" on the live site, open DevTools
-   → Console for the logged raw payload — the fix from there is almost
-   always just adding the actual field name to extractLineupStarters().
-   The "Last Match Report" panel below the pitch (goals/cards timeline +
-   possession/shots/corners table) is untouched by this change and still
-   uses API-Football, so it's still subject to the same free-plan season
-   cap as before.
+   A NOTE ON THE STARTING XI + SEASON STATS (Real Madrid page): both of
+   these used to be live fetches — the XI from ESPN's summary endpoint,
+   squad stats from API-Football — and both turned out to be dead ends.
+   API-Football's free plan doesn't cover the current season at all (see
+   maxFreeSeason below), so Season Stats was quietly showing last year's
+   squad, not this one. And ESPN's exact soccer "lineups" payload shape was
+   never confirmed against a real response, so the pitch just sat on a
+   static example forever with a quiet "showing an example" caption under
+   it — not a great look on a page a college admissions reader might click.
+   As of this update, both are hand-kept instead, the same way the match
+   synopses already are: see RM_CURRENT_LINEUP and RM_SQUAD_STATS below,
+   and renderRmLineup()/renderRmSquadStats() further down, which just paint
+   straight from those constants — no fetch, so nothing to fail. The
+   Starting XI pitch also moved: it used to be its own "Tactical Lineup"
+   tab; it now sits next to the "Last Match Report" panel (goals/cards
+   timeline + possession/shots/corners table, still API-Football and still
+   subject to the same free-plan season cap) inside the Overview tab, so
+   the XI reads together with the rest of that match's info instead of
+   living on a separate page.
 
    A NOTE ON REAL MADRID SYNOPSES: see RM_MATCH_SYNOPSES below. Synopses
    live in this file itself, keyed by match ID, so they deploy with the
@@ -148,6 +146,64 @@ The match would continue as Espanyol would continue to create plays while Real M
 Post-Match
 Mourinho's team won a difficult match with not a great Vini, but this game showed that Bellingham and Arda Guler can work together at least in league matches.`
 };
+
+/* ---- REAL MADRID STARTING XI (manually maintained) -----------------------
+   This used to be a live fetch from ESPN's summary endpoint, but that
+   endpoint's exact soccer "lineups" shape was never confirmed working (see
+   old session notes) — in practice it meant the pitch just sat on a stale
+   example forever with a quiet "showing an example" caption under it. Since
+   this is exactly the kind of thing you already track by hand in your match
+   synopses above, it's hand-kept here too now — same idea as
+   RM_MATCH_SYNOPSES, and it deploys with the rest of the site.
+
+   HOW TO UPDATE THIS, whenever the XI you'd actually put out changes:
+     1. Edit the "players" array below — 11 entries, one per starter.
+     2. posClass must be one of the .pos-* classes defined in style.css:
+        pos-gk, pos-lb, pos-lcb, pos-rcb, pos-rb, pos-ldm, pos-rdm, pos-cam,
+        pos-lw, pos-rw, pos-st — each one is a fixed spot on the pitch, so
+        pick whichever of the 11 reads closest to where that player lined up.
+     3. Update "formation" to match (just a label — doesn't affect layout).
+     4. Save, commit, push. No match ID needed — unlike the synopses, this
+        is just "the current XI", not tied to one specific game.
+   ---------------------------------------------------------------------- */
+const RM_CURRENT_LINEUP = {
+    formation: "4-2-1-3",
+    players: [
+        { name: "Courtois", number: 1, posClass: "pos-gk" },
+        { name: "Cucurella", number: 17, posClass: "pos-lb" },
+        { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+        { name: "Konaté", number: 16, posClass: "pos-rcb" },
+        { name: "Dumfries", number: 24, posClass: "pos-rb" },
+        { name: "Valverde", number: 8, posClass: "pos-ldm" },
+        { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+        { name: "Bellingham", number: 5, posClass: "pos-cam" },
+        { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+        { name: "Diomandé", number: 25, posClass: "pos-rw" },
+        { name: "Mbappé", number: 10, posClass: "pos-st" }
+    ]
+};
+
+/* ---- REAL MADRID SQUAD STATS (manually maintained) ------------------------
+   API-Football's free plan doesn't cover the current season at all (see
+   API_FOOTBALL_CONFIG.maxFreeSeason below) — every row this used to show was
+   really the 2024/25 squad, which is why it looked wrong rather than just
+   old: several of those players aren't even on the roster anymore. ESPN
+   doesn't have a real substitute either — there's no single call that
+   returns a whole squad's season goals/assists the way API-Football's did;
+   getting that from ESPN would mean one request per player against a stats
+   endpoint whose exact shape was never confirmed. So, same as the lineup
+   above: hand-kept instead of fetched.
+
+   HOW TO UPDATE THIS after a match: add or bump a line for anyone who
+   scored or assisted (cross-reference your own synopsis write-up above —
+   that's usually the easiest source). New scorer? Add a new line.
+   ---------------------------------------------------------------------- */
+const RM_SQUAD_STATS = [
+    // Espanyol 1-2 Real Madrid, La Liga Round 2, Aug 22 2026
+    { player: "Jude Bellingham", pos: "MF", goals: 1, assists: 0 },
+    { player: "Carlos Espí", pos: "FW", goals: 1, assists: 0 },
+    { player: "Arda Güler", pos: "MF", goals: 0, assists: 1 }
+];
 
 class Beyond90App {
     constructor() {
@@ -431,6 +487,8 @@ class Beyond90App {
             });
             this.laLigaHub.init();
         } else if (page === "real-madrid") {
+            this.renderRmLineup();
+            this.renderRmSquadStats();
             this.loadRmOverviewLive();
         } else if (page === "home") {
             this.loadHomeSidebarLive();
@@ -497,13 +555,6 @@ class Beyond90App {
     espnStandingsUrl(leagueSlug) {
         return `https://site.api.espn.com/apis/v2/sports/soccer/${leagueSlug}/standings`;
     }
-    // Full match report (documented by ESPN to include a "lineups" field
-    // for soccer) — used to draw the Tactical Lineup pitch. See the note
-    // at the top of this file for how confident we are in the exact shape.
-    espnSummaryUrl(leagueSlug, eventId) {
-        return `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/summary?event=${eventId}`;
-    }
-
     // Real Madrid's fixtures/results — built from the SAME scoreboard
     // endpoint the league hubs use (verified working), filtered down to
     // matches involving Real Madrid, rather than the separate
@@ -943,14 +994,14 @@ class Beyond90App {
             scorersEl.innerHTML = `<div class="empty-state">Add your Cloudflare Worker URL to see top scorers (see PROXY-SETUP.md).</div>`;
         }
 
-        // Tactical Lineup pitch — ESPN, free, always attempted (no Worker
-        // needed). Last Match Report stats + squad goals/assists leaderboard
-        // are still the API-Football "bonus layer" and quietly no-op
-        // (leaving the static example markup in real-madrid.html in place)
-        // if the Worker isn't configured yet, or if the daily quota's run dry.
-        this.loadRmLineup();
+        // Last Match Report (goal/card timeline + possession/shots table) is
+        // still the API-Football "bonus layer" and quietly no-ops if the
+        // Worker isn't configured yet, or if the daily quota's run dry. The
+        // Starting XI pitch beside it and the Season Stats tab no longer
+        // depend on this — see renderRmLineup()/renderRmSquadStats(), called
+        // from autoLoadPageData() instead, since they're just hand-kept data
+        // with nothing to fetch.
         this.loadRmMatchReport();
-        this.loadRmSquadStats();
     }
 
     async loadHomeSidebarLive() {
@@ -998,163 +1049,45 @@ class Beyond90App {
         }
     }
 
-    /* ---- REAL MADRID BONUS LAYER (API-Football) --------------------------
-       Last finished match's lineup drawn onto the tactical pitch, plus a
-       compact stats + goal/card timeline panel, and a squad goals/assists
-       leaderboard. All optional — each quietly leaves the existing static
-       example markup in place if API-Football isn't configured or fails.
+    /* ---- REAL MADRID BONUS LAYER --------------------------------------
+       Starting XI pitch + squad stats are hand-kept (see RM_CURRENT_LINEUP
+       / RM_SQUAD_STATS above) and render instantly, no fetch involved. The
+       match report below is still the API-Football "bonus layer" and
+       quietly shows an empty-state message if it isn't configured or fails.
     ------------------------------------------------------------------ */
     // Statuses API-Football uses for a match that's actually in progress —
-    // used by loadRmMatchReport (stats/events, still API-Football) to know
-    // whether to keep polling. The pitch/lineup below no longer needs this —
-    // loadRmLineup uses ESPN's own isLive flag instead.
+    // used by loadRmMatchReport to know whether to keep polling.
     static LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT", "LIVE"];
 
-    /* ---- TACTICAL LINEUP PITCH (ESPN — free, no key, no daily quota) -----
-       Picks Real Madrid's live match if one's in progress right now,
-       otherwise their most recent finished match, and asks ESPN's summary
-       endpoint for that match's lineups. Written defensively (see the
-       file-header note) — if it can't find starters it logs the raw ESPN
-       payload to the console rather than just failing quietly, so a field-
-       name mismatch is a quick console-log fix rather than a mystery.
+    /* ---- STARTING XI PITCH (hand-kept, see RM_CURRENT_LINEUP above) -----
+       Draws straight from a JS constant — nothing here can ever get stuck
+       showing a stale "showing an example" message, since there's no fetch
+       to fail. The only way this ever changes is editing RM_CURRENT_LINEUP.
     ------------------------------------------------------------------ */
-    async loadRmLineup(forceRefresh = false) {
-        try {
-            const events = await this.fetchRmMatches(forceRefresh);
-            const live = events.find(e => e.isLive);
-            const finished = events
-                .filter(e => !e.isLive && e.status === "FINISHED")
-                .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))[0];
-            const target = live || finished;
-
-            if (!target) {
-                this.markRmLineupUnavailable("No Real Madrid match found yet to show a lineup for — showing an example for now.");
-                return;
-            }
-
-            const summary = await this.fetchEspn(
-                this.espnSummaryUrl(target.leagueSlug, target.id),
-                ESPN_CONFIG.cacheMinutes,
-                forceRefresh || target.isLive
-            );
-
-            const block = this.findRmLineupBlock(summary);
-            if (!block) {
-                console.warn("ESPN summary had no lineup block for Real Madrid (or an unexpected shape) — raw response:", summary);
-                this.markRmLineupUnavailable("ESPN hasn't published a lineup for this match yet — showing an example for now.");
-                return;
-            }
-
-            const starters = this.extractLineupStarters(block);
-            if (!starters.length) {
-                console.warn("Found a Real Madrid lineup block but couldn't parse any starters out of it — raw block:", block);
-                this.markRmLineupUnavailable("Couldn't read the lineup ESPN sent back for this match — showing an example for now.");
-                return;
-            }
-
-            this.renderEspnLineupOnPitch(starters, block, target);
-
-            if (this.rmLineupPollTimer) { clearInterval(this.rmLineupPollTimer); this.rmLineupPollTimer = null; }
-            if (target.isLive) {
-                this.rmLineupPollTimer = setInterval(() => this.loadRmLineup(true), 60000);
-            }
-        } catch (err) {
-            console.warn("ESPN lineup fetch failed — leaving the example lineup in place:", err);
-            this.markRmLineupUnavailable("Live lineup unavailable right now — ESPN's data for this match may not be published yet. Showing an example for now.");
-        }
-    }
-
-    // ESPN documents the top-level key as "lineups" for soccer; "rosters"
-    // is kept as a fallback since that's the key some of ESPN's other
-    // sports use for the same kind of block.
-    findRmLineupBlock(summary) {
-        const blocks = (summary && (summary.lineups || summary.rosters)) || [];
-        const teamId = String(ESPN_CONFIG.realMadridTeamId);
-        return blocks.find(b => b && b.team && String(b.team.id) === teamId) || null;
-    }
-
-    // Tries a few plausible field names for the player list and for each
-    // player's name/number/position/starter-status (see the file-header
-    // note on why this isn't 100%-confirmed against a live payload). Falls
-    // back to "first 11 entries" if no usable starter flag is found at all.
-    extractLineupStarters(block) {
-        const rawEntries = block.entries || block.roster || block.athletes || block.players || [];
-        const normalized = rawEntries.map(entry => {
-            const athlete = entry.athlete || entry.player || {};
-            const position = entry.position || {};
-            const posAbbr = (position.abbreviation || position.name || entry.positionAbbreviation || "").toString().toUpperCase();
-            const hasStarterFlag = entry.starter !== undefined || entry.isStarter !== undefined;
-            const starter = hasStarterFlag ? Boolean(entry.starter ?? entry.isStarter) : null;
-            return {
-                name: athlete.shortName || athlete.displayName || athlete.fullName || entry.playerName || "",
-                number: athlete.jersey ?? entry.jersey ?? "",
-                posAbbr,
-                starter
-            };
-        }).filter(p => p.name);
-
-        const withFlag = normalized.filter(p => p.starter !== null);
-        if (withFlag.length >= 9) return withFlag.filter(p => p.starter).slice(0, 11);
-        return normalized.slice(0, 11);
-    }
-
-    renderEspnLineupOnPitch(starters, block, target) {
-        const pitchEl = document.querySelector("#rm-tab-lineup .pitch");
-        if (!pitchEl) return;
-
-        const startXI = this.mapEspnStartersToGrid(starters);
-        pitchEl.querySelectorAll('.player-card').forEach(el => el.remove());
-        pitchEl.insertAdjacentHTML('beforeend', this.buildPitchCardsHtml(startXI));
-
+    renderRmLineup() {
         const label = document.getElementById("rm-formation-label");
-        if (label) {
-            const rmId = String(ESPN_CONFIG.realMadridTeamId);
-            const isHome = String(target.homeId) === rmId;
-            const opponent = isHome ? target.away : target.home;
-            const rawFormation = block.formation;
-            const formation = typeof rawFormation === "string"
-                ? rawFormation
-                : (rawFormation && (rawFormation.name || rawFormation.displayName)) || "";
-            label.textContent = `vs ${opponent}${formation ? ' — ' + formation : ''}`;
-        }
-    }
+        if (label) label.textContent = RM_CURRENT_LINEUP.formation;
 
-    // Buckets starters into GK / defense / midfield / attack purely from
-    // each player's position abbreviation (ESPN may not hand us a neat
-    // formation grid the way API-Football did), then reuses the same
-    // "row:col" shape buildPitchCardsHtml already expects — so the actual
-    // pixel-placement logic below didn't need to change at all.
-    mapEspnStartersToGrid(starters) {
-        const rowFor = (abbr) => {
-            if (/^(GK|G)$/.test(abbr)) return 1;
-            if (/^(D|CB|LB|RB|LWB|RWB|WB|SW)/.test(abbr)) return 2;
-            if (/^(M|CM|CDM|CAM|DM|AM|LM|RM|WM)/.test(abbr)) return 3;
-            return 4; // forwards/wingers, and anything unrecognized, default to the attacking row
-        };
-        const rows = {};
-        starters.forEach(p => {
-            const row = rowFor(p.posAbbr);
-            (rows[row] = rows[row] || []).push(p);
+        const pitchEl = document.querySelector("#rm-tab-overview .pitch");
+        if (!pitchEl) return;
+        pitchEl.querySelectorAll('.player-card').forEach(el => el.remove());
+        RM_CURRENT_LINEUP.players.forEach(p => {
+            pitchEl.insertAdjacentHTML('beforeend', `
+                <div class="player-card ${p.posClass}">
+                    <span class="num">${p.number}</span>
+                    <span class="name">${this.escapeHtml(p.name)}</span>
+                </div>`);
         });
-        const startXI = [];
-        Object.keys(rows).forEach(row => {
-            rows[row].forEach((p, i) => {
-                startXI.push({ player: { name: p.name, number: p.number, grid: `${row}:${i + 1}` } });
-            });
-        });
-        return startXI;
     }
 
     /* ---- LAST MATCH REPORT (stats/events — still API-Football) ----------
-       The pitch above is now ESPN-powered (loadRmLineup); this part
-       (possession/shots/corners table + goal/card timeline) is otherwise
-       unchanged and still needs your Cloudflare Worker + API-Football key,
-       so it's still subject to the free-plan season cap noted on
-       API_FOOTBALL_CONFIG.maxFreeSeason.
+       Possession/shots/corners table + goal/card timeline. Still needs your
+       Cloudflare Worker + API-Football key, so it's still subject to the
+       free-plan season cap noted on API_FOOTBALL_CONFIG.maxFreeSeason.
     ------------------------------------------------------------------ */
     async loadRmMatchReport(forceRefresh = false) {
         if (!this.isApiFootballEnabled()) {
-            this.markRmMatchReportUnavailable("Add your Cloudflare Worker URL to see match stats and a goal/card timeline here (see PROXY-SETUP.md). The Tactical Lineup pitch above doesn't need this — it's powered by ESPN directly.");
+            this.markRmMatchReportUnavailable("Add your Cloudflare Worker URL to see match stats and a goal/card timeline here (see PROXY-SETUP.md). The Starting XI beside this doesn't need it — that's fixed content you maintain yourself.");
             return;
         }
         try {
@@ -1203,53 +1136,10 @@ class Beyond90App {
         }
     }
 
-    // Pitch-only failure message — touches #rm-formation-label alone, so it
-    // can never stomp on the separately-loading Last Match Report panel.
-    markRmLineupUnavailable(message) {
-        const label = document.getElementById("rm-formation-label");
-        if (label) label.textContent = message;
-    }
-
-    // Match-report-only failure message — touches #rm-match-report alone,
-    // so it can never stomp on the separately-loading pitch/formation label.
+    // Match-report-only failure message — touches #rm-match-report alone.
     markRmMatchReportUnavailable(message, detailHtml = '') {
         const reportEl = document.getElementById("rm-match-report");
         if (reportEl) reportEl.innerHTML = `<div class="empty-state">${this.escapeHtml(message)}${detailHtml}</div>`;
-    }
-
-    // Converts a "row:col" grid position into a percentage top/left for
-    // each player card. Row 1 is always the goalkeeper (placed near the
-    // bottom of the pitch); higher row numbers move up toward attack.
-    // Columns are spread evenly across whatever players share a row. Fed by
-    // loadRmLineup/mapEspnStartersToGrid above — "row:col" is just a
-    // convenient shared shape, not something ESPN's API returns verbatim.
-    buildPitchCardsHtml(startXI) {
-        const players = (startXI || []).map(p => p.player).filter(p => p && p.grid);
-        const rows = {};
-        players.forEach(p => {
-            const parts = p.grid.split(':').map(Number);
-            const row = parts[0], col = parts[1];
-            if (!rows[row]) rows[row] = [];
-            rows[row].push({ ...p, col });
-        });
-        const rowNumbers = Object.keys(rows).map(Number).sort((a, b) => a - b);
-        const maxRow = rowNumbers[rowNumbers.length - 1] || 1;
-
-        let html = '';
-        rowNumbers.forEach(row => {
-            const rowPlayers = rows[row].sort((a, b) => a.col - b.col);
-            const count = rowPlayers.length;
-            const top = maxRow <= 1 ? 90 : 92 - ((row - 1) / (maxRow - 1)) * 82;
-            rowPlayers.forEach((p, i) => {
-                const left = ((i + 1) / (count + 1)) * 100;
-                html += `
-                    <div class="player-card" style="top:${top}%; left:${left}%;">
-                        <span class="num">${p.number ?? ''}</span>
-                        <span class="name">${this.escapeHtml(p.name || '')}</span>
-                    </div>`;
-            });
-        });
-        return html;
     }
 
     renderMatchReportPanel(match, isLive) {
@@ -1304,57 +1194,25 @@ class Beyond90App {
         `;
     }
 
-    async loadRmSquadStats() {
+    // Hand-kept (see RM_SQUAD_STATS above) — no fetch, so nothing here can
+    // come back capped at an old season or listing players who've since
+    // left the club, the way the old API-Football version always did.
+    renderRmSquadStats() {
         const el = document.getElementById("rm-squad-stats-container");
-        if (!el || !this.isApiFootballEnabled()) return;
+        const introEl = document.getElementById("rm-stats-intro");
+        if (introEl) introEl.textContent = "Goals and assists this season, updated by hand after each match — see RM_SQUAD_STATS in script.js.";
+        if (!el) return;
 
-        el.innerHTML = this.skeletonBlock(4);
-        try {
-            const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
-            const season = this.apiFootballSeasonYear();
-            const [page1, page2] = await Promise.all([
-                this.fetchApiFootball(`players?team=${teamId}&season=${season}&page=1`),
-                this.fetchApiFootball(`players?team=${teamId}&season=${season}&page=2`)
-            ]);
-            const rows = [...(page1.response || []), ...(page2.response || [])]
-                .map(row => {
-                    const stats = row.statistics || [];
-                    const goals = stats.reduce((sum, s) => sum + ((s.goals && s.goals.total) || 0), 0);
-                    const assists = stats.reduce((sum, s) => sum + ((s.goals && s.goals.assists) || 0), 0);
-                    const position = (stats[0] && stats[0].games && stats[0].games.position) || "—";
-                    return { player: row.player.name, pos: position, goals, assists };
-                })
-                .filter(r => r.goals > 0 || r.assists > 0)
-                .sort((a, b) => (b.goals - a.goals) || (b.assists - a.assists))
-                .slice(0, 10);
-
-            el.innerHTML = rows.length ? `
-                <div class="table-wrapper">
-                    <table class="standings-table">
-                        <thead><tr><th style="text-align:left;">Player</th><th>Pos</th><th>Goals</th><th>Assists</th></tr></thead>
-                        <tbody>
-                            ${rows.map(r => `<tr><td class="team-cell">${this.escapeHtml(r.player)}</td><td>${r.pos}</td><td><strong>${r.goals}</strong></td><td>${r.assists}</td></tr>`).join('')}
-                        </tbody>
-                    </table>
-                </div>` : `<div class="empty-state">No player stats returned yet this season.</div>`;
-
-            // API-Football's free plan doesn't cover the current season (see
-            // API_FOOTBALL_CONFIG.maxFreeSeason) — say so plainly right on
-            // the page instead of quietly passing off older stats as
-            // current.
-            const introEl = document.getElementById("rm-stats-intro");
-            if (introEl) {
-                introEl.textContent = this.isApiFootballSeasonCapped()
-                    ? `Goals and assists for the ${season}/${String(season + 1).slice(2)} season — API-Football's free plan doesn't cover the current season yet, via API-Football.`
-                    : "Goals and assists across all competitions this season, via API-Football.";
-            }
-        } catch (err) {
-            console.warn("API-Football squad stats failed:", err);
-            // This used to leave the shimmering loading skeleton on screen
-            // forever on failure — replacing it with a clear message is the
-            // actual fix, not just the console.warn.
-            el.innerHTML = `<div class="empty-state">Squad stats unavailable right now — this can mean the Cloudflare Worker needs a check (see PROXY-SETUP.md) or the daily 100-request quota ran dry. Try again later.${this.apiFootballFailureNote(err)}</div>`;
-        }
+        const rows = [...RM_SQUAD_STATS].sort((a, b) => (b.goals - a.goals) || (b.assists - a.assists));
+        el.innerHTML = rows.length ? `
+            <div class="table-wrapper">
+                <table class="standings-table">
+                    <thead><tr><th style="text-align:left;">Player</th><th>Pos</th><th>Goals</th><th>Assists</th></tr></thead>
+                    <tbody>
+                        ${rows.map(r => `<tr><td class="team-cell">${this.escapeHtml(r.player)}</td><td>${r.pos}</td><td><strong>${r.goals}</strong></td><td>${r.assists}</td></tr>`).join('')}
+                    </tbody>
+                </table>
+            </div>` : `<div class="empty-state">No goals or assists logged yet this season.</div>`;
     }
 
     /* ---- RENDER HELPERS ---------------------------------------- */
