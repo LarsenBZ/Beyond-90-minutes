@@ -29,7 +29,6 @@
     <div class="rm-layout">
         <nav class="rm-sub-nav">
             <button class="rm-nav-btn active" data-tab="overview">Overview &amp; Matches</button>
-            <button class="rm-nav-btn" data-tab="lineup">Tactical Lineup</button>
             <button class="rm-nav-btn" data-tab="stats">Season Stats</button>
         </nav>
 
@@ -37,6 +36,22 @@
             <div id="rm-tab-overview" class="rm-tab-page active">
                 <span class="section-label">Real Madrid CF</span>
                 <h1>Match Center</h1>
+
+                <section class="compact-section" style="margin-bottom: 2rem;">
+                    <span class="section-label">Last Match</span>
+                    <h2>Starting XI &amp; Match Report</h2>
+                    <div class="rm-lastmatch-grid">
+                        <div class="pitch-container pitch-container--compact">
+                            <span id="rm-formation-label"></span>
+                            <div class="pitch">
+                                <div class="pitch-line center-line"></div>
+                                <div class="pitch-circle"></div>
+                            </div>
+                        </div>
+                        <div id="rm-match-report"></div>
+                    </div>
+                </section>
+
                 <div class="rm-dashboard-grid">
                     <div>
                         <section style="margin-bottom: 30px;">
@@ -61,49 +76,11 @@
                 </div>
             </div>
 
-            <div id="rm-tab-lineup" class="rm-tab-page">
-                <span class="section-label">Tactical Board</span>
-                <h1>Starting XI Setup</h1>
-                <p style="max-width: 60ch;">Hover a player card for a closer look. This fills in automatically with Real Madrid's actual XI from their last finished match (via API-Football) — the names below are just an example, shown until that loads.</p>
-                <span id="rm-formation-label"></span>
-                <div class="pitch-container">
-                    <div class="pitch">
-                        <div class="pitch-line center-line"></div>
-                        <div class="pitch-circle"></div>
-                        <div class="player-card pos-gk"><span class="num">1</span><span class="name">Courtois</span></div>
-                        <div class="player-card pos-lb"><span class="num">3</span><span class="name">Cucurella</span></div>
-                        <div class="player-card pos-lcb"><span class="num">24</span><span class="name">Huijsen</span></div>
-                        <div class="player-card pos-rcb"><span class="num">22</span><span class="name">Rüdiger</span></div>
-                        <div class="player-card pos-rb"><span class="num">2</span><span class="name">Dumfries</span></div>
-                        <div class="player-card pos-ldm"><span class="num">14</span><span class="name">Tchouaméni</span></div>
-                        <div class="player-card pos-rdm"><span class="num">8</span><span class="name">Valverde</span></div>
-                        <div class="player-card pos-lw"><span class="num">7</span><span class="name">Vinícius Jr</span></div>
-                        <div class="player-card pos-cam"><span class="num">5</span><span class="name">Bellingham</span></div>
-                        <div class="player-card pos-rw"><span class="num">20</span><span class="name">B. Silva</span></div>
-                        <div class="player-card pos-st"><span class="num">9</span><span class="name">Mbappé</span></div>
-                    </div>
-                </div>
-                <div id="rm-match-report" class="compact-section" style="margin-top: 2rem;"></div>
-            </div>
-
             <div id="rm-tab-stats" class="rm-tab-page">
                 <span class="section-label">Data Hub</span>
                 <h1>Squad Performance Leaderboard</h1>
-                <p id="rm-stats-intro" style="max-width: 60ch;">Goals and assists across all competitions this season, via API-Football. The rows below are an example, shown until that loads.</p>
-                <div id="rm-squad-stats-container" style="margin-top: 20px;">
-                    <div class="table-wrapper">
-                        <table class="standings-table">
-                            <thead>
-                                <tr><th style="text-align:left;">Player</th><th>Pos</th><th>Goals</th><th>Assists</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td class="team-cell">Kylian Mbappé</td><td>FW</td><td>6</td><td>2</td></tr>
-                                <tr><td class="team-cell">Vinícius Jr</td><td>FW</td><td>4</td><td>4</td></tr>
-                                <tr><td class="team-cell">Jude Bellingham</td><td>MF</td><td>3</td><td>3</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <p id="rm-stats-intro" style="max-width: 60ch;"></p>
+                <div id="rm-squad-stats-container" style="margin-top: 20px;"></div>
             </div>
         </main>
     </div>
