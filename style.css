@@ -1212,6 +1212,21 @@ footer {
 }
 
 .modal-synopsis { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+/* Header photo for a match's synopsis (RM_MATCH_PHOTOS in script.js) — sits
+   above everything else in .modal-synopsis. Photos come in different
+   aspect ratios match to match, so this crops to a fixed frame with
+   object-fit: cover and keeps the subject centered regardless of the
+   source image's shape (that's the "make sure pics are centered" ask). */
+.modal-synopsis-photo {
+    display: block;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    object-position: center;
+    border-radius: var(--border-radius-md);
+    margin: 0 auto 1rem;
+    box-shadow: var(--shadow-md);
+}
 .modal-synopsis-label {
     display: block;
     font-family: var(--font-label);

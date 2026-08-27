@@ -72,7 +72,10 @@
    numbers, e.g. "645191"), not football-data.org's — if you'd already
    started adding synopses under the old ID scheme, you'll need to re-find
    the match by date on the live site and grab its new ID from the hint
-   text under a finished match with no synopsis yet.
+   text under a finished match with no synopsis yet. RM_MATCH_PHOTOS (just
+   below RM_MATCH_SYNOPSES) adds an optional single header photo per match,
+   rendered at the top of that match's synopsis popup — same match-ID key,
+   same "add a line, commit, push" workflow.
    ========================================================================== */
 
 const ESPN_CONFIG = {
@@ -147,7 +150,41 @@ Formation: 4-2-3-1
 The match would continue as Espanyol would continue to create plays while Real Madrid were not able to score against a low block defense. Yan Diomande and Marc Cucurella would substitute Arda Guler and Alvaro Carreras at the 64th minute. Cucurella played a safe game while Diomande showed a lot of his flair as a creative fast player. At the 80th minute Mourinho with the score 1-1 would make substitutions that were important to the goal scored in the 90th minute. One of the substitutions was Carlos Espi for Bellingham. Carlos Espi would score in a play created by Yan Diomande with a pass to Mbappe in the box. carlos Espi would find the ball and score a really important goal for the player.
 
 Post-Match
-Mourinho's team won a difficult match with not a great Vini, but this game showed that Bellingham and Arda Guler can work together at least in league matches.`
+Mourinho's team won a difficult match with not a great Vini, but this game showed that Bellingham and Arda Guler can work together at least in league matches.`,
+
+    // Real Madrid 4-1 Real Sociedad, La Liga Round 1 (postponed fixture, played Aug 26 2026 after Round 2)
+    "401882919": `Real Madrid vs Real Sociedad
+La Liga round 1
+Mourinho
+
+First half 1-1
+Formation: 4-2-3-1
+Real Madrid started the game with the same starting XI that was used against Espanyol. In the first half Real Madrid show it's worst version of the match against a dangerous Real Sociedad which looked to play with a strong defense and balls into the space. Mbappe would open the score with an amazing pass of Fede Valverde but, an error by Konate and a late track back from Carreras led to a goal by Real Sociedad's Susic.
+
+Second half 4-1
+Formation 4-2-3-1
+In  this second half it became clear that in Mourinho's team the goal scorer is Mbappe. This is shown by Mbappes position when in defense compared to Vinicius. Vinicius is not anymore the player that looks for the balls in the space, now he is the one that passes the ball for Mbappe who is looking for balls in the space with his pace. Vinicius also has a much more defensive role during defense compared to Mbappe. Which can be key in Champions League games where pressure is essential. The combination of Arda Guler and Bellingham in attack is working at least against La Liga teams. Mourinho will have to decide if this approach will continue to be taken in Champions League. Arda Guler has created 12 chances (fotmob) in La Liga the most out of any player in 2 games. Arda Guler is able to make chances for Mbappe, Vinicius, and Bellingham. Bellingham continues to have a high level similar to his World Cup performance. Having a similar role to Guler except that he is able to make plays inside the ball which led to his assist to Vini. Mbappe would do his job with 3 goals scored, HAT-TRICK for Kylian Mbappe.
+
+Post-Match- Mourinho leaves something clear: Mbappe is the top scorer, but as stated by Mourinho " I prefer for him to score 40 goals with titles than 60 goals without titles." Mourinho expands his win history at the Bernabeu with Real Madrid (75 wins/9 draws/6 losses in 90 games.)`
+};
+
+/* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
+   A single header photo shown at the very top of a match's synopsis in the
+   modal — the "action shot" for that write-up. Same idea as
+   RM_MATCH_SYNOPSES/RM_MATCH_LINEUPS: keyed by the SAME ESPN match ID, so
+   it travels with that match's popup automatically.
+
+   HOW TO USE THIS after a match:
+     1. Upload the photo to images/matches/ (lowercase, hyphenated filename
+        is the safest habit — GitHub Pages is case-sensitive).
+     2. Add one line below: "matchId": "images/matches/file.webp"
+     3. Save, commit, push. No other code changes needed — buildLineupHtml/
+        openMatchModal render it automatically for that match's popup.
+   A match with no entry here just shows no photo — nothing breaks.
+   ---------------------------------------------------------------------- */
+const RM_MATCH_PHOTOS = {
+    "401882912": "images/matches/espi-vs-espanyol.webp",
+    "401882919": "images/matches/mbappe-vs-real-sociedad.webp"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
@@ -217,6 +254,34 @@ const RM_MATCH_LINEUPS = {
             { name: "Diomandé", number: 25 },
             { name: "Carlos Espí", number: 19 }
         ]
+    },
+    // Real Madrid 4-1 Real Sociedad, La Liga Round 1, Aug 26 2026. Same
+    // starting XI as the Espanyol match per Braulio's synopsis above; bench
+    // is the 4 subs actually used in the game (Bellingham/Camavinga and
+    // Güler/Brahim Díaz both swapped at 78', Vinícius/Diomandé at 84',
+    // Bernardo Silva/Carlos Espí at 86'). Numbers checked against Real
+    // Madrid's published 2026/27 squad numbers.
+    "401882919": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Carreras", number: 18, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Dumfries", number: 24, posClass: "pos-rb" },
+            { name: "Valverde", number: 8, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Camavinga", number: 6 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Diomandé", number: 25 },
+            { name: "Carlos Espí", number: 19 }
+        ]
     }
 };
 
@@ -237,9 +302,13 @@ const RM_MATCH_LINEUPS = {
    ---------------------------------------------------------------------- */
 const RM_SQUAD_STATS = [
     // Espanyol 1-2 Real Madrid, La Liga Round 2, Aug 22 2026
-    { player: "Jude Bellingham", pos: "MF", goals: 1, assists: 0 },
+    { player: "Jude Bellingham", pos: "MF", goals: 1, assists: 1 }, // +1 assist vs Real Sociedad
     { player: "Carlos Espí", pos: "FW", goals: 1, assists: 0 },
-    { player: "Arda Güler", pos: "MF", goals: 0, assists: 1 }
+    { player: "Arda Güler", pos: "MF", goals: 0, assists: 1 },
+    // Real Madrid 4-1 Real Sociedad, La Liga Round 1, Aug 26 2026
+    { player: "Kylian Mbappé", pos: "FW", goals: 3, assists: 0 },
+    { player: "Vinícius Jr", pos: "FW", goals: 1, assists: 0 },
+    { player: "Fede Valverde", pos: "MF", goals: 0, assists: 1 }
 ];
 
 class Beyond90App {
@@ -979,7 +1048,7 @@ class Beyond90App {
                 .filter(e => !e.isLive && e.status === "FINISHED")
                 .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
                 .slice(0, 3)
-                .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id] || null; m.lineup = RM_MATCH_LINEUPS[m.id] || null; return m; });
+                .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id] || null; m.lineup = RM_MATCH_LINEUPS[m.id] || null; m.photo = RM_MATCH_PHOTOS[m.id] || null; return m; });
 
             const fixturesHeading = document.getElementById("rm-fixtures-heading");
             if (fixturesHeading) fixturesHeading.textContent = live.length ? "Live Now" : "Upcoming Matches";
@@ -1330,13 +1399,19 @@ class Beyond90App {
                 }).join('')}
             </ul>` : '';
 
-        // Starting XI (RM_MATCH_LINEUPS) renders inside the same block as
-        // the synopsis text, above it — either can be present without the
-        // other (a match might have a lineup but no write-up yet, or vice
-        // versa), so the wrapper only appears when at least one exists.
+        // Header photo (RM_MATCH_PHOTOS) renders above everything else in
+        // the synopsis block — a single action shot for that match. Starting
+        // XI (RM_MATCH_LINEUPS) renders next, then the write-up itself. Any
+        // of the three can be present without the others (a match might
+        // have a lineup but no write-up yet, a photo but no lineup, etc),
+        // so the wrapper only appears when at least one exists.
         const lineupHtml = match.lineup ? this.buildLineupHtml(match.lineup) : '';
-        const synopsisRow = (match.synopsis || lineupHtml)
+        const photoHtml = match.photo
+            ? `<img class="modal-synopsis-photo" src="${this.escapeHtml(match.photo)}" alt="${this.escapeHtml(match.home)} vs ${this.escapeHtml(match.away)}">`
+            : '';
+        const synopsisRow = (match.synopsis || lineupHtml || photoHtml)
             ? `<div class="modal-synopsis">
+                   ${photoHtml}
                    ${match.synopsis ? '<span class="modal-synopsis-label">Match Synopsis</span>' : ''}
                    ${lineupHtml}
                    ${match.synopsis ? `<p>${this.escapeHtml(match.synopsis)}</p>` : ''}
