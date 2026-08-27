@@ -1213,19 +1213,24 @@ footer {
 
 .modal-synopsis { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--line); }
 /* Header photo for a match's synopsis (RM_MATCH_PHOTOS in script.js) — sits
-   above everything else in .modal-synopsis. Photos come in different
-   aspect ratios match to match, so this crops to a fixed frame with
-   object-fit: cover and keeps the subject centered regardless of the
-   source image's shape (that's the "make sure pics are centered" ask). */
+   above everything else in .modal-synopsis. A fixed pixel height made this
+   look tall/cramped on narrow phone widths (a 220px-tall box next to a
+   ~320px-wide column reads as "elongated" instead of a wide banner) — using
+   aspect-ratio instead of a fixed height keeps it a consistent WIDE strip
+   (2.35 : 1) no matter how narrow the modal gets. object-fit: cover +
+   object-position: center crops each photo to that strip without distortion
+   and keeps the subject centered regardless of the source image's own
+   shape (both the "make it wider" and "make sure pics are centered" asks). */
 .modal-synopsis-photo {
     display: block;
     width: 100%;
-    height: 220px;
+    aspect-ratio: 2.35 / 1;
     object-fit: cover;
     object-position: center;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--border-radius-lg);
     margin: 0 auto 1rem;
     box-shadow: var(--shadow-md);
+    border: 1px solid var(--line);
 }
 .modal-synopsis-label {
     display: block;
