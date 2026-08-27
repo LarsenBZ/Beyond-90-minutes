@@ -42,25 +42,28 @@
       site (fixtures, standings, schedules) keeps working regardless, since
       that's all ESPN and has no daily limit.
 
-   A NOTE ON THE STARTING XI + SEASON STATS (Real Madrid page): both of
-   these used to be live fetches — the XI from ESPN's summary endpoint,
-   squad stats from API-Football — and both turned out to be dead ends.
-   API-Football's free plan doesn't cover the current season at all (see
-   maxFreeSeason below), so Season Stats was quietly showing last year's
-   squad, not this one. And ESPN's exact soccer "lineups" payload shape was
-   never confirmed against a real response, so the pitch just sat on a
-   static example forever with a quiet "showing an example" caption under
-   it — not a great look on a page a college admissions reader might click.
-   As of this update, both are hand-kept instead, the same way the match
-   synopses already are: see RM_CURRENT_LINEUP and RM_SQUAD_STATS below,
-   and renderRmLineup()/renderRmSquadStats() further down, which just paint
-   straight from those constants — no fetch, so nothing to fail. The
-   Starting XI pitch also moved: it used to be its own "Tactical Lineup"
-   tab; it now sits next to the "Last Match Report" panel (goals/cards
-   timeline + possession/shots/corners table, still API-Football and still
-   subject to the same free-plan season cap) inside the Overview tab, so
-   the XI reads together with the rest of that match's info instead of
-   living on a separate page.
+   A NOTE ON THE STARTING XI + SEASON STATS (Real Madrid page): both used
+   to be live fetches — the XI from ESPN's summary endpoint, squad stats
+   from API-Football — and both turned out to be dead ends. API-Football's
+   free plan doesn't cover the current season at all (see maxFreeSeason
+   below), so Season Stats was quietly showing last year's squad. ESPN's
+   exact soccer "lineups" payload shape was never confirmed either. Both
+   are hand-kept instead, same as the match synopses: see RM_SQUAD_STATS
+   below and RM_MATCH_LINEUPS further down.
+   The Starting XI pitch has moved twice since. First, out of its own
+   "Tactical Lineup" tab into one always-on "current XI" box sitting next
+   to a "Last Match Report" panel — but that report panel was still
+   API-Football, and API-Football's free plan structurally can't return
+   fixtures for the current season at all, so it never had anything real
+   to show. It's been removed outright (was loadRmMatchReport/
+   renderMatchReportPanel/markRmMatchReportUnavailable, if you ever need
+   to see what it looked like in git history). The XI itself moved a
+   second time, from that one "current" box into RM_MATCH_LINEUPS — a
+   lineup entry per match, keyed the same way as RM_MATCH_SYNOPSES — so
+   each finished match's actual XI renders inside THAT match's own
+   synopsis popup via buildLineupHtml(), not as one XI for the whole page.
+   Player photos (optional, added once per player, then reused forever)
+   live in RM_PLAYER_PHOTOS just above RM_MATCH_LINEUPS.
 
    A NOTE ON REAL MADRID SYNOPSES: see RM_MATCH_SYNOPSES below. Synopses
    live in this file itself, keyed by match ID, so they deploy with the
@@ -147,40 +150,74 @@ Post-Match
 Mourinho's team won a difficult match with not a great Vini, but this game showed that Bellingham and Arda Guler can work together at least in league matches.`
 };
 
-/* ---- REAL MADRID STARTING XI (manually maintained) -----------------------
-   This used to be a live fetch from ESPN's summary endpoint, but that
-   endpoint's exact soccer "lineups" shape was never confirmed working (see
-   old session notes) — in practice it meant the pitch just sat on a stale
-   example forever with a quiet "showing an example" caption under it. Since
-   this is exactly the kind of thing you already track by hand in your match
-   synopses above, it's hand-kept here too now — same idea as
-   RM_MATCH_SYNOPSES, and it deploys with the rest of the site.
+/* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
+   Register a player's headshot ONCE here and it applies automatically to
+   every lineup entry that uses that exact name — past matches and future
+   ones — so adding a new match's XI below never means re-uploading a photo
+   for someone you've already added.
 
-   HOW TO UPDATE THIS, whenever the XI you'd actually put out changes:
-     1. Edit the "players" array below — 11 entries, one per starter.
-     2. posClass must be one of the .pos-* classes defined in style.css:
-        pos-gk, pos-lb, pos-lcb, pos-rcb, pos-rb, pos-ldm, pos-rdm, pos-cam,
-        pos-lw, pos-rw, pos-st — each one is a fixed spot on the pitch, so
-        pick whichever of the 11 reads closest to where that player lined up.
-     3. Update "formation" to match (just a label — doesn't affect layout).
-     4. Save, commit, push. No match ID needed — unlike the synopses, this
-        is just "the current XI", not tied to one specific game.
+   HOW TO USE:
+     1. Upload a headshot to images/players/ (any consistent filename is
+        fine — lowercase surname is the easiest habit, e.g. "mbappe.jpg").
+     2. Add one line below: "Exact Name": "images/players/file.jpg" — the
+        name must match the "name" field you use in RM_MATCH_LINEUPS below
+        EXACTLY (same accents/capitalization), or it won't match.
+     3. Save, commit, push. No other code changes needed.
+   A player with no entry here just shows their number in a plain circle
+   instead of a photo — nothing breaks if you haven't gotten to them yet.
    ---------------------------------------------------------------------- */
-const RM_CURRENT_LINEUP = {
-    formation: "4-2-1-3",
-    players: [
-        { name: "Courtois", number: 1, posClass: "pos-gk" },
-        { name: "Cucurella", number: 17, posClass: "pos-lb" },
-        { name: "Huijsen", number: 4, posClass: "pos-lcb" },
-        { name: "Konaté", number: 16, posClass: "pos-rcb" },
-        { name: "Dumfries", number: 24, posClass: "pos-rb" },
-        { name: "Valverde", number: 8, posClass: "pos-ldm" },
-        { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
-        { name: "Bellingham", number: 5, posClass: "pos-cam" },
-        { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
-        { name: "Diomandé", number: 25, posClass: "pos-rw" },
-        { name: "Mbappé", number: 10, posClass: "pos-st" }
-    ]
+const RM_PLAYER_PHOTOS = {
+    // "Mbappé": "images/players/mbappe.jpg",
+};
+
+/* ---- REAL MADRID MATCH LINEUPS (manually maintained, one per match) ------
+   Same idea as RM_MATCH_SYNOPSES right above — keyed by the SAME ESPN match
+   ID, so a match's Starting XI (and bench) travels with its synopsis and
+   renders together with it inside that match's popup, instead of living in
+   one always-on "current XI" box the way it used to.
+
+   HOW TO UPDATE THIS after a match — send Claude the XI + bench and this
+   gets filled in, or do it by hand:
+     1. Find the match's ID — same one RM_MATCH_SYNOPSES uses (the
+        "No synopsis added yet — match ID ######" hint under a finished
+        match with no synopsis tells you this).
+     2. Add an entry: "formation" (just a label), "players" (exactly 11
+        starters), "bench" (as many substitutes as you want listed — an
+        empty array [] is fine if you don't want a bench shown).
+     3. posClass must be one of: pos-gk, pos-lb, pos-lcb, pos-rcb, pos-rb,
+        pos-ldm, pos-rdm, pos-cam, pos-lw, pos-rw, pos-st — each is a fixed
+        spot on the pitch, so pick whichever of the 11 reads closest to
+        where that player actually lined up.
+     4. Photos are separate — see RM_PLAYER_PHOTOS above.
+   ---------------------------------------------------------------------- */
+const RM_MATCH_LINEUPS = {
+    // Espanyol 1-2 Real Madrid, La Liga Round 2, Aug 22 2026. Carreras and
+    // Güler started (not the usual Cucurella/Diomandé) per Braulio's
+    // synopsis above; bench below is only the 3 subs actually named in
+    // that synopsis (Cucurella + Diomandé on ~64', Carlos Espí on ~80')
+    // — not a full matchday squad, since the rest wasn't given. Numbers
+    // checked against Real Madrid's published 2026/27 squad numbers.
+    "401882912": {
+        formation: "4-2-1-3",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Carreras", number: 18, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Dumfries", number: 24, posClass: "pos-rb" },
+            { name: "Valverde", number: 8, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Cucurella", number: 17 },
+            { name: "Diomandé", number: 25 },
+            { name: "Carlos Espí", number: 19 }
+        ]
+    }
 };
 
 /* ---- REAL MADRID SQUAD STATS (manually maintained) ------------------------
@@ -487,7 +524,6 @@ class Beyond90App {
             });
             this.laLigaHub.init();
         } else if (page === "real-madrid") {
-            this.renderRmLineup();
             this.renderRmSquadStats();
             this.loadRmOverviewLive();
         } else if (page === "home") {
@@ -943,7 +979,7 @@ class Beyond90App {
                 .filter(e => !e.isLive && e.status === "FINISHED")
                 .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
                 .slice(0, 3)
-                .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id] || null; return m; });
+                .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id] || null; m.lineup = RM_MATCH_LINEUPS[m.id] || null; return m; });
 
             const fixturesHeading = document.getElementById("rm-fixtures-heading");
             if (fixturesHeading) fixturesHeading.textContent = live.length ? "Live Now" : "Upcoming Matches";
@@ -993,15 +1029,6 @@ class Beyond90App {
         } else if (scorersEl) {
             scorersEl.innerHTML = `<div class="empty-state">Add your Cloudflare Worker URL to see top scorers (see PROXY-SETUP.md).</div>`;
         }
-
-        // Last Match Report (goal/card timeline + possession/shots table) is
-        // still the API-Football "bonus layer" and quietly no-ops if the
-        // Worker isn't configured yet, or if the daily quota's run dry. The
-        // Starting XI pitch beside it and the Season Stats tab no longer
-        // depend on this — see renderRmLineup()/renderRmSquadStats(), called
-        // from autoLoadPageData() instead, since they're just hand-kept data
-        // with nothing to fetch.
-        this.loadRmMatchReport();
     }
 
     async loadHomeSidebarLive() {
@@ -1049,149 +1076,50 @@ class Beyond90App {
         }
     }
 
-    /* ---- REAL MADRID BONUS LAYER --------------------------------------
-       Starting XI pitch + squad stats are hand-kept (see RM_CURRENT_LINEUP
-       / RM_SQUAD_STATS above) and render instantly, no fetch involved. The
-       match report below is still the API-Football "bonus layer" and
-       quietly shows an empty-state message if it isn't configured or fails.
+    /* ---- STARTING XI + BENCH (hand-kept, see RM_MATCH_LINEUPS above) ----
+       Builds the pitch (+ bench, if given) for ONE specific match's lineup
+       and returns it as an HTML string, for injection straight into that
+       match's modal (see openMatchModal below). No DOM query here, no
+       fetch — nothing to get stuck on a stale "showing an example" message
+       the way the old live-fetched version could. Returns '' (renders
+       nothing) if that match has no RM_MATCH_LINEUPS entry yet.
     ------------------------------------------------------------------ */
-    // Statuses API-Football uses for a match that's actually in progress —
-    // used by loadRmMatchReport to know whether to keep polling.
-    static LIVE_STATUSES = ["1H", "HT", "2H", "ET", "BT", "P", "SUSP", "INT", "LIVE"];
+    buildLineupHtml(lineup) {
+        if (!lineup || !lineup.players || !lineup.players.length) return '';
 
-    /* ---- STARTING XI PITCH (hand-kept, see RM_CURRENT_LINEUP above) -----
-       Draws straight from a JS constant — nothing here can ever get stuck
-       showing a stale "showing an example" message, since there's no fetch
-       to fail. The only way this ever changes is editing RM_CURRENT_LINEUP.
-    ------------------------------------------------------------------ */
-    renderRmLineup() {
-        const label = document.getElementById("rm-formation-label");
-        if (label) label.textContent = RM_CURRENT_LINEUP.formation;
-
-        const pitchEl = document.querySelector("#rm-tab-overview .pitch");
-        if (!pitchEl) return;
-        pitchEl.querySelectorAll('.player-card').forEach(el => el.remove());
-        RM_CURRENT_LINEUP.players.forEach(p => {
-            pitchEl.insertAdjacentHTML('beforeend', `
+        const playerCard = p => {
+            const photo = RM_PLAYER_PHOTOS[p.name];
+            const avatarStyle = photo ? ` style="background-image:url('${this.escapeHtml(photo)}')"` : '';
+            const avatarInner = photo
+                ? `<span class="avatar-num">${p.number}</span>`
+                : `<span class="avatar-fallback-num">${p.number}</span>`;
+            return `
                 <div class="player-card ${p.posClass}">
-                    <span class="num">${p.number}</span>
-                    <span class="name">${this.escapeHtml(p.name)}</span>
-                </div>`);
-        });
-    }
-
-    /* ---- LAST MATCH REPORT (stats/events — still API-Football) ----------
-       Possession/shots/corners table + goal/card timeline. Still needs your
-       Cloudflare Worker + API-Football key, so it's still subject to the
-       free-plan season cap noted on API_FOOTBALL_CONFIG.maxFreeSeason.
-    ------------------------------------------------------------------ */
-    async loadRmMatchReport(forceRefresh = false) {
-        if (!this.isApiFootballEnabled()) {
-            this.markRmMatchReportUnavailable("Add your Cloudflare Worker URL to see match stats and a goal/card timeline here (see PROXY-SETUP.md). The Starting XI beside this doesn't need it — that's fixed content you maintain yourself.");
-            return;
-        }
-        try {
-            const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
-
-            // Prefer today's fixture if Real Madrid are playing right now (or
-            // about to) — that's when a live events/stats panel actually
-            // matters. Falls back to the last finished match otherwise.
-            let fx = null;
-            const todayStr = new Date().toISOString().slice(0, 10);
-            try {
-                const todayResp = await this.fetchApiFootball(`fixtures?team=${teamId}&date=${todayStr}`, forceRefresh);
-                fx = (todayResp.response || [])[0] || null;
-            } catch (err) { /* fine — fall through to the last finished match */ }
-
-            if (!fx) {
-                const last = await this.fetchApiFootball(`fixtures?team=${teamId}&last=1`);
-                fx = (last.response || [])[0] || null;
-            }
-            if (!fx) {
-                console.warn(`API-Football returned no fixtures for team=${teamId} — double-check API_FOOTBALL_CONFIG.realMadridTeamId against the dashboard.`);
-                this.markRmMatchReportUnavailable(`No fixtures came back for Real Madrid — most likely API-Football's free plan not covering the current season (confirmed: it only covers up to ${API_FOOTBALL_CONFIG.maxFreeSeason}). Could also be worth double-checking API_FOOTBALL_CONFIG.realMadridTeamId (currently ${teamId}) against the dashboard.`);
-                return;
-            }
-
-            const isLive = Beyond90App.LIVE_STATUSES.includes(fx.fixture.status.short);
-            const detail = await this.fetchApiFootball(`fixtures?id=${fx.fixture.id}`, forceRefresh || isLive);
-            const match = detail.response && detail.response[0];
-            if (!match) {
-                this.markRmMatchReportUnavailable("The fixture came back without match details — try again shortly.");
-                return;
-            }
-
-            this.renderMatchReportPanel(match, isLive);
-
-            if (this.rmReportPollTimer) { clearInterval(this.rmReportPollTimer); this.rmReportPollTimer = null; }
-            if (isLive) {
-                this.rmReportPollTimer = setInterval(() => this.loadRmMatchReport(true), 60000);
-            }
-        } catch (err) {
-            console.warn("API-Football match report failed — leaving the example stats in place:", err);
-            this.markRmMatchReportUnavailable(
-                `Match stats unavailable right now — most likely API-Football's free plan not covering the current season (confirmed: only up to ${API_FOOTBALL_CONFIG.maxFreeSeason}). Could also be the Cloudflare Worker (see PROXY-SETUP.md) or the daily 100-request quota.`,
-                this.apiFootballFailureNote(err)
-            );
-        }
-    }
-
-    // Match-report-only failure message — touches #rm-match-report alone.
-    markRmMatchReportUnavailable(message, detailHtml = '') {
-        const reportEl = document.getElementById("rm-match-report");
-        if (reportEl) reportEl.innerHTML = `<div class="empty-state">${this.escapeHtml(message)}${detailHtml}</div>`;
-    }
-
-    renderMatchReportPanel(match, isLive) {
-        const el = document.getElementById("rm-match-report");
-        if (!el) return;
-
-        const teamId = API_FOOTBALL_CONFIG.realMadridTeamId;
-        const isHome = match.teams.home.id === teamId;
-        const rmGoals = isHome ? match.goals.home : match.goals.away;
-        const oppGoals = isHome ? match.goals.away : match.goals.home;
-        const opponent = isHome ? match.teams.away.name : match.teams.home.name;
-
-        const events = (match.events || [])
-            .filter(e => e.type === "Goal" || e.type === "Card")
-            .sort((a, b) => (a.time.elapsed + (a.time.extra || 0)) - (b.time.elapsed + (b.time.extra || 0)));
-
-        const eventsHtml = events.length ? `
-            <ul class="match-report-timeline">
-                ${events.map(e => {
-                    const minute = `${e.time.elapsed}${e.time.extra ? '+' + e.time.extra : ''}'`;
-                    const icon = e.type === "Goal" ? "⚽" : (e.detail === "Red Card" ? "🟥" : "🟨");
-                    const assist = e.assist && e.assist.name ? ` (assist: ${this.escapeHtml(e.assist.name)})` : "";
-                    return `<li><strong>${minute}</strong> ${icon} ${this.escapeHtml((e.player && e.player.name) || '')}${assist} — ${this.escapeHtml((e.team && e.team.name) || '')}</li>`;
-                }).join('')}
-            </ul>` : `<p class="empty-state">No goal or card events returned for this match.</p>`;
-
-        const statsBlocks = match.statistics || [];
-        const rmStats = statsBlocks.find(s => s.team && s.team.id === teamId);
-        const oppStats = statsBlocks.find(s => s.team && s.team.id !== teamId);
-        const wantedStats = ["Ball Possession", "Total Shots", "Shots on Goal", "Corner Kicks", "Fouls", "Yellow Cards", "Red Cards"];
-        const statVal = (block, type) => {
-            if (!block) return "—";
-            const found = (block.statistics || []).find(s => s.type === type);
-            return (found && found.value !== null && found.value !== undefined) ? found.value : "—";
+                    <span class="player-avatar${photo ? '' : ' player-avatar--no-photo'}"${avatarStyle}>${avatarInner}</span>
+                    <span class="player-name">${this.escapeHtml(p.name)}</span>
+                </div>`;
         };
-        const statsHtml = `
-            <div class="table-wrapper">
-                <table class="standings-table">
-                    <thead><tr><th style="text-align:left;">Stat</th><th>Real Madrid</th><th>${this.escapeHtml(opponent)}</th></tr></thead>
-                    <tbody>
-                        ${wantedStats.map(type => `<tr><td class="team-cell">${type}</td><td>${statVal(rmStats, type)}</td><td>${statVal(oppStats, type)}</td></tr>`).join('')}
-                    </tbody>
-                </table>
-            </div>`;
 
-        el.innerHTML = `
-            <span class="section-label">Via API-Football${isLive ? ' — updating every 60s' : ''}</span>
-            <h2>${isLive ? 'Live Match Report' : 'Last Match Report'}</h2>
-            <p class="article-byline">${isLive ? '<span class="live-pill">LIVE</span> ' : ''}Real Madrid ${rmGoals} – ${oppGoals} ${this.escapeHtml(opponent)}</p>
-            ${eventsHtml}
-            ${statsHtml}
-        `;
+        const benchHtml = (lineup.bench && lineup.bench.length) ? `
+            <div class="lineup-bench">
+                <span class="section-label">Bench</span>
+                <ul class="bench-list">
+                    ${lineup.bench.map(b => `<li><span class="bench-num">${b.number ?? ''}</span>${this.escapeHtml(b.name)}</li>`).join('')}
+                </ul>
+            </div>` : '';
+
+        return `
+            <div class="lineup-block">
+                <span class="modal-synopsis-label">Starting XI — ${this.escapeHtml(lineup.formation)}</span>
+                <div class="pitch-container">
+                    <div class="pitch">
+                        <div class="pitch-line center-line"></div>
+                        <div class="pitch-circle"></div>
+                        ${lineup.players.map(playerCard).join('')}
+                    </div>
+                </div>
+                ${benchHtml}
+            </div>`;
     }
 
     // Hand-kept (see RM_SQUAD_STATS above) — no fetch, so nothing here can
@@ -1402,10 +1330,16 @@ class Beyond90App {
                 }).join('')}
             </ul>` : '';
 
-        const synopsisRow = match.synopsis
+        // Starting XI (RM_MATCH_LINEUPS) renders inside the same block as
+        // the synopsis text, above it — either can be present without the
+        // other (a match might have a lineup but no write-up yet, or vice
+        // versa), so the wrapper only appears when at least one exists.
+        const lineupHtml = match.lineup ? this.buildLineupHtml(match.lineup) : '';
+        const synopsisRow = (match.synopsis || lineupHtml)
             ? `<div class="modal-synopsis">
-                   <span class="modal-synopsis-label">Match Synopsis</span>
-                   <p>${this.escapeHtml(match.synopsis)}</p>
+                   ${match.synopsis ? '<span class="modal-synopsis-label">Match Synopsis</span>' : ''}
+                   ${lineupHtml}
+                   ${match.synopsis ? `<p>${this.escapeHtml(match.synopsis)}</p>` : ''}
                </div>`
             : '';
 
