@@ -1045,7 +1045,18 @@ button { font-family: var(--font-body); cursor: pointer; }
     background: var(--paper-raised);
     padding: 2rem;
     border-radius: var(--border-radius-lg);
-    max-width: 520px;
+    /* Was 520px — fine for a plain text synopsis, but too narrow once a
+       match's popup also carries a header photo (RM_MATCH_PHOTOS) and the
+       Starting XI pitch (RM_MATCH_LINEUPS/buildLineupHtml). At 520px the
+       pitch's inner width was only ~456px against a fixed 440px height —
+       nearly square, cramping the 11 player markers and their name pills
+       toward the edges (pos-lb/pos-rb sit at 15%/85%). Wider here gives the
+       pitch a properly rectangular, real-pitch-like shape and gives the
+       photo (which scales with the container via aspect-ratio) more room
+       too. width: 100% still caps this to the viewport on phones — this
+       only actually kicks in on tablet/desktop widths, so the
+       already-verified mobile layout is untouched. */
+    max-width: 700px;
     width: 100%;
     max-height: calc(100vh - 2rem);
     display: flex;
