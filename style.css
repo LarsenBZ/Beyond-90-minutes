@@ -575,6 +575,7 @@ button { font-family: var(--font-body); cursor: pointer; }
 .search-input:focus { border-color: var(--pitch-bright); outline: none; }
 
 .category-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-groups { display: flex; gap: 15px; flex-wrap: wrap; }
 
 .article-grid {
     display: grid;

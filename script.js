@@ -490,22 +490,29 @@ class Beyond90App {
     setupArticleSearch() {
         const searchInput = document.getElementById("article-search");
         const categoryButtons = document.querySelectorAll("#category-filters .rm-nav-btn");
+        // Length (Short/Long reads) is a second, independent filter — it ANDs
+        // with the topic filter and the search box rather than replacing them,
+        // so "Analysis" + "Short Reads" narrows to short analysis pieces only.
+        const lengthButtons = document.querySelectorAll("#length-filters .rm-nav-btn");
         const articleCards = document.querySelectorAll(".article-card");
         const emptyState = document.getElementById("articles-empty-state");
 
-        if (!searchInput && categoryButtons.length === 0) return;
+        if (!searchInput && categoryButtons.length === 0 && lengthButtons.length === 0) return;
 
         let currentCategory = "ALL";
+        let currentLength = "ALL";
         let searchQuery = "";
 
         const filterArticles = () => {
             let visibleCount = 0;
             articleCards.forEach(card => {
                 const category = card.getAttribute("data-category") || "";
+                const length = card.getAttribute("data-length") || "";
                 const title = card.getAttribute("data-title") || "";
                 const matchesCategory = currentCategory === "ALL" || category === currentCategory;
+                const matchesLength = currentLength === "ALL" || length === currentLength;
                 const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase());
-                const visible = matchesCategory && matchesSearch;
+                const visible = matchesCategory && matchesLength && matchesSearch;
                 card.style.display = visible ? "flex" : "none";
                 if (visible) visibleCount++;
             });
@@ -524,6 +531,15 @@ class Beyond90App {
                 categoryButtons.forEach(b => b.classList.remove("active"));
                 e.target.classList.add("active");
                 currentCategory = e.target.getAttribute("data-category") || "ALL";
+                filterArticles();
+            });
+        });
+
+        lengthButtons.forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                lengthButtons.forEach(b => b.classList.remove("active"));
+                e.target.classList.add("active");
+                currentLength = e.target.getAttribute("data-length") || "ALL";
                 filterArticles();
             });
         });

@@ -44,16 +44,23 @@
                 class="search-input"
                 placeholder="Search articles by title or keyword..."
             >
-            <div id="category-filters" class="category-filters">
-                <button class="rm-nav-btn active" data-category="ALL">All</button>
-                <button class="rm-nav-btn" data-category="ANALYSIS">Analysis</button>
-                <button class="rm-nav-btn" data-category="WORLD CUP">World Cup</button>
+            <div class="filter-groups">
+                <div id="category-filters" class="category-filters">
+                    <button class="rm-nav-btn active" data-category="ALL">All</button>
+                    <button class="rm-nav-btn" data-category="ANALYSIS">Analysis</button>
+                    <button class="rm-nav-btn" data-category="WORLD CUP">World Cup</button>
+                </div>
+                <div id="length-filters" class="category-filters">
+                    <button class="rm-nav-btn active" data-length="ALL">Any Length</button>
+                    <button class="rm-nav-btn" data-length="SHORT">Short Reads</button>
+                    <button class="rm-nav-btn" data-length="LONG">Long Reads</button>
+                </div>
             </div>
         </section>
 
         <section class="articles-section">
             <div class="article-grid" id="articles-list">
-                <article class="article-card" data-category="ANALYSIS" data-title="Real Madrid Midfield Analysis">
+                <article class="article-card" data-category="ANALYSIS" data-length="SHORT" data-title="Real Madrid Midfield Analysis">
                     <a href="article-real-madrid.html" style="text-decoration:none; color:inherit;">
                         <div class="card-image" style="background-image: url('images/kroos-modric.jpg'); background-position: center 18%;"><span>Real Madrid</span></div>
                         <div class="card-content">
@@ -64,7 +71,7 @@
                     </a>
                 </article>
 
-                <article class="article-card" data-category="ANALYSIS" data-title="Is It Expected for a Club to Let Their Star Go? The Case of Julian Alvarez">
+                <article class="article-card" data-category="ANALYSIS" data-length="LONG" data-title="Is It Expected for a Club to Let Their Star Go? The Case of Julian Alvarez">
                     <a href="article-julian-alvarez.html" style="text-decoration:none; color:inherit;">
                         <div class="card-image" style="background-image: url('images/julian-alvarez.jpg'); background-position: 22% 25%;"><span>Julian Alvarez</span></div>
                         <div class="card-content">
@@ -75,7 +82,18 @@
                     </a>
                 </article>
 
-                <article class="article-card" data-category="WORLD CUP" data-title="Is the World Cup a EURO + Brazil and Argentina?">
+                <article class="article-card" data-category="ANALYSIS" data-length="SHORT" data-title="Has VAR Made Football Worse?">
+                    <a href="article-var.html" style="text-decoration:none; color:inherit;">
+                        <div class="card-image" style="background-image: url('images/var-referee.jpg'); background-position: 62% 20%;"><span>VAR</span></div>
+                        <div class="card-content">
+                            <span class="section-label">Analysis</span>
+                            <h3>Has VAR Made Football Worse?</h3>
+                            <p>VAR was built to make football fairer. Has it made the game worse in the process?</p>
+                        </div>
+                    </a>
+                </article>
+
+                <article class="article-card" data-category="WORLD CUP" data-length="SHORT" data-title="Is the World Cup a EURO + Brazil and Argentina?">
                     <a href="article-world-cup.html" style="text-decoration:none; color:inherit;">
                         <div class="card-image" style="background-image: url('images/world-cup.jpg');"><span>World Cup</span></div>
                         <div class="card-content">
