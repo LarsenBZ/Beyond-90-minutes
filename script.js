@@ -175,16 +175,17 @@ Post-Match- Mourinho leaves something clear: Mbappe is the top scorer, but as st
    it travels with that match's popup automatically.
 
    HOW TO USE THIS after a match:
-     1. Upload the photo to images/matches/ (lowercase, hyphenated filename
-        is the safest habit — GitHub Pages is case-sensitive).
-     2. Add one line below: "matchId": "images/matches/file.webp"
+     1. Upload the photo directly into the images/ folder (same folder as
+        kroos-modric.jpg etc — no matches/ subfolder; lowercase, hyphenated
+        filename is the safest habit, since GitHub Pages is case-sensitive).
+     2. Add one line below: "matchId": "images/file.webp"
      3. Save, commit, push. No other code changes needed — buildLineupHtml/
         openMatchModal render it automatically for that match's popup.
    A match with no entry here just shows no photo — nothing breaks.
    ---------------------------------------------------------------------- */
 const RM_MATCH_PHOTOS = {
-    "401882912": "images/matches/espi-vs-espanyol.webp",
-    "401882919": "images/matches/mbappe-vs-real-sociedad.webp"
+    "401882912": "images/espi-vs-espanyol.webp",
+    "401882919": "images/mbappe-vs-real-sociedad.webp"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
