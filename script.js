@@ -165,7 +165,14 @@ Second half 4-1
 Formation 4-2-3-1
 In  this second half it became clear that in Mourinho's team the goal scorer is Mbappe. This is shown by Mbappes position when in defense compared to Vinicius. Vinicius is not anymore the player that looks for the balls in the space, now he is the one that passes the ball for Mbappe who is looking for balls in the space with his pace. Vinicius also has a much more defensive role during defense compared to Mbappe. Which can be key in Champions League games where pressure is essential. The combination of Arda Guler and Bellingham in attack is working at least against La Liga teams. Mourinho will have to decide if this approach will continue to be taken in Champions League. Arda Guler has created 12 chances (fotmob) in La Liga the most out of any player in 2 games. Arda Guler is able to make chances for Mbappe, Vinicius, and Bellingham. Bellingham continues to have a high level similar to his World Cup performance. Having a similar role to Guler except that he is able to make plays inside the ball which led to his assist to Vini. Mbappe would do his job with 3 goals scored, HAT-TRICK for Kylian Mbappe.
 
-Post-Match- Mourinho leaves something clear: Mbappe is the top scorer, but as stated by Mourinho " I prefer for him to score 40 goals with titles than 60 goals without titles." Mourinho expands his win history at the Bernabeu with Real Madrid (75 wins/9 draws/6 losses in 90 games.)`
+Post-Match- Mourinho leaves something clear: Mbappe is the top scorer, but as stated by Mourinho " I prefer for him to score 40 goals with titles than 60 goals without titles." Mourinho expands his win history at the Bernabeu with Real Madrid (75 wins/9 draws/6 losses in 90 games.)`,
+
+    // Real Madrid 4-0 Malaga, La Liga Round 3, Aug 30 2026 (third straight win of Mourinho's second spell)
+    "401882899": `Real Madrid Victory 4-0 against Malaga
+La Liga round 3
+Hope
+
+Real Madrid started with the same 4-2-3-1 with changes in the lineup as Trent started over Dumfries, Cucurella over Dumfries, and Brahim Diaz over Arda Guler. Real Madrid first 30 minutes were the best in the 2nd Mourinho era at Madrid. Trent Alexander-Arnold played his best football in Real Madrid showing that he can start over Dumfries. With an outstanding Bellingham Real Madrid opened the score in the 19th minute with a golazo solo play. Then Bellingham would score the 2nd at the 26th minute (goal counted as own goal.) In the 30th minute Trent would assist Mbappe. Then from the 30th minute to the 80th minute not much would occur and Real Madrid would play worse. Likely due to not having the pressure to win. Arda Guler showed his hunger when he came on in the 87th minute. It took him 4 minutes to change the game quickly showing he doesn't want to be a rotating player. Arda Guler would score with an assist by Vinicius. Yan Diomande hasn't shown his talent yet and many will call his signing a failure. It's hard to not judge a young player when he was signed for 140 million euros (with add-ons.) Mourinho stated that he has a lot to show and hasn't been starting/a having more minutes due to his late arrival. Diomande does show something different with the way he moves the ball. Only time will tell if Diomande will become a star or the next Franco Mastantuono. Solid defense today even though it wasn't challenged as much. Vinicius Jr needs to do more.`
 };
 
 /* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
@@ -185,7 +192,8 @@ Post-Match- Mourinho leaves something clear: Mbappe is the top scorer, but as st
    ---------------------------------------------------------------------- */
 const RM_MATCH_PHOTOS = {
     "401882912": "images/espi-vs-espanyol.webp",
-    "401882919": "images/mbappe-vs-real-sociedad.webp"
+    "401882919": "images/mbappe-vs-real-sociedad.webp",
+    "401882899": "images/bellingham-vs-malaga.jpg"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
@@ -283,6 +291,39 @@ const RM_MATCH_LINEUPS = {
             { name: "Diomandé", number: 25 },
             { name: "Carlos Espí", number: 19 }
         ]
+    },
+    // Real Madrid 4-0 Malaga, La Liga Round 3, Aug 30 2026. Five changes
+    // from the Real Sociedad XI per Braulio's synopsis above (Trent,
+    // Rüdiger and Cucurella all made their full debuts; Brahim Díaz started
+    // over Güler). Sourced from LaLiga.com's official lineup for this match
+    // since Braulio's write-up doesn't list the full XI. Bench is LaLiga's
+    // full published matchday squad. Numbers checked against Real Madrid's
+    // published 2026/27 squad numbers.
+    "401882899": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Rüdiger", number: 22, posClass: "pos-rcb" },
+            { name: "Trent", number: 12, posClass: "pos-rb" },
+            { name: "Camavinga", number: 6, posClass: "pos-ldm" },
+            { name: "Valverde", number: 8, posClass: "pos-rdm" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Brahim Díaz", number: 21, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Konaté", number: 16 },
+            { name: "Dumfries", number: 24 },
+            { name: "Carreras", number: 18 },
+            { name: "Güler", number: 15 },
+            { name: "Bernardo Silva", number: 20 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Diomandé", number: 25 }
+        ]
     }
 };
 
@@ -303,13 +344,15 @@ const RM_MATCH_LINEUPS = {
    ---------------------------------------------------------------------- */
 const RM_SQUAD_STATS = [
     // Espanyol 1-2 Real Madrid, La Liga Round 2, Aug 22 2026
-    { player: "Jude Bellingham", pos: "MF", goals: 1, assists: 1 }, // +1 assist vs Real Sociedad
+    { player: "Jude Bellingham", pos: "MF", goals: 2, assists: 1 }, // +1 goal vs Malaga (solo run, 19')
     { player: "Carlos Espí", pos: "FW", goals: 1, assists: 0 },
-    { player: "Arda Güler", pos: "MF", goals: 0, assists: 1 },
+    { player: "Arda Güler", pos: "MF", goals: 1, assists: 1 }, // +1 goal vs Malaga (90+1', assist Vinícius)
     // Real Madrid 4-1 Real Sociedad, La Liga Round 1, Aug 26 2026
-    { player: "Kylian Mbappé", pos: "FW", goals: 3, assists: 0 },
-    { player: "Vinícius Jr", pos: "FW", goals: 1, assists: 0 },
-    { player: "Fede Valverde", pos: "MF", goals: 0, assists: 1 }
+    { player: "Kylian Mbappé", pos: "FW", goals: 4, assists: 0 }, // +1 goal vs Malaga (30', assist Trent)
+    { player: "Vinícius Jr", pos: "FW", goals: 1, assists: 1 }, // +1 assist vs Malaga, to Güler
+    { player: "Fede Valverde", pos: "MF", goals: 0, assists: 1 },
+    // Real Madrid 4-0 Malaga, La Liga Round 3, Aug 30 2026
+    { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 } // assist vs Malaga (30', to Mbappé)
 ];
 
 class Beyond90App {

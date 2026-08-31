@@ -699,6 +699,25 @@ button { font-family: var(--font-body); cursor: pointer; }
     font-size: 1.25rem;
     color: var(--text-primary);
 }
+/* In-article photo — for articles that embed more than one image inside
+   the body copy (not just the top .article-cover). A plain <figure> so it
+   drops into a paragraph flow anywhere in .article-body. */
+.article-inline-photo { margin: 2rem 0; }
+.article-inline-photo img {
+    display: block;
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+}
+.article-inline-photo figcaption {
+    font-family: var(--font-label);
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-top: 0.6rem;
+}
 .back-link {
     display: inline-flex;
     align-items: center;
