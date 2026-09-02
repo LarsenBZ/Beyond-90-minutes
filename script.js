@@ -1203,19 +1203,43 @@ class Beyond90App {
         }
     }
 
+    // Populates BOTH homepage cards from one shared fetch: the next
+    // upcoming fixture ("Real Madrid — Next Up") and the most recently
+    // written match report ("Latest Match Report"), which is just the
+    // newest-dated match that has an RM_MATCH_SYNOPSES entry — so adding
+    // a new synopsis (the normal per-match workflow) is the only thing
+    // needed to make it show up here; nothing homepage-specific to
+    // update by hand. Uses the same wide 240-day lookback as the Match
+    // Reports archive page so a written-up match doesn't drop off the
+    // homepage just because it's no longer "recent."
     async loadHomeSidebarLive() {
         const sidebar = document.getElementById("latest-match-sidebar");
-        if (!sidebar) return;
+        const reportSidebar = document.getElementById("latest-report-sidebar");
+        if (!sidebar && !reportSidebar) return;
         try {
-            const events = await this.fetchRmMatches();
+            const events = await this.fetchRmMatches(false, 240, 60);
             const now = new Date();
-            const next = events
-                .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
-                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
-                .slice(0, 1);
-            sidebar.innerHTML = next.length
-                ? next.map(f => this.renderMatchCard(f, "Real Madrid")).join('')
-                : `<div class="empty-state">No upcoming fixture found.</div>`;
+
+            if (sidebar) {
+                const next = events
+                    .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
+                    .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
+                    .slice(0, 1);
+                sidebar.innerHTML = next.length
+                    ? next.map(f => this.renderMatchCard(f, "Real Madrid")).join('')
+                    : `<div class="empty-state">No upcoming fixture found.</div>`;
+            }
+
+            if (reportSidebar) {
+                const latestReport = events
+                    .filter(m => RM_MATCH_SYNOPSES[m.id])
+                    .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id]; m.lineup = RM_MATCH_LINEUPS[m.id] || null; m.photo = RM_MATCH_PHOTOS[m.id] || null; return m; })
+                    .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
+                    .slice(0, 1);
+                reportSidebar.innerHTML = latestReport.length
+                    ? latestReport.map(m => this.renderMatchCard(m, "Real Madrid")).join('')
+                    : `<div class="empty-state">No match reports yet.</div>`;
+            }
         } catch (err) {
             console.warn("ESPN homepage fetch failed, showing sample data instead:", err);
             this.loadHomeSidebar();
@@ -1225,9 +1249,17 @@ class Beyond90App {
     /* ---- SAMPLE-DATA LOADERS (fallback on fetch failure) ------------------ */
     loadHomeSidebar() {
         const sidebar = document.getElementById("latest-match-sidebar");
+        const reportSidebar = document.getElementById("latest-report-sidebar");
         const data = this.mockData["Real Madrid"];
-        if (!sidebar || !data) return;
-        sidebar.innerHTML = data.fixtures.map(f => this.renderMatchCard(f, "Real Madrid")).join("");
+        if (sidebar && data) {
+            sidebar.innerHTML = data.fixtures.map(f => this.renderMatchCard(f, "Real Madrid")).join("");
+        }
+        // Mock data has no synopsis attached to it, so there's nothing
+        // real to show here if the live fetch failed — an empty-state
+        // beats displaying a fake "report."
+        if (reportSidebar) {
+            reportSidebar.innerHTML = `<div class="empty-state">Match reports unavailable right now.</div>`;
+        }
     }
 
     loadRmOverview() {
