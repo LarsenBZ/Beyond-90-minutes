@@ -321,7 +321,7 @@ button { font-family: var(--font-body); cursor: pointer; }
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cline x1='200' y1='0' x2='200' y2='200' stroke='rgba(246,242,233,0.3)' stroke-width='2'/%3E%3Cline x1='0' y1='200' x2='200' y2='200' stroke='rgba(246,242,233,0.3)' stroke-width='2'/%3E%3Cpath d='M160 200 A40 40 0 0 0 200 160' stroke='rgba(246,242,233,0.3)' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cpath d='M160 200 A40 40 0 0 0 200 160' stroke='rgba(246,242,233,0.3)' stroke-width='2' fill='none'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: bottom right;
     background-size: 280px 280px;
@@ -718,6 +718,24 @@ button { font-family: var(--font-body); cursor: pointer; }
     color: var(--text-muted);
     margin-top: 0.6rem;
 }
+
+/* In-article data table (e.g. the World Cup all-time standings) — same
+   figure/figcaption pattern as .article-inline-photo above, but wrapping
+   a .table-wrapper instead of an image. */
+.article-data-figure { margin: 2rem 0; }
+.article-data-figure .section-label { margin-bottom: 0.75rem; }
+.article-data-figure figcaption {
+    font-family: var(--font-label);
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-top: 0.7rem;
+}
+.article-data-figure figcaption a {
+    color: var(--text-muted);
+    border-bottom: 1px dotted var(--line-strong);
+}
+.article-data-figure figcaption a:hover { color: var(--gold); border-bottom-color: var(--gold); }
 .back-link {
     display: inline-flex;
     align-items: center;
@@ -832,6 +850,55 @@ button { font-family: var(--font-body); cursor: pointer; }
     background: var(--pitch-bright);
     box-shadow: 0 0 0 3px rgba(46, 118, 217, 0.2);
 }
+
+/* --------------------------------------------------------------------------
+   10b. STAT CHARTS (Real Madrid hub — squad goals/assists bar chart,
+   season goals-for/against trend line). Plain SVG built in script.js
+   (buildSquadStatsChartSvg / buildGoalsTrendSvg) so there's no chart
+   library dependency — colors are CSS custom properties via inline
+   `style="fill:var(...)"` / stroke on the SVG elements, so both charts
+   follow the light/dark theme toggle automatically.
+   -------------------------------------------------------------------------- */
+.stat-chart-wrapper {
+    background: var(--paper-raised);
+    border: 1px solid var(--line);
+    border-radius: var(--border-radius-md);
+    padding: 1.25rem 1.4rem 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+.chart-legend {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 0.85rem;
+    font-family: var(--font-label);
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.legend-swatch--goals { background: var(--gold); }
+.legend-swatch--assists { background: var(--pitch-bright); }
+.legend-swatch--gf { background: var(--gold); }
+.legend-swatch--ga { background: var(--status-danger); }
+
+.stat-bar-chart, .stat-trend-chart { width: 100%; height: auto; display: block; overflow: visible; }
+
+.chart-player-label { font-family: var(--font-body); font-size: 13px; fill: var(--text-primary); }
+.chart-value-label { font-family: var(--font-label); font-size: 11px; fill: var(--text-secondary); }
+.chart-bar-goals { fill: var(--gold); }
+.chart-bar-assists { fill: var(--pitch-bright); }
+
+.chart-gridline { stroke: var(--line); stroke-width: 1; }
+.chart-axis-label { font-family: var(--font-label); font-size: 10px; fill: var(--text-muted); }
+.chart-axis-label--x { font-size: 9.5px; }
+.chart-line { stroke-width: 2.5; }
+.chart-line--gf { stroke: var(--gold); }
+.chart-line--ga { stroke: var(--status-danger); }
+.chart-dot--gf { fill: var(--gold); }
+.chart-dot--ga { fill: var(--status-danger); }
 
 /* --------------------------------------------------------------------------
    11. MATCH CARDS

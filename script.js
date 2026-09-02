@@ -655,6 +655,8 @@ class Beyond90App {
         } else if (page === "real-madrid") {
             this.renderRmSquadStats();
             this.loadRmOverviewLive();
+        } else if (page === "match-reports") {
+            this.loadMatchReportsArchive();
         } else if (page === "home") {
             this.loadHomeSidebarLive();
         }
@@ -730,10 +732,17 @@ class Beyond90App {
     // the safer bet. Covers La Liga + Champions League; doesn't currently
     // include Copa del Rey (ESPN slug esp.copa_del_rey, if you want to add
     // it — same pattern, just another league to fetch and merge).
-    async fetchRmMatches(forceRefresh = false) {
+    // daysBack/daysForward default to a rolling 30/60-day window (fine for
+    // "recent results" + "upcoming fixtures" on the Overview tab and the
+    // homepage sidebar, which only ever need matches near today). The
+    // Match Reports archive page passes a much wider daysBack instead —
+    // it needs to keep finding a match with a synopsis (see
+    // RM_MATCH_SYNOPSES) for as long as that match stays in the archive,
+    // not just while it's recent.
+    async fetchRmMatches(forceRefresh = false, daysBack = 30, daysForward = 60) {
         const now = new Date();
-        const start = new Date(now); start.setUTCDate(start.getUTCDate() - 30);
-        const end = new Date(now); end.setUTCDate(end.getUTCDate() + 60);
+        const start = new Date(now); start.setUTCDate(start.getUTCDate() - daysBack);
+        const end = new Date(now); end.setUTCDate(end.getUTCDate() + daysForward);
         const fmt = d => `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`;
         const datesParam = `${fmt(start)}-${fmt(end)}`;
 
@@ -1110,6 +1119,14 @@ class Beyond90App {
                 .slice(0, 3)
                 .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id] || null; m.lineup = RM_MATCH_LINEUPS[m.id] || null; m.photo = RM_MATCH_PHOTOS[m.id] || null; return m; });
 
+            // Full finished list (not sliced to 3), oldest → newest, for the
+            // goals-for/against trend chart — see renderRmGoalsTrend/
+            // buildGoalsTrendSvg above.
+            const allFinishedAscending = events
+                .filter(e => !e.isLive && e.status === "FINISHED" && e.rawDate)
+                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
+            this.renderRmGoalsTrend(allFinishedAscending);
+
             const fixturesHeading = document.getElementById("rm-fixtures-heading");
             if (fixturesHeading) fixturesHeading.textContent = live.length ? "Live Now" : "Upcoming Matches";
 
@@ -1157,6 +1174,32 @@ class Beyond90App {
             }
         } else if (scorersEl) {
             scorersEl.innerHTML = `<div class="empty-state">Add your Cloudflare Worker URL to see top scorers (see PROXY-SETUP.md).</div>`;
+        }
+    }
+
+    // Match Reports archive page — every RM match that has a synopsis
+    // (see RM_MATCH_SYNOPSES up top), newest first, reusing the exact
+    // same renderMatchCard() + modal system as the Real Madrid hub (a
+    // card here opens the same synopsis/lineup/photo popup). Uses a much
+    // wider fetch window than the Overview tab (see fetchRmMatches above)
+    // so a written-up match doesn't drop off this page just because it's
+    // no longer "recent" — it stays as long as RM_MATCH_SYNOPSES keeps it.
+    async loadMatchReportsArchive(forceRefresh = false) {
+        const el = document.getElementById("match-reports-list");
+        if (!el) return;
+        try {
+            const events = await this.fetchRmMatches(forceRefresh, 240, 14);
+            const reports = events
+                .filter(m => RM_MATCH_SYNOPSES[m.id])
+                .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id]; m.lineup = RM_MATCH_LINEUPS[m.id] || null; m.photo = RM_MATCH_PHOTOS[m.id] || null; return m; })
+                .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+
+            el.innerHTML = reports.length
+                ? reports.map(m => this.renderMatchCard(m, "Real Madrid")).join('')
+                : `<div class="empty-state">No match reports yet — they'll show up here as soon as one's written.</div>`;
+        } catch (err) {
+            console.warn("Fetching Real Madrid's schedule failed on the Match Reports page:", err);
+            el.innerHTML = `<div class="empty-state">Match reports unavailable right now.${this.apiFootballFailureNote(err)}</div>`;
         }
     }
 
@@ -1262,6 +1305,7 @@ class Beyond90App {
 
         const rows = [...RM_SQUAD_STATS].sort((a, b) => (b.goals - a.goals) || (b.assists - a.assists));
         el.innerHTML = rows.length ? `
+            ${this.buildSquadStatsChartSvg(rows)}
             <div class="table-wrapper">
                 <table class="standings-table">
                     <thead><tr><th style="text-align:left;">Player</th><th>Pos</th><th>Goals</th><th>Assists</th></tr></thead>
@@ -1270,6 +1314,132 @@ class Beyond90App {
                     </tbody>
                 </table>
             </div>` : `<div class="empty-state">No goals or assists logged yet this season.</div>`;
+    }
+
+    // Horizontal grouped-bar chart (goals + assists per player), built as a
+    // plain SVG string — no chart library. viewBox uses a fixed virtual
+    // coordinate system (chartW below) and scales to the container via
+    // CSS (width:100%), so it stays responsive without measuring the DOM.
+    buildSquadStatsChartSvg(rows) {
+        if (!rows || !rows.length) return '';
+        const maxVal = Math.max(1, ...rows.flatMap(r => [r.goals, r.assists]));
+        const chartW = 600;
+        const labelW = 148;
+        const valueW = 30;
+        const barAreaW = chartW - labelW - valueW;
+        const rowH = 44;
+        const barH = 13;
+        const gap = 5;
+        const topPad = 8;
+        const totalH = topPad * 2 + rows.length * rowH;
+        const scale = v => (v / maxVal) * barAreaW;
+
+        const rowsSvg = rows.map((r, i) => {
+            const rowCenter = topPad + i * rowH + rowH / 2;
+            const goalsW = Math.max(scale(r.goals), r.goals > 0 ? 2 : 0);
+            const assistsW = Math.max(scale(r.assists), r.assists > 0 ? 2 : 0);
+            const goalsY = rowCenter - barH - gap / 2;
+            const assistsY = rowCenter + gap / 2;
+            return `
+                <g>
+                    <text x="${labelW - 10}" y="${rowCenter + 4}" text-anchor="end" class="chart-player-label">${this.escapeHtml(r.player)}</text>
+                    <rect x="${labelW}" y="${goalsY}" width="${goalsW}" height="${barH}" rx="2" class="chart-bar-goals"></rect>
+                    <text x="${labelW + goalsW + 6}" y="${goalsY + barH - 2}" class="chart-value-label">${r.goals}</text>
+                    <rect x="${labelW}" y="${assistsY}" width="${assistsW}" height="${barH}" rx="2" class="chart-bar-assists"></rect>
+                    <text x="${labelW + assistsW + 6}" y="${assistsY + barH - 2}" class="chart-value-label">${r.assists}</text>
+                </g>`;
+        }).join('');
+
+        return `
+            <div class="stat-chart-wrapper">
+                <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-swatch legend-swatch--goals"></span>Goals</span>
+                    <span class="legend-item"><span class="legend-swatch legend-swatch--assists"></span>Assists</span>
+                </div>
+                <svg viewBox="0 0 ${chartW} ${totalH}" class="stat-bar-chart" role="img" aria-label="Goals and assists per player this season">
+                    ${rowsSvg}
+                </svg>
+            </div>`;
+    }
+
+    // Line chart for RM's goals-for/goals-against across the finished
+    // matches of the season so far (ascending, oldest to newest). Same
+    // plain-SVG approach as buildSquadStatsChartSvg above — no library,
+    // scales via viewBox. Needs at least 2 points to draw a line; the
+    // caller (loadRmOverviewLive) shows a placeholder instead if there
+    // aren't enough matches yet. X-axis labels are the opponent's name —
+    // fine while the match count stays modest (a handful of league
+    // games); if the season list grows long, this is the spot to revisit
+    // for label rotation/thinning.
+    buildGoalsTrendSvg(points) {
+        if (!points || points.length < 2) return '';
+        const chartW = 640;
+        const chartH = 230;
+        const padL = 30, padR = 16, padT = 16, padB = 44;
+        const innerW = chartW - padL - padR;
+        const innerH = chartH - padT - padB;
+        const maxVal = Math.max(1, ...points.flatMap(p => [p.gf, p.ga]));
+        const stepX = points.length > 1 ? innerW / (points.length - 1) : 0;
+        const xAt = i => padL + i * stepX;
+        const yAt = v => padT + innerH - (v / maxVal) * innerH;
+
+        const linePath = key => points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${xAt(i).toFixed(1)} ${yAt(p[key]).toFixed(1)}`).join(' ');
+
+        const gridVals = [...new Set([0, Math.round(maxVal / 2), maxVal])];
+        const gridLines = gridVals.map(v => `
+            <line x1="${padL}" y1="${yAt(v).toFixed(1)}" x2="${chartW - padR}" y2="${yAt(v).toFixed(1)}" class="chart-gridline"></line>
+            <text x="${padL - 8}" y="${(yAt(v) + 3.5).toFixed(1)}" text-anchor="end" class="chart-axis-label">${v}</text>
+        `).join('');
+
+        const dots = key => points.map((p, i) =>
+            `<circle cx="${xAt(i).toFixed(1)}" cy="${yAt(p[key]).toFixed(1)}" r="4" class="chart-dot chart-dot--${key}"><title>${this.escapeHtml(p.opponent)}: ${p[key]}</title></circle>`
+        ).join('');
+
+        const xLabels = points.map((p, i) =>
+            `<text x="${xAt(i).toFixed(1)}" y="${chartH - padB + 20}" text-anchor="middle" class="chart-axis-label chart-axis-label--x">${this.escapeHtml(p.opponent)}</text>`
+        ).join('');
+
+        return `
+            <div class="stat-chart-wrapper">
+                <div class="chart-legend">
+                    <span class="legend-item"><span class="legend-swatch legend-swatch--gf"></span>Goals For</span>
+                    <span class="legend-item"><span class="legend-swatch legend-swatch--ga"></span>Goals Against</span>
+                </div>
+                <svg viewBox="0 0 ${chartW} ${chartH}" class="stat-trend-chart" role="img" aria-label="Goals for and against by match this season">
+                    ${gridLines}
+                    <path d="${linePath('gf')}" class="chart-line chart-line--gf" fill="none"></path>
+                    <path d="${linePath('ga')}" class="chart-line chart-line--ga" fill="none"></path>
+                    ${dots('gf')}
+                    ${dots('ga')}
+                    ${xLabels}
+                </svg>
+            </div>`;
+    }
+
+    // Builds the {opponent, gf, ga} points buildGoalsTrendSvg needs from
+    // finished RM matches (ascending). match.score is always "H - A" for
+    // a FINISHED match (see mapEspnEvent) — home/away determined by
+    // comparing homeId to Real Madrid's own ESPN id.
+    renderRmGoalsTrend(finishedAscending) {
+        const el = document.getElementById("rm-goals-trend-container");
+        if (!el) return;
+        const rmId = String(ESPN_CONFIG.realMadridTeamId);
+        const points = finishedAscending
+            .filter(m => m.score && m.score.includes(' - '))
+            .map(m => {
+                const isHome = String(m.homeId) === rmId;
+                const [s1, s2] = m.score.split(' - ').map(n => parseInt(n, 10));
+                return {
+                    opponent: isHome ? m.away : m.home,
+                    gf: isHome ? s1 : s2,
+                    ga: isHome ? s2 : s1
+                };
+            })
+            .filter(p => Number.isFinite(p.gf) && Number.isFinite(p.ga));
+
+        el.innerHTML = points.length >= 2
+            ? this.buildGoalsTrendSvg(points)
+            : `<div class="empty-state">Trend chart will appear once a few matches are in.</div>`;
     }
 
     /* ---- RENDER HELPERS ---------------------------------------- */
