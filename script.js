@@ -327,6 +327,70 @@ const RM_MATCH_LINEUPS = {
     }
 };
 
+/* ---- REAL MADRID MATCH INFO (manually maintained, one per match) ---------
+   Core match facts — score, competition, venue, kickoff, and the goal
+   timeline — for every match that has a synopsis above. This is what
+   powers the Match Reports archive page (match-reports.html) and the
+   homepage's "Latest Match Report" card, and it renders WITHOUT any live
+   ESPN fetch: the old approach (fetch Real Madrid's schedule live, then
+   cross-reference it against RM_MATCH_SYNOPSES) kept coming back with
+   "No match reports yet" on the live site even though the data was all
+   there — same class of bug as the lineups/photos before it, so same
+   fix: hand-kept and rendered directly, guaranteed to work regardless of
+   network conditions in the visitor's browser.
+
+   HOW TO ADD A NEW MATCH after writing its synopsis above:
+     1. Same match ID as RM_MATCH_SYNOPSES/RM_MATCH_LINEUPS/RM_MATCH_PHOTOS.
+     2. "opponent" + "isHome" (true if Real Madrid is the home team).
+     3. "rmScore"/"oppScore", "matchday" (number, or omit if unknown),
+        "venue", and "rawDate" as a UTC ISO kickoff time — it's formatted
+        for display automatically, same as everywhere else on the site.
+     4. "events" — as many goal/card entries as you want shown, oldest
+        first: { minute: "40'", type: "goal"|"yellow"|"red", team:
+        "rm"|"opp", player: "Name", ownGoal / penalty: true (optional) }.
+   A match with no entry here just won't appear on the Match Reports page
+   or the homepage report card — nothing else breaks.
+   ---------------------------------------------------------------------- */
+const RM_MATCH_INFO = {
+    // Espanyol 1-2 Real Madrid, La Liga Matchday 2, Aug 22 2026, RCDE Stadium
+    "401882912": {
+        opponent: "Espanyol", isHome: false, rmScore: 2, oppScore: 1,
+        matchday: 2, venue: "RCDE Stadium, Cornellà-El Prat",
+        rawDate: "2026-08-22T19:30:00Z",
+        events: [
+            { minute: "9'", type: "goal", team: "rm", player: "Bellingham" },
+            { minute: "30'", type: "goal", team: "opp", player: "Calatrava" },
+            { minute: "90'", type: "goal", team: "rm", player: "Carlos Espí" }
+        ]
+    },
+    // Real Madrid 4-1 Real Sociedad, La Liga Matchday 1 (postponed fixture,
+    // played Aug 26 2026), Santiago Bernabéu
+    "401882919": {
+        opponent: "Real Sociedad", isHome: true, rmScore: 4, oppScore: 1,
+        matchday: 1, venue: "Santiago Bernabéu Stadium, Madrid",
+        rawDate: "2026-08-26T19:00:00Z",
+        events: [
+            { minute: "40'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "44'", type: "goal", team: "opp", player: "Sučić" },
+            { minute: "60'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "68'", type: "goal", team: "rm", player: "Vinícius Jr" },
+            { minute: "80'", type: "goal", team: "rm", player: "Mbappé" }
+        ]
+    },
+    // Real Madrid 4-0 Málaga, La Liga Matchday 3, Aug 30 2026, Santiago Bernabéu
+    "401882899": {
+        opponent: "Málaga", isHome: true, rmScore: 4, oppScore: 0,
+        matchday: 3, venue: "Santiago Bernabéu Stadium, Madrid",
+        rawDate: "2026-08-30T15:00:00Z",
+        events: [
+            { minute: "19'", type: "goal", team: "rm", player: "Bellingham" },
+            { minute: "26'", type: "goal", team: "rm", player: "A. Herrero", ownGoal: true },
+            { minute: "30'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "90+1'", type: "goal", team: "rm", player: "Güler" }
+        ]
+    }
+};
+
 /* ---- REAL MADRID SQUAD STATS (manually maintained) ------------------------
    API-Football's free plan doesn't cover the current season at all (see
    API_FOOTBALL_CONFIG.maxFreeSeason below) — every row this used to show was
@@ -532,30 +596,26 @@ class Beyond90App {
     /* ---- ARTICLE SEARCH & FILTER ---------------------------------------- */
     setupArticleSearch() {
         const searchInput = document.getElementById("article-search");
-        const categoryButtons = document.querySelectorAll("#category-filters .rm-nav-btn");
-        // Length (Short/Long reads) is a second, independent filter — it ANDs
-        // with the topic filter and the search box rather than replacing them,
-        // so "Analysis" + "Short Reads" narrows to short analysis pieces only.
+        // Length (Short/Long reads) ANDs with the search box — the topic
+        // filter (All/Analysis/World Cup) was removed since it wasn't
+        // pulling its weight with only two real categories.
         const lengthButtons = document.querySelectorAll("#length-filters .rm-nav-btn");
         const articleCards = document.querySelectorAll(".article-card");
         const emptyState = document.getElementById("articles-empty-state");
 
-        if (!searchInput && categoryButtons.length === 0 && lengthButtons.length === 0) return;
+        if (!searchInput && lengthButtons.length === 0) return;
 
-        let currentCategory = "ALL";
         let currentLength = "ALL";
         let searchQuery = "";
 
         const filterArticles = () => {
             let visibleCount = 0;
             articleCards.forEach(card => {
-                const category = card.getAttribute("data-category") || "";
                 const length = card.getAttribute("data-length") || "";
                 const title = card.getAttribute("data-title") || "";
-                const matchesCategory = currentCategory === "ALL" || category === currentCategory;
                 const matchesLength = currentLength === "ALL" || length === currentLength;
                 const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase());
-                const visible = matchesCategory && matchesLength && matchesSearch;
+                const visible = matchesLength && matchesSearch;
                 card.style.display = visible ? "flex" : "none";
                 if (visible) visibleCount++;
             });
@@ -568,15 +628,6 @@ class Beyond90App {
                 filterArticles();
             });
         }
-
-        categoryButtons.forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                categoryButtons.forEach(b => b.classList.remove("active"));
-                e.target.classList.add("active");
-                currentCategory = e.target.getAttribute("data-category") || "ALL";
-                filterArticles();
-            });
-        });
 
         lengthButtons.forEach(btn => {
             btn.addEventListener("click", (e) => {
@@ -1177,91 +1228,111 @@ class Beyond90App {
         }
     }
 
-    // Match Reports archive page — every RM match that has a synopsis
-    // (see RM_MATCH_SYNOPSES up top), newest first, reusing the exact
-    // same renderMatchCard() + modal system as the Real Madrid hub (a
-    // card here opens the same synopsis/lineup/photo popup). Uses a much
-    // wider fetch window than the Overview tab (see fetchRmMatches above)
-    // so a written-up match doesn't drop off this page just because it's
-    // no longer "recent" — it stays as long as RM_MATCH_SYNOPSES keeps it.
-    async loadMatchReportsArchive(forceRefresh = false) {
-        const el = document.getElementById("match-reports-list");
-        if (!el) return;
-        try {
-            const events = await this.fetchRmMatches(forceRefresh, 240, 14);
-            const reports = events
-                .filter(m => RM_MATCH_SYNOPSES[m.id])
-                .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id]; m.lineup = RM_MATCH_LINEUPS[m.id] || null; m.photo = RM_MATCH_PHOTOS[m.id] || null; return m; })
-                .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+    // Builds full match-card-ready objects for every match that has a
+    // synopsis, straight from the hand-kept RM_MATCH_INFO/RM_MATCH_SYNOPSES/
+    // RM_MATCH_LINEUPS/RM_MATCH_PHOTOS registries above — no ESPN fetch
+    // involved, so nothing here can go stale, rate-limit, or come back
+    // empty because of a visitor's network/browser. Same output shape as
+    // mapEspnEvent() so renderMatchCard()/openMatchModal() need no changes
+    // to consume it. Newest first.
+    buildRmMatchReports() {
+        return Object.keys(RM_MATCH_SYNOPSES)
+            .map(id => {
+                const info = RM_MATCH_INFO[id];
+                if (!info) {
+                    console.warn(`RM_MATCH_SYNOPSES has an entry for match ${id} with no matching RM_MATCH_INFO — skipping it on the Match Reports page until that's added.`);
+                    return null;
+                }
+                const rmSide = info.isHome ? "home" : "away";
+                const oppSide = info.isHome ? "away" : "home";
+                const events = (info.events || []).map(e => ({
+                    minute: e.minute,
+                    type: e.type,
+                    teamSide: e.team === "rm" ? rmSide : oppSide,
+                    player: e.player,
+                    ownGoal: Boolean(e.ownGoal),
+                    penalty: Boolean(e.penalty)
+                }));
+                const date = new Date(info.rawDate);
+                const time = isNaN(date.getTime())
+                    ? "TBD"
+                    : date.toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
-            el.innerHTML = reports.length
-                ? reports.map(m => this.renderMatchCard(m, "Real Madrid")).join('')
-                : `<div class="empty-state">No match reports yet — they'll show up here as soon as one's written.</div>`;
-        } catch (err) {
-            console.warn("Fetching Real Madrid's schedule failed on the Match Reports page:", err);
-            el.innerHTML = `<div class="empty-state">Match reports unavailable right now.${this.apiFootballFailureNote(err)}</div>`;
-        }
+                return {
+                    id,
+                    home: info.isHome ? "Real Madrid" : info.opponent,
+                    away: info.isHome ? info.opponent : "Real Madrid",
+                    time,
+                    score: info.isHome ? `${info.rmScore} - ${info.oppScore}` : `${info.oppScore} - ${info.rmScore}`,
+                    venue: info.venue,
+                    status: "FINISHED",
+                    isLive: false,
+                    statusLabel: null,
+                    events,
+                    halftime: null,
+                    matchday: info.matchday ?? null,
+                    stage: null,
+                    group: null,
+                    rawDate: info.rawDate,
+                    synopsis: RM_MATCH_SYNOPSES[id],
+                    lineup: RM_MATCH_LINEUPS[id] || null,
+                    photo: RM_MATCH_PHOTOS[id] || null
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
     }
 
-    // Populates BOTH homepage cards from one shared fetch: the next
-    // upcoming fixture ("Real Madrid — Next Up") and the most recently
-    // written match report ("Latest Match Report"), which is just the
-    // newest-dated match that has an RM_MATCH_SYNOPSES entry — so adding
-    // a new synopsis (the normal per-match workflow) is the only thing
-    // needed to make it show up here; nothing homepage-specific to
-    // update by hand. Uses the same wide 240-day lookback as the Match
-    // Reports archive page so a written-up match doesn't drop off the
-    // homepage just because it's no longer "recent."
+    // Match Reports archive page — every RM match that has a synopsis,
+    // newest first, reusing the exact same renderMatchCard() + modal
+    // system as the Real Madrid hub (a card here opens the same
+    // synopsis/lineup/photo popup). Fully synchronous and hand-kept (see
+    // buildRmMatchReports() above) — no fetch, so no loading state and
+    // nothing for a slow or blocked network to break.
+    loadMatchReportsArchive() {
+        const el = document.getElementById("match-reports-list");
+        if (!el) return;
+        const reports = this.buildRmMatchReports();
+        el.innerHTML = reports.length
+            ? reports.map(m => this.renderMatchCard(m, "Real Madrid")).join('')
+            : `<div class="empty-state">No match reports yet — they'll show up here as soon as one's written.</div>`;
+    }
+
+    // Populates the homepage's two cards. "Latest Match Report" is fully
+    // hand-kept (see buildRmMatchReports() above) — same fix as the Match
+    // Reports archive page, no fetch needed, so adding a new synopsis is
+    // still the only thing needed to make it show up here. "Real Madrid
+    // — Next Up" is the one card that genuinely needs a live fetch (an
+    // unplayed fixture can't be hand-kept ahead of time), so it still
+    // pulls from ESPN and falls back to sample data if that fails.
     async loadHomeSidebarLive() {
         const sidebar = document.getElementById("latest-match-sidebar");
         const reportSidebar = document.getElementById("latest-report-sidebar");
-        if (!sidebar && !reportSidebar) return;
+        if (reportSidebar) {
+            const latestReport = this.buildRmMatchReports().slice(0, 1);
+            reportSidebar.innerHTML = latestReport.length
+                ? latestReport.map(m => this.renderMatchCard(m, "Real Madrid")).join('')
+                : `<div class="empty-state">No match reports yet.</div>`;
+        }
+        if (!sidebar) return;
         try {
             const events = await this.fetchRmMatches(false, 240, 60);
             const now = new Date();
-
-            if (sidebar) {
-                const next = events
-                    .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
-                    .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
-                    .slice(0, 1);
-                sidebar.innerHTML = next.length
-                    ? next.map(f => this.renderMatchCard(f, "Real Madrid")).join('')
-                    : `<div class="empty-state">No upcoming fixture found.</div>`;
-            }
-
-            if (reportSidebar) {
-                const latestReport = events
-                    .filter(m => RM_MATCH_SYNOPSES[m.id])
-                    .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id]; m.lineup = RM_MATCH_LINEUPS[m.id] || null; m.photo = RM_MATCH_PHOTOS[m.id] || null; return m; })
-                    .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
-                    .slice(0, 1);
-                reportSidebar.innerHTML = latestReport.length
-                    ? latestReport.map(m => this.renderMatchCard(m, "Real Madrid")).join('')
-                    : `<div class="empty-state">No match reports yet.</div>`;
-            }
+            const next = events
+                .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
+                .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate))
+                .slice(0, 1);
+            sidebar.innerHTML = next.length
+                ? next.map(f => this.renderMatchCard(f, "Real Madrid")).join('')
+                : `<div class="empty-state">No upcoming fixture found.</div>`;
         } catch (err) {
-            console.warn("ESPN homepage fetch failed, showing sample data instead:", err);
-            this.loadHomeSidebar();
+            console.warn("ESPN homepage fetch failed for the 'Next Up' fixture, showing sample data instead:", err);
+            const data = this.mockData["Real Madrid"];
+            if (sidebar && data) sidebar.innerHTML = data.fixtures.map(f => this.renderMatchCard(f, "Real Madrid")).join("");
         }
     }
 
     /* ---- SAMPLE-DATA LOADERS (fallback on fetch failure) ------------------ */
-    loadHomeSidebar() {
-        const sidebar = document.getElementById("latest-match-sidebar");
-        const reportSidebar = document.getElementById("latest-report-sidebar");
-        const data = this.mockData["Real Madrid"];
-        if (sidebar && data) {
-            sidebar.innerHTML = data.fixtures.map(f => this.renderMatchCard(f, "Real Madrid")).join("");
-        }
-        // Mock data has no synopsis attached to it, so there's nothing
-        // real to show here if the live fetch failed — an empty-state
-        // beats displaying a fake "report."
-        if (reportSidebar) {
-            reportSidebar.innerHTML = `<div class="empty-state">Match reports unavailable right now.</div>`;
-        }
-    }
-
     loadRmOverview() {
         const fixturesEl = document.getElementById("rm-fixtures-container");
         const resultsEl = document.getElementById("rm-results-container");
