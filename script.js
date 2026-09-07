@@ -5,12 +5,12 @@
    match detail modal, Real Madrid post-match synopses, and Real Madrid tab
    switching.
 
-   WHERE THE DATA COMES FROM (two APIs, split by what each is good at):
+   WHERE THE DATA COMES FROM:
 
-   1. ESPN's public site API (site.api.espn.com) — scoreboard, standings,
-      and team schedules. No API key, no rate limit, no proxy needed — your
-      browser talks to it directly. This is why fixtures/standings just work
-      the moment you load the page, with nothing to configure.
+   ESPN's public site API (site.api.espn.com) — scoreboard, standings, and
+   team schedules. No API key, no rate limit, no proxy needed — your
+   browser talks to it directly. This is why fixtures/standings just work
+   the moment you load the page, with nothing to configure.
 
       Gotcha we ran into: soccer standings return an empty {} on the
       "/apis/site/v2/" path. You have to use "/apis/v2/" instead — see
@@ -21,35 +21,38 @@
       the label reads "Matchday 12", figured out from the schedule itself
       rather than read off a field ESPN doesn't provide.
 
-   2. API-Football (v3.football.api-sports.io) — everything ESPN's soccer
-      coverage doesn't reliably give: season top scorers, a finished match's
-      lineups/formation, and match stats (shots, possession, cards) and
-      events (who scored, when). This one DOES need a key, so it's routed
-      through your Cloudflare Worker proxy (cloudflare-worker.js) exactly
-      like football-data.org used to be — the key stays server-side, never
-      in this file or your public repo.
+   Everything else — league Top Scorers (LEAGUE_TOP_SCORERS), Real Madrid's
+   Starting XI (RM_MATCH_LINEUPS), Season Stats (RM_SQUAD_STATS), and match
+   reports (RM_MATCH_INFO/RM_MATCH_SYNOPSES) — is hand-kept directly in this
+   file rather than fetched live. This used to be split against a second
+   API, API-Football (v3.football.api-sports.io), for the season-wide stuff
+   ESPN's soccer coverage doesn't reliably give — routed through a
+   Cloudflare Worker proxy (cloudflare-worker.js) to keep the key server
+   side. But API-Football's free plan doesn't cover the current season at
+   all (confirmed by hitting it directly — every call silently fell back to
+   an old season instead of failing outright), so everything it powered was
+   quietly WRONG rather than just occasionally unavailable: Season Stats
+   showed last year's squad, Top Scorers showed a stale season. Top Scorers
+   was the last thing on the site still depending on it (as of Sep 5 2026,
+   see LEAGUE_TOP_SCORERS below) — nothing in this file calls API-Football
+   any more, so the Cloudflare Worker and its API key are dormant. Fine to
+   leave as-is or retire the Worker entirely; your call.
 
-      IMPORTANT — free-tier quota: API-Football's free plan is 100
-      requests/DAY, and that's ONE shared quota across every visitor to
-      your site (not 100 per visitor). Two things protect that budget:
-        a) This file caches every API-Football response in localStorage for
-           API_FOOTBALL_CONFIG.cacheMinutes (long, on purpose).
-        b) The Worker itself caches responses at Cloudflare's edge (see
-           cloudflare-worker.js), so even a brand new visitor with an empty
-           cache usually gets a cached copy instead of spending a request.
-      If the scorers/lineups/stats sections ever show "unavailable right
-      now", the quota probably ran dry for the day — everything else on the
-      site (fixtures, standings, schedules) keeps working regardless, since
-      that's all ESPN and has no daily limit.
+   A NOTE ON HAND-KEPT DATA (Top Scorers, Starting XI, Season Stats, match
+   reports): all four update the same way — find the real number/lineup
+   from a source you trust (a league's own site, ESPN, LaLiga.com, etc.),
+   edit the relevant constant below, commit, push. None of these
+   auto-refresh; each is only ever as current as the last time someone
+   edited this file. See LEAGUE_TOP_SCORERS, RM_MATCH_LINEUPS, and
+   RM_SQUAD_STATS below for the exact shape each expects, and the "HOW TO
+   UPDATE" comment above each one.
 
    A NOTE ON THE STARTING XI + SEASON STATS (Real Madrid page): both used
    to be live fetches — the XI from ESPN's summary endpoint, squad stats
-   from API-Football — and both turned out to be dead ends. API-Football's
-   free plan doesn't cover the current season at all (see maxFreeSeason
-   below), so Season Stats was quietly showing last year's squad. ESPN's
-   exact soccer "lineups" payload shape was never confirmed either. Both
-   are hand-kept instead, same as the match synopses: see RM_SQUAD_STATS
-   below and RM_MATCH_LINEUPS further down.
+   from API-Football — and both turned out to be dead ends, for the same
+   free-plan reason above. ESPN's exact soccer "lineups" payload shape was
+   never confirmed either. Both are hand-kept instead, same as the match
+   synopses: see RM_SQUAD_STATS below and RM_MATCH_LINEUPS further down.
    The Starting XI pitch has moved twice since. First, out of its own
    "Tactical Lineup" tab into one always-on "current XI" box sitting next
    to a "Last Match Report" panel — but that report panel was still
@@ -86,39 +89,6 @@ const ESPN_CONFIG = {
     },
     realMadridTeamId: 86, // ESPN's internal team ID for Real Madrid
     cacheMinutes: 5
-};
-
-const API_FOOTBALL_CONFIG = {
-    // Paste your Cloudflare Worker URL here (see PROXY-SETUP.md). Leave it
-    // blank and the site still works fine — fixtures/standings/schedules
-    // (ESPN) all still load live, you just won't get top scorers, lineups,
-    // or match stats until this is set.
-    proxyBaseUrl: "https://beyond90-proxy.braulioz147.workers.dev",
-    leagues: {
-        premierLeague: 39,
-        laLiga: 140,
-        championsLeague: 2
-    },
-    // API-Football's team ID for Real Madrid. Team IDs are stable, but if
-    // the match report or squad stats sections ever come back empty, this
-    // is the first thing worth double-checking against
-    // https://dashboard.api-football.com (Ids → Teams → search "Real Madrid").
-    realMadridTeamId: 541,
-    // Deliberately long — the free plan is 100 requests/DAY, shared by every
-    // visitor, so we lean hard on caching. The Worker also caches at
-    // Cloudflare's edge on top of this, see cloudflare-worker.js.
-    cacheMinutes: 180,
-    // CONFIRMED Aug 2026 by hitting the Worker URL directly: API-Football's
-    // free plan returns { "errors": { "plan": "Free plans do not have
-    // access to this season, try from 2022 to 2024." } } for season=2026.
-    // This isn't a bug in this site's code — the free plan simply doesn't
-    // cover the current 2025/26 season at all. Season-scoped calls (top
-    // scorers, squad stats) fall back to this year instead, so the site
-    // shows real data rather than a permanent "unavailable" message — the
-    // UI labels it as that season wherever it's used so it's never
-    // mistaken for current. Bump this the day API-Football's free plan
-    // actually covers the current season again.
-    maxFreeSeason: 2024
 };
 
 /* ---- REAL MADRID POST-MATCH SYNOPSES -------------------------------------
@@ -172,7 +142,14 @@ Post-Match- Mourinho leaves something clear: Mbappe is the top scorer, but as st
 La Liga round 3
 Hope
 
-Real Madrid started with the same 4-2-3-1 with changes in the lineup as Trent started over Dumfries, Cucurella over Dumfries, and Brahim Diaz over Arda Guler. Real Madrid first 30 minutes were the best in the 2nd Mourinho era at Madrid. Trent Alexander-Arnold played his best football in Real Madrid showing that he can start over Dumfries. With an outstanding Bellingham Real Madrid opened the score in the 19th minute with a golazo solo play. Then Bellingham would score the 2nd at the 26th minute (goal counted as own goal.) In the 30th minute Trent would assist Mbappe. Then from the 30th minute to the 80th minute not much would occur and Real Madrid would play worse. Likely due to not having the pressure to win. Arda Guler showed his hunger when he came on in the 87th minute. It took him 4 minutes to change the game quickly showing he doesn't want to be a rotating player. Arda Guler would score with an assist by Vinicius. Yan Diomande hasn't shown his talent yet and many will call his signing a failure. It's hard to not judge a young player when he was signed for 140 million euros (with add-ons.) Mourinho stated that he has a lot to show and hasn't been starting/a having more minutes due to his late arrival. Diomande does show something different with the way he moves the ball. Only time will tell if Diomande will become a star or the next Franco Mastantuono. Solid defense today even though it wasn't challenged as much. Vinicius Jr needs to do more.`
+Real Madrid started with the same 4-2-3-1 with changes in the lineup as Trent started over Dumfries, Cucurella over Dumfries, and Brahim Diaz over Arda Guler. Real Madrid first 30 minutes were the best in the 2nd Mourinho era at Madrid. Trent Alexander-Arnold played his best football in Real Madrid showing that he can start over Dumfries. With an outstanding Bellingham Real Madrid opened the score in the 19th minute with a golazo solo play. Then Bellingham would score the 2nd at the 26th minute (goal counted as own goal.) In the 30th minute Trent would assist Mbappe. Then from the 30th minute to the 80th minute not much would occur and Real Madrid would play worse. Likely due to not having the pressure to win. Arda Guler showed his hunger when he came on in the 87th minute. It took him 4 minutes to change the game quickly showing he doesn't want to be a rotating player. Arda Guler would score with an assist by Vinicius. Yan Diomande hasn't shown his talent yet and many will call his signing a failure. It's hard to not judge a young player when he was signed for 140 million euros (with add-ons.) Mourinho stated that he has a lot to show and hasn't been starting/a having more minutes due to his late arrival. Diomande does show something different with the way he moves the ball. Only time will tell if Diomande will become a star or the next Franco Mastantuono. Solid defense today even though it wasn't challenged as much. Vinicius Jr needs to do more.`,
+
+    // Real Betis 1-0 Real Madrid, La Liga Round 4, Sep 4 2026
+    "401882894": `Real Betis 1-0 Real Madrid
+La Liga Round 4
+The different side of the same coin
+
+Real Madrid played with the same energy as Ancelotti's team in 24/25, Xabi Alonso's 25/26, and Álvaro Arbeloa 25/26. Meaning there is no hunger. Real Madrid creates chances because they are players with quality, but the moment you face a team that plays defensively you have to score the chances you have. Some may say that the penalty should have repeated, Real Madrid should not need a penalty in the last minute to draw. Yes, Real Betis is a great team, but the difference in squad quality is massive. These games can't be lost, not a single point. At the end of the season these points are the ones that cause the biggest difference for first place. The team played a bad first half and an even worse second half. NOTHING from the midfield. Today Bellingham was not existent in attack. Valverde nothing, there is nothing to defend for the most part so he is "just there." Camavinga is an ex-player you give him a pass and you receive a rock with the shape of a ball. Vinicius can't dribble past anyone. The pass given by Guler in the first half he should have scored it, but he was sleeping in the pitch for a second. Kylian Mbappe it doesn't matter if you score a hat-trick, a poker, it doesn't matter if you can't score the goal that gives the team the advantage. The pass by Vini which he should have shot, was still a great chance to score but no. The penalty, unlucky I guess it happens but a game where nothing happens it's hard to avoid the thought what if. Mourinho is the same as Ancelotti, Xabi Alonso, and Alvaro Arbeloa: they are scared of the big names. Why if Vini is playing bad why not sub him out. Let Espi start who has shown that he can score similarly to Gonzalo Garcia. Why buy a player for 140 million euros when he isn't going to score. Arda Guler is playing great, there was no need I'm not sure what the board was thinking. I'm sure that Diomande is still developing, but if I buy a player for 140 million I want him to do everything in the club. A signing of that amount should a star, should be in any graphic, social media posts, and every game. However, he isn't? Mourinho said some of his decisions are based on the amount of time some players had to train due to the World Cup and the time they were signed. This doesn't make sense with the right back. Why not start Trent when you are going to have the ball, yes he will likely lose the 1v1 vs  Fran Garcia, but he will be incredible in attack. Lastly, honor to Espi for signing for Real Madrid and living a dream even though he will not get minutes because the front 2 + Diomande/Arda Guler is untouchable for any coach at this point (Endrick will have even less development when he is back from injury.)`
 };
 
 /* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
@@ -193,7 +170,8 @@ Real Madrid started with the same 4-2-3-1 with changes in the lineup as Trent st
 const RM_MATCH_PHOTOS = {
     "401882912": "images/espi-vs-espanyol.webp",
     "401882919": "images/mbappe-vs-real-sociedad.webp",
-    "401882899": "images/bellingham-vs-malaga.jpg"
+    "401882899": "images/bellingham-vs-malaga.jpg",
+    "401882894": "images/mbappe-vs-betis.webp"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
@@ -324,6 +302,44 @@ const RM_MATCH_LINEUPS = {
             { name: "Carlos Espí", number: 19 },
             { name: "Diomandé", number: 25 }
         ]
+    },
+    // Real Betis 1-0 Real Madrid, La Liga Matchday 4, Sep 4 2026. Sourced
+    // from Real Madrid's own official lineup announcement (realmadrid.com)
+    // and cross-checked against Fotmob's match center. Camavinga/Valverde
+    // returned as the double pivot with Güler on the right (matches
+    // Braulio's synopsis above naming both as starters). Subs used in the
+    // match: Bernardo Silva for Camavinga, Trent for Dumfries, Diomandé for
+    // Güler. Bench below is the full published matchday squad; numbers
+    // checked against Real Madrid's published 2026/27 squad numbers.
+    "401882894": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Dumfries", number: 24, posClass: "pos-rb" },
+            { name: "Camavinga", number: 6, posClass: "pos-ldm" },
+            { name: "Valverde", number: 8, posClass: "pos-rdm" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Javi Navarro", number: 31 },
+            { name: "Trent", number: 12 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Bernardo Silva", number: 20 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Diomandé", number: 25 },
+            { name: "Cestero", number: 29 },
+            { name: "Mario Rivas", number: 33 },
+            { name: "Sergio Martínez", number: 38 }
+        ]
     }
 };
 
@@ -388,13 +404,27 @@ const RM_MATCH_INFO = {
             { minute: "30'", type: "goal", team: "rm", player: "Mbappé" },
             { minute: "90+1'", type: "goal", team: "rm", player: "Güler" }
         ]
+    },
+    // Real Betis 1-0 Real Madrid, La Liga Matchday 4, Sep 4 2026, Estadio
+    // La Cartuja (Betis's temporary home while their own stadium is being
+    // expanded). Mbappé had a stoppage-time penalty saved by Valles that
+    // would have drawn the game level — not logged as an event below since
+    // there's no "missed penalty" event type, but it's in Braulio's
+    // synopsis above.
+    "401882894": {
+        opponent: "Real Betis", isHome: false, rmScore: 0, oppScore: 1,
+        matchday: 4, venue: "Estadio La Cartuja, Seville",
+        rawDate: "2026-09-04T19:00:00Z",
+        events: [
+            { minute: "81'", type: "goal", team: "opp", player: "Troy Parrott" }
+        ]
     }
 };
 
 /* ---- REAL MADRID SQUAD STATS (manually maintained) ------------------------
-   API-Football's free plan doesn't cover the current season at all (see
-   API_FOOTBALL_CONFIG.maxFreeSeason below) — every row this used to show was
-   really the 2024/25 squad, which is why it looked wrong rather than just
+   API-Football's free plan doesn't cover the current season at all (see the
+   file-header note above) — every row this used to show was really the
+   2024/25 squad, which is why it looked wrong rather than just
    old: several of those players aren't even on the roster anymore. ESPN
    doesn't have a real substitute either — there's no single call that
    returns a whole squad's season goals/assists the way API-Football's did;
@@ -418,6 +448,70 @@ const RM_SQUAD_STATS = [
     // Real Madrid 4-0 Malaga, La Liga Round 3, Aug 30 2026
     { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 } // assist vs Malaga (30', to Mbappé)
 ];
+
+/* ---- LEAGUE TOP SCORERS (manually maintained, one list per league) -------
+   Same reasoning as RM_SQUAD_STATS above: API-Football's free plan doesn't
+   cover the current season, so a live "top scorers" call was quietly
+   showing an old season dressed up with a "(2023/24)" label rather than
+   real current numbers. Hand-kept instead — keyed by the exact leagueKey
+   string each CompetitionHub uses ("Premier League", "La Liga", "UEFA
+   Champions League"), which loadScorers()/loadRmOverviewLive() read
+   straight from this object with no fetch involved.
+
+   HOW TO UPDATE THIS: check a source you trust (the Premier League's own
+   stats page, LaLiga.com, ESPN's league stats page, etc.), replace the
+   "scorers" array for that league with the new top ~10, and update "asOf"
+   to the date you checked. assists are optional — leave a player's
+   assists as null if your source doesn't show them; renderScorersTable
+   shows "—" for that. Ties (several players on the same goal count) can
+   go in any order. Save, commit, push — no other code changes needed.
+   A league with an empty "scorers" array shows "note" instead (used below
+   for the Champions League before its league phase has kicked off).
+   ---------------------------------------------------------------------- */
+const LEAGUE_TOP_SCORERS = {
+    // Source: NBC Sports (Nicholas Mendola), published Sep 5 2026, 11:53am ET
+    "Premier League": {
+        asOf: "Sep 5, 2026 (Matchday 4)",
+        scorers: [
+            { player: "Bruno Fernandes", team: "Manchester United", goals: 3, assists: null },
+            { player: "Alexander Isak", team: "Liverpool", goals: 3, assists: null },
+            { player: "Erling Haaland", team: "Manchester City", goals: 3, assists: null },
+            { player: "Jack Hinshelwood", team: "Brighton", goals: 2, assists: null },
+            { player: "Rayan Cherki", team: "Manchester City", goals: 2, assists: null },
+            { player: "Anthony Elanga", team: "Newcastle United", goals: 2, assists: null },
+            { player: "Joao Pedro", team: "Chelsea", goals: 2, assists: null },
+            { player: "Cole Palmer", team: "Chelsea", goals: 2, assists: null },
+            { player: "Bukayo Saka", team: "Arsenal", goals: 2, assists: null },
+            { player: "Marcus Tavernier", team: "Bournemouth", goals: 2, assists: null }
+        ]
+    },
+    // Source: NBC Sports (Nicholas Mendola), published Sep 4 2026, 3:01pm ET
+    // — reflects Real Madrid's MD4 loss at Betis, but not every MD4 game
+    // (Barcelona hadn't played its round-4 fixture yet at publish time).
+    "La Liga": {
+        asOf: "Sep 4, 2026 (Matchday 4)",
+        scorers: [
+            { player: "Raphinha", team: "Barcelona", goals: 5, assists: null },
+            { player: "Kylian Mbappé", team: "Real Madrid", goals: 4, assists: null },
+            { player: "Fermín López", team: "Barcelona", goals: 3, assists: null },
+            { player: "Yassir Zabiri", team: "Racing Santander", goals: 3, assists: null },
+            { player: "Roberto Fernández", team: "Espanyol", goals: 3, assists: null },
+            { player: "Alex Baena", team: "Atlético Madrid", goals: 3, assists: null },
+            { player: "Pierre-Emerick Aubameyang", team: "Deportivo de La Coruña", goals: 3, assists: null },
+            { player: "Sergio Camello", team: "Rayo Vallecano", goals: 3, assists: null },
+            { player: "Mariano Díaz", team: "Alavés", goals: 2, assists: null },
+            { player: "Rodrigo Riquelme", team: "Real Betis", goals: 2, assists: null }
+        ]
+    },
+    // League phase doesn't kick off until Sep 8 2026 (Real Madrid host
+    // Inter Milan that night) — no goals scored yet, so nothing to show.
+    // Fill this in with the real top scorers once matches start.
+    "UEFA Champions League": {
+        asOf: null,
+        scorers: [],
+        note: "League phase kicks off Sep 8, 2026 — check back once matches are played."
+    }
+};
 
 class Beyond90App {
     constructor() {
@@ -661,7 +755,6 @@ class Beyond90App {
         if (page === "premier-league") {
             this.plHub = new CompetitionHub(this, {
                 espnLeague: ESPN_CONFIG.leagues.premierLeague,
-                apiFootballLeagueId: API_FOOTBALL_CONFIG.leagues.premierLeague,
                 leagueKey: "Premier League",
                 fixturesId: "pl-fixtures-container",
                 standingsId: "pl-standings-container",
@@ -676,7 +769,6 @@ class Beyond90App {
         } else if (page === "ucl") {
             this.uclHub = new CompetitionHub(this, {
                 espnLeague: ESPN_CONFIG.leagues.championsLeague,
-                apiFootballLeagueId: API_FOOTBALL_CONFIG.leagues.championsLeague,
                 leagueKey: "UEFA Champions League",
                 fixturesId: "ucl-fixtures-container",
                 standingsId: "ucl-standings-container",
@@ -691,7 +783,6 @@ class Beyond90App {
         } else if (page === "la-liga") {
             this.laLigaHub = new CompetitionHub(this, {
                 espnLeague: ESPN_CONFIG.leagues.laLiga,
-                apiFootballLeagueId: API_FOOTBALL_CONFIG.leagues.laLiga,
                 leagueKey: "La Liga",
                 fixturesId: "ll-fixtures-container",
                 standingsId: "ll-standings-container",
@@ -711,34 +802,6 @@ class Beyond90App {
         } else if (page === "home") {
             this.loadHomeSidebarLive();
         }
-    }
-
-    isApiFootballEnabled() {
-        return Boolean(API_FOOTBALL_CONFIG.proxyBaseUrl && API_FOOTBALL_CONFIG.proxyBaseUrl.trim().length > 8);
-    }
-
-    // European club seasons start around July — before that, "this year" is
-    // still last year's season as far as the APIs are concerned.
-    currentEuropeanSeasonYear() {
-        const now = new Date();
-        return now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear() - 1;
-    }
-
-    // The season to actually request from API-Football — clamped to the
-    // free plan's real coverage (see the maxFreeSeason comment above). Use
-    // this instead of currentEuropeanSeasonYear() for any API-Football
-    // call; keep using currentEuropeanSeasonYear() directly for anything
-    // ESPN-based, which has no such restriction.
-    apiFootballSeasonYear() {
-        return Math.min(this.currentEuropeanSeasonYear(), API_FOOTBALL_CONFIG.maxFreeSeason);
-    }
-
-    // True when we had to fall back to an older season than the live one
-    // because of the free-plan restriction — callers use this to decide
-    // whether to label a heading with the season, so it's never confused
-    // for current data.
-    isApiFootballSeasonCapped() {
-        return this.apiFootballSeasonYear() < this.currentEuropeanSeasonYear();
     }
 
     /* ---- ESPN FETCH + CACHE ---------------------------------------------
@@ -816,49 +879,6 @@ class Beyond90App {
             });
         });
         return matches;
-    }
-
-    /* ---- API-FOOTBALL FETCH + CACHE (via your Cloudflare Worker) -------- */
-    // Turns a failed API-Football fetch into a small, visible technical
-    // detail (the HTTP status + endpoint, or "Failed to fetch" for a
-    // network/CORS problem) so a failure is diagnosable right there on the
-    // page — without needing to open DevTools. Meant to sit under a
-    // friendlier one-line explanation, not replace it.
-    // Updates a heading to show which season is actually on screen, but
-    // only when it differs from the live current one (the free-plan season
-    // cap) — e.g. "Top Scorers (2023/24)". Leaves the heading alone once
-    // the cap no longer applies, so this quietly stops doing anything the
-    // day the free plan (or a paid upgrade) covers the current season.
-    labelSeasonHeading(elementId, baseLabel, seasonUsed) {
-        const el = document.getElementById(elementId);
-        if (!el) return;
-        el.textContent = seasonUsed < this.currentEuropeanSeasonYear()
-            ? `${baseLabel} (${seasonUsed}/${String(seasonUsed + 1).slice(2)})`
-            : baseLabel;
-    }
-
-    apiFootballFailureNote(err) {
-        const msg = (err && err.message) || "unknown error";
-        return `<div style="margin-top:6px; font-size:0.8em; opacity:0.7;">(${this.escapeHtml(msg)})</div>`;
-    }
-
-    async fetchApiFootball(path, forceRefresh = false) {
-        const cacheKey = `af_cache_${path}`;
-        if (!forceRefresh) {
-            try {
-                const cached = localStorage.getItem(cacheKey);
-                if (cached) {
-                    const { timestamp, data } = JSON.parse(cached);
-                    if (Date.now() - timestamp < API_FOOTBALL_CONFIG.cacheMinutes * 60000) return data;
-                }
-            } catch (err) { /* localStorage unavailable — just fetch fresh */ }
-        }
-        const base = API_FOOTBALL_CONFIG.proxyBaseUrl.replace(/\/+$/, '');
-        const response = await fetch(`${base}/${path}`);
-        if (!response.ok) throw new Error(`API-Football proxy request failed (${response.status}) for ${path}`);
-        const data = await response.json();
-        try { localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data })); } catch (err) { /* not fatal */ }
-        return data;
     }
 
     /* ---- ESPN RESPONSE → CARD/TABLE SHAPE --------------------------------
@@ -971,16 +991,6 @@ class Beyond90App {
             l: stat("losses"),
             gd: stat("pointDifferential"),
             pts: stat("points")
-        };
-    }
-
-    mapApiFootballScorer(row) {
-        const stats = (row.statistics && row.statistics[0]) || {};
-        return {
-            player: (row.player && row.player.name) || "Unknown",
-            team: (stats.team && stats.team.name) || "Unknown",
-            goals: (stats.goals && stats.goals.total) || 0,
-            assists: (stats.goals && stats.goals.assists) ?? null
         };
     }
 
@@ -1212,20 +1222,28 @@ class Beyond90App {
             if (standingsEl) standingsEl.innerHTML = `<div class="empty-state">Standings unavailable right now.</div>`;
         }
 
-        if (this.isApiFootballEnabled()) {
-            try {
-                const season = this.apiFootballSeasonYear();
-                const scorersData = await this.fetchApiFootball(`players/topscorers?league=${API_FOOTBALL_CONFIG.leagues.laLiga}&season=${season}`);
-                const scorersList = (scorersData.response || []).slice(0, 10).map(s => this.mapApiFootballScorer(s));
-                if (scorersEl) scorersEl.innerHTML = this.renderScorersTable(scorersList);
-                this.labelSeasonHeading("rm-scorers-heading", "La Liga Top Scorers", season);
-            } catch (err) {
-                console.warn("API-Football La Liga scorers failed on the Real Madrid page:", err);
-                if (scorersEl) scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now.${this.apiFootballFailureNote(err)}</div>`;
-            }
-        } else if (scorersEl) {
-            scorersEl.innerHTML = `<div class="empty-state">Add your Cloudflare Worker URL to see top scorers (see PROXY-SETUP.md).</div>`;
+        // Reuses the same hand-kept La Liga list as the La Liga hub page —
+        // see LEAGUE_TOP_SCORERS near the top of this file.
+        this.renderTopScorersInto(scorersEl, "rm-scorers-heading", "La Liga Top Scorers", "La Liga");
+    }
+
+    // Shared by every "Top Scorers" box on the site (league hubs + this RM
+    // page) — looks up the hand-kept LEAGUE_TOP_SCORERS entry for
+    // leagueKey, renders its table (or its "note" if there's nothing to
+    // show yet, e.g. UCL before the league phase starts), and stamps the
+    // heading with the "as of" date so it's never mistaken for live data.
+    renderTopScorersInto(containerEl, headingId, baseLabel, leagueKey) {
+        if (!containerEl) return;
+        const data = LEAGUE_TOP_SCORERS[leagueKey];
+        const headingEl = document.getElementById(headingId);
+        if (!data) {
+            containerEl.innerHTML = `<div class="empty-state">Top scorers aren't set up for this competition yet.</div>`;
+            return;
         }
+        containerEl.innerHTML = data.scorers.length
+            ? this.renderScorersTable(data.scorers)
+            : `<div class="empty-state">${data.note || "No scorer data yet."}</div>`;
+        if (headingEl) headingEl.textContent = data.asOf ? `${baseLabel} (as of ${data.asOf})` : baseLabel;
     }
 
     // Builds full match-card-ready objects for every match that has a
@@ -1782,14 +1800,13 @@ class Beyond90App {
    Powers the Premier League, UCL, and La Liga pages: round-by-round
    browsing with ← → arrows (grouped from ESPN's season calendar — see
    buildRounds/buildStageRounds), a full always-current league table
-   (ESPN), a Top Scorers list (API-Football, if configured), and live
+   (ESPN), a hand-kept Top Scorers list (see LEAGUE_TOP_SCORERS), and live
    polling while a match in the visible round is in progress.
    ========================================================================== */
 class CompetitionHub {
     constructor(app, config) {
         this.app = app;
         this.espnLeague = config.espnLeague;
-        this.apiFootballLeagueId = config.apiFootballLeagueId;
         this.leagueKey = config.leagueKey;
         this.fixturesEl = document.getElementById(config.fixturesId);
         this.standingsEl = document.getElementById(config.standingsId);
@@ -1877,22 +1894,14 @@ class CompetitionHub {
         }
     }
 
-    async loadScorers() {
+    loadScorers() {
         if (!this.scorersEl) return;
-        if (!this.app.isApiFootballEnabled()) {
-            this.scorersEl.innerHTML = `<div class="empty-state">Add your Cloudflare Worker URL to see top scorers (see PROXY-SETUP.md).</div>`;
-            return;
-        }
-        try {
-            const season = this.app.apiFootballSeasonYear();
-            const data = await this.app.fetchApiFootball(`players/topscorers?league=${this.apiFootballLeagueId}&season=${season}`);
-            const scorers = (data.response || []).slice(0, 10).map(r => this.app.mapApiFootballScorer(r));
-            this.scorersEl.innerHTML = this.app.renderScorersTable(scorers);
-            this.app.labelSeasonHeading(this.scorersEl.id.replace("-container", "-heading"), "Top Scorers", season);
-        } catch (err) {
-            console.warn(`API-Football scorers failed for ${this.leagueKey}:`, err);
-            this.scorersEl.innerHTML = `<div class="empty-state">Top scorers unavailable right now — API-Football's free plan is 100 requests/day shared by every visitor, so this can run dry. Try again later.${this.app.apiFootballFailureNote(err)}</div>`;
-        }
+        this.app.renderTopScorersInto(
+            this.scorersEl,
+            this.scorersEl.id.replace("-container", "-heading"),
+            "Top Scorers",
+            this.leagueKey
+        );
     }
 
     go(delta) {
