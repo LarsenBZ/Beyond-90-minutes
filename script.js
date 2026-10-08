@@ -853,19 +853,79 @@ class Beyond90App {
     // it needs to keep finding a match with a synopsis (see
     // RM_MATCH_SYNOPSES) for as long as that match stays in the archive,
     // not just while it's recent.
+    // ESPN BLOCKED DATE RANGES (dates=20260918-20260920) around Sep 15, 2026 —
+    // they now return 400 on every league. A single day (dates=20260918),
+    // a month (dates=202609) and a year (dates=2026) still work. So instead
+    // of asking for a range, we ask for whole MONTHS (limit=400 so nothing
+    // gets cut off), merge them, and trim to the window we want right here
+    // in the browser. If the month request also fails, it falls back to one
+    // request per day. Returns the same {events: [...]} shape as before, so
+    // everything downstream is unchanged.
+    async fetchEspnWindow(leagueSlug, start, end, forceRefresh = false) {
+        const dayStart = d => Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+        const startMs = dayStart(start);
+        const endMs = dayStart(end) + 86399999;
+        const ym = d => `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}`;
+
+        const months = [];
+        for (let d = new Date(Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), 1)); d.getTime() <= endMs; d.setUTCMonth(d.getUTCMonth() + 1)) {
+            months.push(ym(d));
+        }
+
+        const gather = async (params) => {
+            const results = await Promise.allSettled(params.map(prm =>
+                this.fetchEspn(this.espnScoreboardUrl(leagueSlug, prm, 400), ESPN_CONFIG.cacheMinutes, forceRefresh)
+            ));
+            const events = [];
+            let anyOk = false;
+            results.forEach((r, i) => {
+                if (r.status !== "fulfilled") {
+                    console.warn(`ESPN scoreboard failed for ${leagueSlug} (dates=${params[i]}):`, r.reason);
+                    return;
+                }
+                anyOk = true;
+                events.push(...(r.value.events || []));
+            });
+            return { events, anyOk };
+        };
+
+        let { events, anyOk } = await gather(months);
+        if (!anyOk) {
+            const days = [];
+            for (let t = startMs; t <= endMs && days.length < 21; t += 86400000) days.push(this.formatYmd(new Date(t)));
+            ({ events, anyOk } = await gather(days));
+        }
+        if (!anyOk) throw new Error(`ESPN scoreboard unavailable for ${leagueSlug}`);
+
+        const seen = new Set();
+        const inWindow = events.filter(e => {
+            if (e.id) {
+                if (seen.has(e.id)) return false;
+                seen.add(e.id);
+            }
+            const comp = (e.competitions && e.competitions[0]) || {};
+            const t = new Date(comp.date || e.date).getTime();
+            return isNaN(t) || (t >= startMs && t <= endMs);
+        });
+        return { events: inWindow };
+    }
+
+    // Per-team schedule URL — backup route for Real Madrid only.
+    espnTeamScheduleUrl(leagueSlug, teamId) {
+        return `https://site.api.espn.com/apis/site/v2/sports/soccer/${leagueSlug}/teams/${teamId}/schedule`;
+    }
+
     async fetchRmMatches(forceRefresh = false, daysBack = 30, daysForward = 60) {
         const now = new Date();
-        const start = new Date(now); start.setUTCDate(start.getUTCDate() - daysBack);
-        const end = new Date(now); end.setUTCDate(end.getUTCDate() + daysForward);
-        const fmt = d => `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, '0')}${String(d.getUTCDate()).padStart(2, '0')}`;
-        const datesParam = `${fmt(start)}-${fmt(end)}`;
-
-        const leagueSlugs = [ESPN_CONFIG.leagues.laLiga, ESPN_CONFIG.leagues.championsLeague];
-        const responses = await Promise.allSettled(
-            leagueSlugs.map(slug => this.fetchEspn(this.espnScoreboardUrl(slug, datesParam), ESPN_CONFIG.cacheMinutes, forceRefresh))
-        );
-
+        const from = new Date(now); from.setUTCDate(from.getUTCDate() - daysBack);
+        const to = new Date(now); to.setUTCDate(to.getUTCDate() + daysForward);
         const rmId = String(ESPN_CONFIG.realMadridTeamId);
+        const leagueSlugs = [ESPN_CONFIG.leagues.laLiga, ESPN_CONFIG.leagues.championsLeague];
+
+        // Main route: month-by-month scoreboards, keep only Real Madrid's.
+        const responses = await Promise.allSettled(
+            leagueSlugs.map(slug => this.fetchEspnWindow(slug, from, to, forceRefresh))
+        );
         const matches = [];
         responses.forEach((result, i) => {
             if (result.status !== "fulfilled") {
@@ -878,7 +938,37 @@ class Beyond90App {
                 if (mapped.homeId === rmId || mapped.awayId === rmId) matches.push(mapped);
             });
         });
-        return matches;
+        if (matches.length) return matches;
+
+        // Backup route: ESPN's per-team schedule (plain + ?fixture=true for
+        // upcoming), deduped by match id and trimmed to the same window.
+        console.warn("Month scoreboards gave no Real Madrid matches — trying the team-schedule route.");
+        const requests = [];
+        leagueSlugs.forEach(slug => {
+            const base = this.espnTeamScheduleUrl(slug, rmId);
+            requests.push({ slug, url: base }, { slug, url: `${base}?fixture=true` });
+        });
+        const sched = await Promise.allSettled(
+            requests.map(r => this.fetchEspn(r.url, ESPN_CONFIG.cacheMinutes, forceRefresh))
+        );
+        const seen = new Set();
+        const backup = [];
+        sched.forEach((result, i) => {
+            if (result.status !== "fulfilled") {
+                console.warn(`ESPN team schedule failed (${requests[i].url}):`, result.reason);
+                return;
+            }
+            (result.value.events || []).forEach(e => {
+                const mapped = this.mapEspnEvent(e);
+                if (mapped.id && seen.has(mapped.id)) return;
+                const d = mapped.rawDate ? new Date(mapped.rawDate) : null;
+                if (d && !isNaN(d.getTime()) && (d < from || d > to)) return;
+                if (mapped.id) seen.add(mapped.id);
+                mapped.leagueSlug = requests[i].slug;
+                backup.push(mapped);
+            });
+        });
+        return backup;
     }
 
     /* ---- ESPN RESPONSE → CARD/TABLE SHAPE --------------------------------
@@ -909,9 +999,20 @@ class Beyond90App {
             ? "TBD"
             : date.toLocaleString(undefined, { weekday: "short", month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
 
+        // Scoreboard gives score as a string ("2"); the per-team schedule
+        // endpoint gives it as an object ({value, displayValue}). Handle both.
+        const scoreOf = c => {
+            const sc = c.score;
+            if (sc == null) return null;
+            if (typeof sc === "object") {
+                if (sc.displayValue != null) return sc.displayValue;
+                return sc.value != null ? String(Math.round(sc.value)) : null;
+            }
+            return sc;
+        };
         let score = "VS";
-        if ((completed || isLive) && home.score != null && away.score != null) {
-            score = `${home.score} - ${away.score}`;
+        if ((completed || isLive) && scoreOf(home) != null && scoreOf(away) != null) {
+            score = `${scoreOf(home)} - ${scoreOf(away)}`;
         }
 
         const desc = statusType.description || "";
@@ -1055,8 +1156,7 @@ class Beyond90App {
         const results = await Promise.allSettled(stageEntries.map(stage => {
             const start = new Date(stage.startDate);
             const end = new Date(stage.endDate);
-            const datesParam = `${this.formatYmd(start)}-${this.formatYmd(end)}`;
-            return this.fetchEspn(this.espnScoreboardUrl(espnLeague, datesParam, 1000));
+            return this.fetchEspnWindow(espnLeague, start, end);
         }));
 
         const rounds = [];
@@ -1334,7 +1434,7 @@ class Beyond90App {
         }
         if (!sidebar) return;
         try {
-            const events = await this.fetchRmMatches(false, 240, 60);
+            const events = await this.fetchRmMatches(false, 7, 90);
             const now = new Date();
             const next = events
                 .filter(e => e.status !== "FINISHED" && e.rawDate && new Date(e.rawDate) >= now)
@@ -1832,7 +1932,17 @@ class CompetitionHub {
         if (this.statusEl) this.statusEl.textContent = "Status: Fetching from ESPN…";
 
         try {
-            const seasonScoreboard = await this.app.fetchEspn(this.app.espnScoreboardUrl(this.espnLeague));
+            let seasonScoreboard;
+            try {
+                seasonScoreboard = await this.app.fetchEspn(this.app.espnScoreboardUrl(this.espnLeague));
+            } catch (firstErr) {
+                // Plain request failed — the year form (dates=2026) still
+                // works on ESPN and carries the same season calendar.
+                console.warn(`Plain scoreboard failed for ${this.leagueKey}, trying the year form:`, firstErr);
+                seasonScoreboard = await this.app.fetchEspn(
+                    this.app.espnScoreboardUrl(this.espnLeague, String(new Date().getUTCFullYear()), 1)
+                );
+            }
             this.rounds = await this.app.buildRounds(seasonScoreboard, this.espnLeague);
 
             const now = new Date();
@@ -1842,8 +1952,10 @@ class CompetitionHub {
 
             await this.loadRound();
         } catch (err) {
-            console.warn(`ESPN fetch failed for ${this.leagueKey}, showing sample data instead:`, err);
-            this.loadSample();
+            console.warn(`ESPN fetch failed for ${this.leagueKey}:`, err);
+            this.showFixturesUnavailable();
+            this.loadStandings();
+            this.loadScorers();
             return;
         }
 
@@ -1860,10 +1972,12 @@ class CompetitionHub {
         if (this.fixturesEl) this.fixturesEl.innerHTML = this.app.skeletonBlock(3);
 
         try {
-            const data = await this.app.fetchEspn(
-                this.app.espnScoreboardUrl(this.espnLeague, this.app.formatDatesParam(round)),
-                ESPN_CONFIG.cacheMinutes, forceRefresh
-            );
+            // Widen by a day each side so a match near midnight in the
+            // visitor's timezone isn't trimmed off (ranges are blocked by
+            // ESPN now — see fetchEspnWindow).
+            const winStart = new Date(round.start); winStart.setUTCDate(winStart.getUTCDate() - 1);
+            const winEnd = new Date(round.end); winEnd.setUTCDate(winEnd.getUTCDate() + 1);
+            const data = await this.app.fetchEspnWindow(this.espnLeague, winStart, winEnd, forceRefresh);
             const events = (data.events || []).map(e => this.app.mapEspnEvent(e))
                 .sort((a, b) => new Date(a.rawDate) - new Date(b.rawDate));
 
@@ -1918,6 +2032,16 @@ class CompetitionHub {
             if (this.statusEl) this.statusEl.textContent = "Status: Live — updating every 60 seconds";
             this.pollTimer = setInterval(() => this.loadRound(true), 60000);
         }
+    }
+
+    // Fixtures are down but the table (a different ESPN endpoint) still works,
+    // so say so honestly instead of showing made-up sample matches.
+    showFixturesUnavailable() {
+        if (this.labelEl) this.labelEl.textContent = "Unavailable";
+        if (this.prevBtn) this.prevBtn.disabled = true;
+        if (this.nextBtn) this.nextBtn.disabled = true;
+        if (this.fixturesEl) this.fixturesEl.innerHTML = `<div class="empty-state">Fixtures are temporarily unavailable from the data provider. The league table is still live.</div>`;
+        if (this.statusEl) this.statusEl.textContent = "Status: Fixtures unavailable";
     }
 
     loadSample() {
