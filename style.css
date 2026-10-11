@@ -924,8 +924,17 @@ button { font-family: var(--font-body); cursor: pointer; }
     color: var(--text-muted);
 }
 
-.match-teams { display: flex; align-items: center; justify-content: space-between; margin-top: 0.5rem; gap: 12px; }
-.match-teams .teams-name { font-weight: 600; color: var(--text-primary); }
+/* The score pill sits INSIDE the title, between the two team names, so the
+   result reads at a glance: "Real Madrid [ 4 - 1 ] Rayo Vallecano". */
+.match-teams { display: flex; align-items: center; justify-content: flex-start; margin-top: 0.5rem; gap: 12px; }
+.match-teams .teams-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+}
 .match-score {
     font-family: var(--font-label);
     font-weight: 600;
@@ -936,6 +945,9 @@ button { font-family: var(--font-body); cursor: pointer; }
     border-radius: var(--border-radius-sm);
     white-space: nowrap;
 }
+/* Dark mode: the deep-blue score text vanished against the dark pill, and it now sits
+   right next to the title, so give it the lighter blue. */
+body.dark-theme .match-score { color: var(--pitch-bright); }
 
 .empty-state {
     padding: 1.5rem;

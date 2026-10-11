@@ -95,7 +95,7 @@ const ESPN_CONFIG = {
    HOW TO USE THIS, after a Real Madrid match finishes:
      1. Open the live site's Real Madrid page and look under "Recent Results".
         A finished match with no synopsis yet shows a small hint line like
-        "No synopsis added yet — match ID 645191".
+        "Match write-up coming soon" (hover it to see the match ID, e.g. 645191).
      2. Copy that number and add a line below: "645191": "Your synopsis..."
      3. Save, commit, and push to GitHub like normal. Once it deploys, your
         synopsis replaces the hint for every visitor — not just you, and not
@@ -149,7 +149,33 @@ Real Madrid started with the same 4-2-3-1 with changes in the lineup as Trent st
 La Liga Round 4
 The different side of the same coin
 
-Real Madrid played with the same energy as Ancelotti's team in 24/25, Xabi Alonso's 25/26, and Álvaro Arbeloa 25/26. Meaning there is no hunger. Real Madrid creates chances because they are players with quality, but the moment you face a team that plays defensively you have to score the chances you have. Some may say that the penalty should have repeated, Real Madrid should not need a penalty in the last minute to draw. Yes, Real Betis is a great team, but the difference in squad quality is massive. These games can't be lost, not a single point. At the end of the season these points are the ones that cause the biggest difference for first place. The team played a bad first half and an even worse second half. NOTHING from the midfield. Today Bellingham was not existent in attack. Valverde nothing, there is nothing to defend for the most part so he is "just there." Camavinga is an ex-player you give him a pass and you receive a rock with the shape of a ball. Vinicius can't dribble past anyone. The pass given by Guler in the first half he should have scored it, but he was sleeping in the pitch for a second. Kylian Mbappe it doesn't matter if you score a hat-trick, a poker, it doesn't matter if you can't score the goal that gives the team the advantage. The pass by Vini which he should have shot, was still a great chance to score but no. The penalty, unlucky I guess it happens but a game where nothing happens it's hard to avoid the thought what if. Mourinho is the same as Ancelotti, Xabi Alonso, and Alvaro Arbeloa: they are scared of the big names. Why if Vini is playing bad why not sub him out. Let Espi start who has shown that he can score similarly to Gonzalo Garcia. Why buy a player for 140 million euros when he isn't going to score. Arda Guler is playing great, there was no need I'm not sure what the board was thinking. I'm sure that Diomande is still developing, but if I buy a player for 140 million I want him to do everything in the club. A signing of that amount should a star, should be in any graphic, social media posts, and every game. However, he isn't? Mourinho said some of his decisions are based on the amount of time some players had to train due to the World Cup and the time they were signed. This doesn't make sense with the right back. Why not start Trent when you are going to have the ball, yes he will likely lose the 1v1 vs  Fran Garcia, but he will be incredible in attack. Lastly, honor to Espi for signing for Real Madrid and living a dream even though he will not get minutes because the front 2 + Diomande/Arda Guler is untouchable for any coach at this point (Endrick will have even less development when he is back from injury.)`
+Real Madrid played with the same energy as Ancelotti's team in 24/25, Xabi Alonso's 25/26, and Álvaro Arbeloa 25/26. Meaning there is no hunger. Real Madrid creates chances because they are players with quality, but the moment you face a team that plays defensively you have to score the chances you have. Some may say that the penalty should have repeated, Real Madrid should not need a penalty in the last minute to draw. Yes, Real Betis is a great team, but the difference in squad quality is massive. These games can't be lost, not a single point. At the end of the season these points are the ones that cause the biggest difference for first place. The team played a bad first half and an even worse second half. NOTHING from the midfield. Today Bellingham was not existent in attack. Valverde nothing, there is nothing to defend for the most part so he is "just there." Camavinga is an ex-player you give him a pass and you receive a rock with the shape of a ball. Vinicius can't dribble past anyone. The pass given by Guler in the first half he should have scored it, but he was sleeping in the pitch for a second. Kylian Mbappe it doesn't matter if you score a hat-trick, a poker, it doesn't matter if you can't score the goal that gives the team the advantage. The pass by Vini which he should have shot, was still a great chance to score but no. The penalty, unlucky I guess it happens but a game where nothing happens it's hard to avoid the thought what if. Mourinho is the same as Ancelotti, Xabi Alonso, and Alvaro Arbeloa: they are scared of the big names. Why if Vini is playing bad why not sub him out. Let Espi start who has shown that he can score similarly to Gonzalo Garcia. Why buy a player for 140 million euros when he isn't going to score. Arda Guler is playing great, there was no need I'm not sure what the board was thinking. I'm sure that Diomande is still developing, but if I buy a player for 140 million I want him to do everything in the club. A signing of that amount should a star, should be in any graphic, social media posts, and every game. However, he isn't? Mourinho said some of his decisions are based on the amount of time some players had to train due to the World Cup and the time they were signed. This doesn't make sense with the right back. Why not start Trent when you are going to have the ball, yes he will likely lose the 1v1 vs  Fran Garcia, but he will be incredible in attack. Lastly, honor to Espi for signing for Real Madrid and living a dream even though he will not get minutes because the front 2 + Diomande/Arda Guler is untouchable for any coach at this point (Endrick will have even less development when he is back from injury.)`,
+
+    // Real Madrid 2-1 Inter Milan, Champions League Matchday 1, Sep 8 2026
+    "rm-inter-2026-09-08": `Real Madrid 2-1 Inter Milan
+Champions League Matchday 1
+
+Real Madrid with a correct game against Inter Milan, many missed chances which will hopefully as the season progresses become converted into more goals. Mbappe opened the score at the 14th minute and Valverde made it 2-0 at the 23rd minute. Inter had the possession for long periods of time during the match which isn't a good sign. Inter also converted that possession into 21 shots, which without Courtois does shots would have been converted into goals for Inter. Jose Mourinho's first Champions League game at Real Madrid since his return, Mbappe scored his 71st goal in the competition which are the same as Real Madrid legend Raul Gonzalez.`,
+
+    // Real Madrid 4-1 Rayo Vallecano, La Liga Matchday 5, Sep 12 2026
+    "rm-rayo-2026-09-12": `Real Madrid 4-1 Rayo Vallecano
+La Liga Matchday 5
+A great game, an expected game. Great performances from Bellingham and Mbappe, dominance of the ball, not much trouble in defense (besides the goal by Sergio Camello from Rayo Vallecano). The games at home should be dominated by Real Madrid throughout the season for La Liga.`,
+
+    // Elche 2-3 Real Madrid, La Liga Matchday 6, Sep 15 2026
+    "rm-elche-2026-09-15": `Elche 2-3 Real Madrid
+La Liga Matchday 6
+A difficult game won 3-2 away. A game that showed a great side of Real Madrid in the first half. The second half showed that the players get too comfortable needing a late game winner by Carlos Espi to get the 3 points. Every game has to get played no matter the lineup quality but, Real Madrid can't be losing a 2-0 lead like this. Hopefully Mourinho is able to make changes for this to not happen as games like these are the ones that lose a team the league.`,
+
+    // Atletico Madrid 2-1 Real Madrid, La Liga Matchday 7, Sep 20 2026
+    "rm-atletico-2026-09-20": `Atletico Madrid 2-1 Real Madrid
+Real Madrid Matchday 7
+Real Madrid lost in a awfully played game by Real Madrid, in which the referee also became the protagonist. Not much from many of the players in attack, Real Madrid was dominated in a game in which nothing different was created. Something I have noticed is that players don't know when a red card is worth it and not. A red card at the start of the second half which causes a penalty (and a goal) is not worth it. Huijsen just let him shoot. It's more likely that Courtois saves a shoot from open play and even he doesn't at least it's still a 11v11. In the team all of the fingers point to Vinicius who has not been playing at a high level at all.`,
+
+    // Real Madrid 1-0 Villarreal, La Liga Matchday 8, Oct 10 2026
+    "rm-villarreal-2026-10-10": `Real Madrid 1-0 Villareal
+La Liga Matchday 8
+ES INSOLITO y SURREALISTA. I could only describe how i feel about the game using those words. the first half felt like an anime filler episode, what i really liked were Trent's passes and crosses throughout the game. This referee "if i speak I'm in big trouble." Vinicius started the game as a sub, Diomande on the left, and Arda Guler on the right. It didn't seem to work which led to changes in the XI during the 2nd half. Valverde was moved to the right-back position after Vini was substituted for Trent, and Guler was moved to the midfield. This worked much better, the Valverde and Tchouameni double pivot as of now does not work. When Vinicius came on he brought a better atmosphere to the Bernabeu and the squad. Diomande would score from a really good shot and a clever assist by Valverde. Real Madrid seemed it was closer to the 2nd goal than the Villareal equalizer. In a counter attack Bellingham would assist Vinicius and it was all a very nice moment for Vini. The things that happen to Vinicius since the Ballon D'or I can't even explain. The referee gets called for var, Vinicius is seen pulling the hair of the player prior to the goal which equates to a red card as it is seen as physical offense without possession of the ball. The referee with a nice smirk while he sends Vini off, this triggers Vini who will now be sanctioned for 2 matches most likely. The narrative has changed from Vinicus scoring to now Vini most likely not being able to play the next 2 La Liga matches and all of the media will focus on that now. Real Madrid overall did not play a great game. I will like to know how Valverde and Tchouameni not being compatible as a double pivot (as of now) cause changes in the XI. Will this lead to Valverde playing on the right-back and Trent in the midfield, will Trent and Dumfries not play, will either Valverde or Tchouameni not play, or will Mourinho choose to try and make it work. (Deserved red card for Vinicus now reflecting after the game, but it is just so unlucky and partly Vincius fault that these moments happen to only him.)`
 };
 
 /* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
@@ -171,7 +197,12 @@ const RM_MATCH_PHOTOS = {
     "401882912": "images/espi-vs-espanyol.webp",
     "401882919": "images/mbappe-vs-real-sociedad.webp",
     "401882899": "images/bellingham-vs-malaga.jpg",
-    "401882894": "images/mbappe-vs-betis.webp"
+    "401882894": "images/mbappe-vs-betis.webp",
+    "rm-inter-2026-09-08": "images/real-madrid-vs-inter.jpg",
+    "rm-rayo-2026-09-12": "images/real-madrid-vs-rayo.jpg",
+    "rm-elche-2026-09-15": "images/mbappe-vs-elche.jpg",
+    "rm-atletico-2026-09-20": "images/atletico-vs-real-madrid.jpg",
+    "rm-villarreal-2026-10-10": "images/real-madrid-vs-villarreal.jpg"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
@@ -203,7 +234,7 @@ const RM_PLAYER_PHOTOS = {
    HOW TO UPDATE THIS after a match — send Claude the XI + bench and this
    gets filled in, or do it by hand:
      1. Find the match's ID — same one RM_MATCH_SYNOPSES uses (the
-        "No synopsis added yet — match ID ######" hint under a finished
+        "Match write-up coming soon" hint (hover it for the match ID) under a finished
         match with no synopsis tells you this).
      2. Add an entry: "formation" (just a label), "players" (exactly 11
         starters), "bench" (as many substitutes as you want listed — an
@@ -340,6 +371,171 @@ const RM_MATCH_LINEUPS = {
             { name: "Mario Rivas", number: 33 },
             { name: "Sergio Martínez", number: 38 }
         ]
+    },
+
+    // Real Madrid 2-1 Inter Milan, Champions League Matchday 1, Sep 8 2026. XI + bench are Real Madrid's own official
+    // lineup announcement (realmadrid.com); Inter's match center lists the shape as 4-3-3. Bench is the full 11 named
+    // on the matchday squad (substitutions used aren't tracked here).
+    "rm-inter-2026-09-08": {
+        formation: "4-3-3",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Dumfries", number: 24, posClass: "pos-rb" },
+            { name: "Valverde", number: 8, posClass: "pos-ldm" },
+            { name: "Trent", number: 12, posClass: "pos-rdm" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Brahim Díaz", number: 21, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Sergio Mestre", number: 26 },
+            { name: "Endrick", number: 9 },
+            { name: "Tchouaméni", number: 14 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Diomandé", number: 25 },
+            { name: "Thiago", number: 27 },
+            { name: "Cestero", number: 29 },
+            { name: "Mario Rivas", number: 33 }
+        ]
+    },
+
+    // Real Madrid 4-1 Rayo Vallecano, La Liga Matchday 5, Sep 12 2026. Official XI + bench from realmadrid.com.
+    // Diomandé's first start for Real Madrid. Subs used (per EFE's match sheet): Camavinga for Valverde 46',
+    // Tchouaméni for Bernardo Silva 69', Güler for Diomandé 72', Cucurella for Vinícius 89'.
+    "rm-rayo-2026-09-12": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Carreras", number: 18, posClass: "pos-lb" },
+            { name: "Rüdiger", number: 22, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Dumfries", number: 24, posClass: "pos-rb" },
+            { name: "Valverde", number: 8, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Diomandé", number: 25, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Asencio", number: 2 },
+            { name: "Huijsen", number: 4 },
+            { name: "Camavinga", number: 6 },
+            { name: "Endrick", number: 9 },
+            { name: "Trent", number: 12 },
+            { name: "Tchouaméni", number: 14 },
+            { name: "Güler", number: 15 },
+            { name: "Cucurella", number: 17 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Thiago", number: 27 }
+        ]
+    },
+
+    // Elche 2-3 Real Madrid, La Liga Matchday 6, Sep 15 2026. Official XI + bench from realmadrid.com. Carlos Espí and
+    // Endrick came on late (per AFP); the full list of subs used isn't tracked here.
+    "rm-elche-2026-09-15": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Trent", number: 12, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Valverde", number: 8, posClass: "pos-rdm" },
+            { name: "Güler", number: 15, posClass: "pos-cam" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Diomandé", number: 25, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Asencio", number: 2 },
+            { name: "Bellingham", number: 5 },
+            { name: "Camavinga", number: 6 },
+            { name: "Endrick", number: 9 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Bernardo Silva", number: 20 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Dumfries", number: 24 },
+            { name: "Thiago", number: 27 }
+        ]
+    },
+
+    // Atlético Madrid 2-1 Real Madrid, La Liga Matchday 7, Sep 20 2026. Official XI + bench from realmadrid.com.
+    // Huijsen was sent off at 52' (left the XI with 10 men).
+    "rm-atletico-2026-09-20": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Dumfries", number: 24, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Valverde", number: 8, posClass: "pos-rdm" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Asencio", number: 2 },
+            { name: "Camavinga", number: 6 },
+            { name: "Endrick", number: 9 },
+            { name: "Trent", number: 12 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Bernardo Silva", number: 20 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Diomandé", number: 25 },
+            { name: "Thiago", number: 27 }
+        ]
+    },
+
+    // Real Madrid 1-0 Villarreal, La Liga Matchday 8, Oct 10 2026. Official XI + bench from realmadrid.com. Diomandé on
+    // the left and Güler on the right, per Braulio's write-up; Vinícius started on the bench and came on for Trent at 52'.
+    "rm-villarreal-2026-10-10": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Carreras", number: 18, posClass: "pos-lb" },
+            { name: "Rüdiger", number: 22, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Trent", number: 12, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Valverde", number: 8, posClass: "pos-rdm" },
+            { name: "Diomandé", number: 25, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Sergio Mestre", number: 26 },
+            { name: "Camavinga", number: 6 },
+            { name: "Vinícius Jr", number: 7 },
+            { name: "Endrick", number: 9 },
+            { name: "Cucurella", number: 17 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Bernardo Silva", number: 20 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Dumfries", number: 24 },
+            { name: "Thiago", number: 27 }
+        ]
     }
 };
 
@@ -356,7 +552,11 @@ const RM_MATCH_LINEUPS = {
    network conditions in the visitor's browser.
 
    HOW TO ADD A NEW MATCH after writing its synopsis above:
-     1. Same match ID as RM_MATCH_SYNOPSES/RM_MATCH_LINEUPS/RM_MATCH_PHOTOS.
+     1. Same key as RM_MATCH_SYNOPSES/RM_MATCH_LINEUPS/RM_MATCH_PHOTOS. Newer
+        entries use readable keys like "rm-rayo-2026-09-12" instead of ESPN's
+        number — the Real Madrid page finds them by opponent + kickoff date
+        (see rmRegistryKeyFor), so the key just has to be unique.
+        Optional "competition": "Champions League" (defaults to "La Liga").
      2. "opponent" + "isHome" (true if Real Madrid is the home team).
      3. "rmScore"/"oppScore", "matchday" (number, or omit if unknown),
         "venue", and "rawDate" as a UTC ISO kickoff time — it's formatted
@@ -418,6 +618,69 @@ const RM_MATCH_INFO = {
         events: [
             { minute: "81'", type: "goal", team: "opp", player: "Troy Parrott" }
         ]
+    },
+
+    // Real Madrid 2-1 Inter Milan, Champions League Matchday 1, Sep 8 2026, Santiago Bernabéu
+    "rm-inter-2026-09-08": {
+        opponent: "Inter Milan", isHome: true, rmScore: 2, oppScore: 1,
+        competition: "Champions League", matchday: 1, venue: "Santiago Bernabéu Stadium, Madrid",
+        rawDate: "2026-09-08T19:00:00Z",
+        events: [
+            { minute: "14'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "23'", type: "goal", team: "rm", player: "Valverde" },
+            { minute: "77'", type: "goal", team: "opp", player: "Carlos Augusto" }
+        ]
+    },
+    // Real Madrid 4-1 Rayo Vallecano, La Liga Matchday 5, Sep 12 2026, Santiago Bernabéu
+    "rm-rayo-2026-09-12": {
+        opponent: "Rayo Vallecano", isHome: true, rmScore: 4, oppScore: 1,
+        matchday: 5, venue: "Santiago Bernabéu Stadium, Madrid",
+        rawDate: "2026-09-12T19:00:00Z",
+        events: [
+            { minute: "14'", type: "goal", team: "rm", player: "Mbappé", penalty: true },
+            { minute: "17'", type: "goal", team: "rm", player: "Carreras" },
+            { minute: "35'", type: "goal", team: "rm", player: "Bellingham" },
+            { minute: "51'", type: "goal", team: "opp", player: "Camello" },
+            { minute: "90+1'", type: "goal", team: "rm", player: "Mbappé" }
+        ]
+    },
+    // Elche 2-3 Real Madrid, La Liga Matchday 6, Sep 15 2026, Estadio Manuel Martínez Valero.
+    // The 25' goal was an own goal by Elche keeper Dituro (off Güler's free kick).
+    "rm-elche-2026-09-15": {
+        opponent: "Elche", isHome: false, rmScore: 3, oppScore: 2,
+        matchday: 6, venue: "Estadio Manuel Martínez Valero, Elche",
+        rawDate: "2026-09-15T19:30:00Z",
+        events: [
+            { minute: "25'", type: "goal", team: "rm", player: "Dituro", ownGoal: true },
+            { minute: "33'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "71'", type: "goal", team: "opp", player: "Osorio" },
+            { minute: "83'", type: "goal", team: "opp", player: "Fer Niño" },
+            { minute: "90+1'", type: "goal", team: "rm", player: "Carlos Espí" }
+        ]
+    },
+    // Atlético Madrid 2-1 Real Madrid, La Liga Matchday 7, Sep 20 2026, Riyadh Air Metropolitano
+    "rm-atletico-2026-09-20": {
+        opponent: "Atlético Madrid", isHome: false, rmScore: 1, oppScore: 2,
+        matchday: 7, venue: "Riyadh Air Metropolitano, Madrid",
+        rawDate: "2026-09-20T14:15:00Z",
+        events: [
+            { minute: "52'", type: "red", team: "rm", player: "Huijsen" },
+            { minute: "53'", type: "goal", team: "opp", player: "Grimaldo", penalty: true },
+            { minute: "59'", type: "goal", team: "opp", player: "Jonathan David" },
+            { minute: "89'", type: "goal", team: "rm", player: "Rüdiger" }
+        ]
+    },
+    // Real Madrid 1-0 Villarreal, La Liga Matchday 8, Oct 10 2026, Santiago Bernabéu.
+    // Vinícius's goal at ~71' was disallowed by VAR (hair pull in the build-up) and he was sent
+    // off — the card is logged below; the disallowed goal isn't, since it didn't count.
+    "rm-villarreal-2026-10-10": {
+        opponent: "Villarreal", isHome: true, rmScore: 1, oppScore: 0,
+        matchday: 8, venue: "Santiago Bernabéu Stadium, Madrid",
+        rawDate: "2026-10-10T19:00:00Z",
+        events: [
+            { minute: "62'", type: "goal", team: "rm", player: "Diomandé" },
+            { minute: "74'", type: "red", team: "rm", player: "Vinícius Jr" }
+        ]
     }
 };
 
@@ -437,16 +700,19 @@ const RM_MATCH_INFO = {
    that's usually the easiest source). New scorer? Add a new line.
    ---------------------------------------------------------------------- */
 const RM_SQUAD_STATS = [
-    // Espanyol 1-2 Real Madrid, La Liga Round 2, Aug 22 2026
-    { player: "Jude Bellingham", pos: "MF", goals: 2, assists: 1 }, // +1 goal vs Malaga (solo run, 19')
-    { player: "Carlos Espí", pos: "FW", goals: 1, assists: 0 },
-    { player: "Arda Güler", pos: "MF", goals: 1, assists: 1 }, // +1 goal vs Malaga (90+1', assist Vinícius)
-    // Real Madrid 4-1 Real Sociedad, La Liga Round 1, Aug 26 2026
-    { player: "Kylian Mbappé", pos: "FW", goals: 4, assists: 0 }, // +1 goal vs Malaga (30', assist Trent)
-    { player: "Vinícius Jr", pos: "FW", goals: 1, assists: 1 }, // +1 assist vs Malaga, to Güler
-    { player: "Fede Valverde", pos: "MF", goals: 0, assists: 1 },
-    // Real Madrid 4-0 Malaga, La Liga Round 3, Aug 30 2026
-    { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 } // assist vs Malaga (30', to Mbappé)
+    // Updated through Real Madrid 1-0 Villarreal (Oct 10 2026). All competitions.
+    { player: "Kylian Mbappé", pos: "FW", goals: 8, assists: 1 }, // UCL: Inter (14'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'). Assist: Espí's winner at Elche
+    { player: "Jude Bellingham", pos: "MF", goals: 3, assists: 1 }, // Espanyol, Málaga, Rayo (35')
+    { player: "Carlos Espí", pos: "FW", goals: 2, assists: 0 }, // Espanyol (90'), Elche (90+1')
+    { player: "Arda Güler", pos: "MF", goals: 1, assists: 2 }, // goal vs Málaga; assists vs Espanyol and Rayo (Mbappé's 4th)
+    { player: "Vinícius Jr", pos: "FW", goals: 1, assists: 3 }, // goal vs Sociedad; assists vs Málaga (Güler) and Rayo x2 (Carreras 17', Bellingham 35')
+    { player: "Fede Valverde", pos: "MF", goals: 1, assists: 2 }, // goal vs Inter (23'); assists vs Sociedad and Villarreal (Diomandé)
+    { player: "Yan Diomandé", pos: "FW", goals: 1, assists: 1 }, // goal vs Villarreal (62'); assist for Mbappé at Elche (33')
+    { player: "Álvaro Carreras", pos: "DF", goals: 1, assists: 0 }, // goal vs Rayo (17')
+    { player: "Antonio Rüdiger", pos: "DF", goals: 1, assists: 0 }, // header at Atlético (89')
+    { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 }, // assist vs Málaga (30', to Mbappé)
+    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 1 }, // assist for Mbappé vs Inter (14')
+    { player: "Bernardo Silva", pos: "MF", goals: 0, assists: 1 } // cross for Rüdiger's goal at Atlético (89')
 ];
 
 /* ---- LEAGUE TOP SCORERS (manually maintained, one list per league) -------
@@ -503,13 +769,12 @@ const LEAGUE_TOP_SCORERS = {
             { player: "Rodrigo Riquelme", team: "Real Betis", goals: 2, assists: null }
         ]
     },
-    // League phase doesn't kick off until Sep 8 2026 (Real Madrid host
-    // Inter Milan that night) — no goals scored yet, so nothing to show.
-    // Fill this in with the real top scorers once matches start.
+    // League phase began Sep 8 2026 — fill this in with the real top scorers
+    // (the "note" below shows until then).
     "UEFA Champions League": {
         asOf: null,
         scorers: [],
-        note: "League phase kicks off Sep 8, 2026 — check back once matches are played."
+        note: "Top scorers for the league phase haven't been added yet."
     }
 };
 
@@ -1278,7 +1543,17 @@ class Beyond90App {
                 .filter(e => !e.isLive && e.status === "FINISHED")
                 .sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate))
                 .slice(0, 3)
-                .map(m => { m.synopsis = RM_MATCH_SYNOPSES[m.id] || null; m.lineup = RM_MATCH_LINEUPS[m.id] || null; m.photo = RM_MATCH_PHOTOS[m.id] || null; return m; });
+                .map(m => {
+                    const k = this.rmRegistryKeyFor(m);
+                    m.synopsis = (k && RM_MATCH_SYNOPSES[k]) || null;
+                    m.lineup = (k && RM_MATCH_LINEUPS[k]) || null;
+                    m.photo = (k && RM_MATCH_PHOTOS[k]) || null;
+                    if (k && RM_MATCH_INFO[k]) {
+                        m.competition = RM_MATCH_INFO[k].competition || "La Liga";
+                        if (m.matchday == null) m.matchday = RM_MATCH_INFO[k].matchday ?? null;
+                    }
+                    return m;
+                });
 
             // Full finished list (not sliced to 3), oldest → newest, for the
             // goals-for/against trend chart — see renderRmGoalsTrend/
@@ -1353,6 +1628,31 @@ class Beyond90App {
     // empty because of a visitor's network/browser. Same output shape as
     // mapEspnEvent() so renderMatchCard()/openMatchModal() need no changes
     // to consume it. Newest first.
+    // Which hand-kept entry (RM_MATCH_SYNOPSES / LINEUPS / PHOTOS / INFO) belongs
+    // to a live ESPN match on the Real Madrid page? Matches by opponent name +
+    // kickoff date (within ~30 hours), so a write-up shows up on the right card
+    // even when the key isn't ESPN's numeric match ID. Falls back to the ID.
+    rmRegistryKeyFor(match) {
+        if (!match) return null;
+        const norm = s => String(s || "")
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase().replace(/[^a-z0-9 ]/g, " ")
+            .replace(/\b(cf|fc|club|de)\b/g, " ").replace(/\s+/g, " ").trim();
+        const oppName = norm(norm(match.home).includes("real madrid") ? match.away : match.home);
+        const when = new Date(match.rawDate).getTime();
+        if (oppName && !isNaN(when)) {
+            const words = x => x.split(" ").filter(w => w.length >= 4 && w !== "real");
+            for (const [key, info] of Object.entries(RM_MATCH_INFO)) {
+                const t = new Date(info.rawDate).getTime();
+                if (isNaN(t) || Math.abs(t - when) > 30 * 3600 * 1000) continue;
+                const infoName = norm(info.opponent);
+                if (oppName.includes(infoName) || infoName.includes(oppName)
+                    || words(oppName).some(w => words(infoName).includes(w))) return key;
+            }
+        }
+        return (match.id != null && RM_MATCH_SYNOPSES[match.id]) ? String(match.id) : null;
+    }
+
     buildRmMatchReports() {
         return Object.keys(RM_MATCH_SYNOPSES)
             .map(id => {
@@ -1389,6 +1689,7 @@ class Beyond90App {
                     events,
                     halftime: null,
                     matchday: info.matchday ?? null,
+                    competition: info.competition || "La Liga",
                     stage: null,
                     group: null,
                     rawDate: info.rawDate,
@@ -1521,7 +1822,7 @@ class Beyond90App {
     renderRmSquadStats() {
         const el = document.getElementById("rm-squad-stats-container");
         const introEl = document.getElementById("rm-stats-intro");
-        if (introEl) introEl.textContent = "Goals and assists this season, updated by hand after each match — see RM_SQUAD_STATS in script.js.";
+        if (introEl) introEl.textContent = "Goals and assists this season across all competitions, updated after each match.";
         if (!el) return;
 
         const rows = [...RM_SQUAD_STATS].sort((a, b) => (b.goals - a.goals) || (b.assists - a.assists));
@@ -1688,9 +1989,15 @@ class Beyond90App {
         // This was a real bug: the one synopsis on the site so far contains
         // "Mourinho's", which is exactly what broke it.
         const payload = encodeURIComponent(JSON.stringify({ ...match, league: leagueKey }));
-        const timeLabel = match.isLive
+        const baseTime = match.isLive
             ? `<span class="live-pill">${match.statusLabel || 'LIVE'}</span>`
             : (match.statusLabel || match.time || "Full-time");
+        // Hand-kept Real Madrid reports carry their competition (La Liga /
+        // Champions League) + matchday, so a card says what it is without a click.
+        const compTag = match.competition
+            ? ` · ${this.escapeHtml(match.competition)}${(match.matchday !== undefined && match.matchday !== null) ? ` · Matchday ${match.matchday}` : ''}`
+            : '';
+        const timeLabel = baseTime + compTag;
 
         const eventsStrip = this.formatEventsStrip(match.events, 6);
         const eventsBlock = eventsStrip ? `<div class="match-events-strip">${eventsStrip}</div>` : '';
@@ -1708,7 +2015,9 @@ class Beyond90App {
                         <span class="match-synopsis-cta">Tap to read the full write-up →</span>
                     </div>`;
             } else if (match.id) {
-                synopsisBlock = `<div class="match-synopsis-hint">No synopsis added yet — match ID ${match.id}</div>`;
+                // Visitor-facing text stays friendly; the match ID (what you'd
+                // use as a key in RM_MATCH_SYNOPSES) is in the hover tooltip.
+                synopsisBlock = `<div class="match-synopsis-hint" title="match ID ${this.escapeHtml(match.id)}">Match write-up coming soon</div>`;
             }
         }
 
@@ -1716,8 +2025,7 @@ class Beyond90App {
             <div class="match-card" tabindex="0" role="button" data-match="${payload}">
                 <div class="match-time">${timeLabel}</div>
                 <div class="match-teams">
-                    <span class="teams-name">${match.home} vs ${match.away}</span>
-                    <span class="match-score">${match.score}</span>
+                    <span class="teams-name">${match.home}<span class="match-score">${match.score}</span>${match.away}</span>
                 </div>
                 ${eventsBlock}
                 ${synopsisBlock}
@@ -1869,9 +2177,13 @@ class Beyond90App {
                </div>`
             : '';
 
+        const fixtureTitle = (match.score && match.score !== "VS")
+            ? `${match.home} ${match.score} ${match.away}`
+            : `${match.home} vs ${match.away}`;
+
         content.innerHTML = `
-            <div class="modal-competition">${match.league || "Match Details"}</div>
-            <div class="modal-fixture">${match.home} vs ${match.away}</div>
+            <div class="modal-competition">${match.competition || match.league || "Match Details"}</div>
+            <div class="modal-fixture">${fixtureTitle}</div>
             ${statusRow}
             <div class="modal-detail-row"><span>Kickoff</span><span>${match.time || "Full-time"}</span></div>
             <div class="modal-detail-row"><span>Score</span><span>${match.score}</span></div>
