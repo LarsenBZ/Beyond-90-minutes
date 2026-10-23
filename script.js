@@ -175,7 +175,24 @@ Real Madrid lost in a awfully played game by Real Madrid, in which the referee a
     // Real Madrid 1-0 Villarreal, La Liga Matchday 8, Oct 10 2026
     "rm-villarreal-2026-10-10": `Real Madrid 1-0 Villareal
 La Liga Matchday 8
-ES INSOLITO y SURREALISTA. I could only describe how i feel about the game using those words. the first half felt like an anime filler episode, what i really liked were Trent's passes and crosses throughout the game. This referee "if i speak I'm in big trouble." Vinicius started the game as a sub, Diomande on the left, and Arda Guler on the right. It didn't seem to work which led to changes in the XI during the 2nd half. Valverde was moved to the right-back position after Vini was substituted for Trent, and Guler was moved to the midfield. This worked much better, the Valverde and Tchouameni double pivot as of now does not work. When Vinicius came on he brought a better atmosphere to the Bernabeu and the squad. Diomande would score from a really good shot and a clever assist by Valverde. Real Madrid seemed it was closer to the 2nd goal than the Villareal equalizer. In a counter attack Bellingham would assist Vinicius and it was all a very nice moment for Vini. The things that happen to Vinicius since the Ballon D'or I can't even explain. The referee gets called for var, Vinicius is seen pulling the hair of the player prior to the goal which equates to a red card as it is seen as physical offense without possession of the ball. The referee with a nice smirk while he sends Vini off, this triggers Vini who will now be sanctioned for 2 matches most likely. The narrative has changed from Vinicus scoring to now Vini most likely not being able to play the next 2 La Liga matches and all of the media will focus on that now. Real Madrid overall did not play a great game. I will like to know how Valverde and Tchouameni not being compatible as a double pivot (as of now) cause changes in the XI. Will this lead to Valverde playing on the right-back and Trent in the midfield, will Trent and Dumfries not play, will either Valverde or Tchouameni not play, or will Mourinho choose to try and make it work. (Deserved red card for Vinicus now reflecting after the game, but it is just so unlucky and partly Vincius fault that these moments happen to only him.)`
+ES INSOLITO y SURREALISTA. I could only describe how i feel about the game using those words. the first half felt like an anime filler episode, what i really liked were Trent's passes and crosses throughout the game. This referee "if i speak I'm in big trouble." Vinicius started the game as a sub, Diomande on the left, and Arda Guler on the right. It didn't seem to work which led to changes in the XI during the 2nd half. Valverde was moved to the right-back position after Vini was substituted for Trent, and Guler was moved to the midfield. This worked much better, the Valverde and Tchouameni double pivot as of now does not work. When Vinicius came on he brought a better atmosphere to the Bernabeu and the squad. Diomande would score from a really good shot and a clever assist by Valverde. Real Madrid seemed it was closer to the 2nd goal than the Villareal equalizer. In a counter attack Bellingham would assist Vinicius and it was all a very nice moment for Vini. The things that happen to Vinicius since the Ballon D'or I can't even explain. The referee gets called for var, Vinicius is seen pulling the hair of the player prior to the goal which equates to a red card as it is seen as physical offense without possession of the ball. The referee with a nice smirk while he sends Vini off, this triggers Vini who will now be sanctioned for 2 matches most likely. The narrative has changed from Vinicus scoring to now Vini most likely not being able to play the next 2 La Liga matches and all of the media will focus on that now. Real Madrid overall did not play a great game. I will like to know how Valverde and Tchouameni not being compatible as a double pivot (as of now) cause changes in the XI. Will this lead to Valverde playing on the right-back and Trent in the midfield, will Trent and Dumfries not play, will either Valverde or Tchouameni not play, or will Mourinho choose to try and make it work. (Deserved red card for Vinicus now reflecting after the game, but it is just so unlucky and partly Vincius fault that these moments happen to only him.)`,
+    // AS Roma 3-4 Real Madrid, Champions League Matchday 2, Oct 14 2026
+    "rm-roma-2026-10-14": `AS Roma vs Real Madrid
+Champions League matchday 2
+
+Real Madrid does it again. From 3-1 at the 82nd minute in favor of Roma to 3-4 in the 90th minute for the win. Hardly fought win by the substitutions. I did not like the Vinicius and Bellingham, the defense was struggling a lot against a team that Real Madrid should not struggle against. Great substitutions by Mourinho, Endrick showed that he can play at Real Madrid just needs more minutes, Espi always there to score, and Rudiger with the goal to seal the win off. This game shows the importance of set pieces, having players such as Espi, Rudiger, Tchouameni and Bellingham who can score from crosses. It is never good for a team to struggle like this, but if you do its good to know that the team can comeback. Hopefully this leads to learning in the future games to always show your best.`,
+
+    // Real Madrid 4-1 Sevilla, La Liga Matchday 9, Oct 18 2026
+    "rm-sevilla-2026-10-18": `Real Madrid 4-1 Sevilla
+La Liga matchday 9
+
+Arda Guler y Diomande son un jugon. Great first half by Arda Guler and great 1st half and second half by Diomande. Guler's goal is a magical goal, the way the ball goes in, only a top player can score a goal like that. Mbappe's goal also an amazing goal, the way he turns while having control of the ball, and he scores using "la croqueta" great goal. Diomande who is the player of the match in my opinion, the way he gets the ball and shoots the ball at tha speed, great goal and shows a lot, the 140 million are still not worth but it is a start. Now Mourinho will have to decide who plays on the left Vinicius or Diomande. Diomande is playing much better at the moment, but it is difficult for many coaches to bench a player with hierarchy. Today the Real Madrid stand displayed a sign stating "No es futbol son Tebas y Negreira" It is not football, it is Tebas and Negreira. This is after Tebas compared RMTV to a dictatorship political regime use of media. Also, following a statement by UEFA in which they have received documents provided by Real Madrid over the Negreira case related to the investigation on FC Barcelona.`,
+
+    // Real Madrid 4-1 RB Leipzig, Champions League Matchday 3, Oct 21 2026
+    "rm-leipzig-2026-10-21": `Real Madrid 4-1 RB Leipzig
+Champions League Matchday 3
+
+Good goal by Bernardo Silva to open the score in the 43rd minute. Arda Guler again scoring, has to be in the right position for the goal. Mbappe great goal in the 83rd, the way the ball curves to get into the net, we know Mbappe can score these goals hundreds of times, we need this in El Clasico. The goal from Yan Diomande wow, the cross from Brahim was good, but the way he shoots the ball with that speed with the goalkeeper having no chance. Yan Diomande reminds me of early Vinicius being able to dribble, but he is even better than early Vinicius, he can score a lot of goals especially from distance. El Clasico should be played with Diomande and Mbappe in attack with Bellingham, and Arda Guler for support.`
 };
 
 /* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
@@ -202,7 +219,10 @@ const RM_MATCH_PHOTOS = {
     "rm-rayo-2026-09-12": "images/real-madrid-vs-rayo.jpg",
     "rm-elche-2026-09-15": "images/mbappe-vs-elche.jpg",
     "rm-atletico-2026-09-20": "images/atletico-vs-real-madrid.jpg",
-    "rm-villarreal-2026-10-10": "images/real-madrid-vs-villarreal.jpg"
+    "rm-villarreal-2026-10-10": "images/real-madrid-vs-villarreal.jpg",
+    "rm-roma-2026-10-14": "images/espi-vs-roma.webp",
+    "rm-sevilla-2026-10-18": "images/guler-vs-sevilla.webp",
+    "rm-leipzig-2026-10-21": "images/mbappe-guler-vs-leipzig.webp"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
@@ -536,6 +556,107 @@ const RM_MATCH_LINEUPS = {
             { name: "Dumfries", number: 24 },
             { name: "Thiago", number: 27 }
         ]
+    },
+
+    // AS Roma 3-4 Real Madrid, Champions League Matchday 2, Oct 14 2026. Official XI + bench from realmadrid.com.
+    // Güler and Endrick came on at 59' (for Dumfries and Vinícius), Bernardo for Tchouaméni at 70', Carreras and Espí
+    // at 78' (for Cucurella and Diomandé).
+    "rm-roma-2026-10-14": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Rüdiger", number: 22, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Dumfries", number: 24, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Valverde", number: 8, posClass: "pos-rdm" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Diomandé", number: 25, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Sergio Mestre", number: 26 },
+            { name: "Huijsen", number: 4 },
+            { name: "Camavinga", number: 6 },
+            { name: "Endrick", number: 9 },
+            { name: "Trent", number: 12 },
+            { name: "Güler", number: 15 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Bernardo Silva", number: 20 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Thiago", number: 27 }
+        ]
+    },
+
+    // Real Madrid 4-1 Sevilla, La Liga Matchday 9, Oct 18 2026. Official XI + bench from realmadrid.com.
+    // Valverde moved to right-back with Güler next to Tchouaméni in the double pivot (per the match reports);
+    // Vinícius was suspended. Camavinga came on for Güler at 70', Militão returned at 85' after a long injury.
+    "rm-sevilla-2026-10-18": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Valverde", number: 8, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Güler", number: 15, posClass: "pos-rdm" },
+            { name: "Diomandé", number: 25, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Endrick", number: 9, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Javi Navarro", number: 31 },
+            { name: "Militão", number: 3 },
+            { name: "Camavinga", number: 6 },
+            { name: "Trent", number: 12 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Bernardo Silva", number: 20 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Dumfries", number: 24 },
+            { name: "Thiago", number: 27 }
+        ]
+    },
+
+    // Real Madrid 4-1 RB Leipzig, Champions League Matchday 3, Oct 21 2026. Official XI + bench from realmadrid.com.
+    // Diomandé and Cucurella came on at 70' (for Vinícius and Carreras), Brahim for Güler at 78'; Endrick at 88'.
+    "rm-leipzig-2026-10-21": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Carreras", number: 18, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Rüdiger", number: 22, posClass: "pos-rcb" },
+            { name: "Valverde", number: 8, posClass: "pos-rb" },
+            { name: "Camavinga", number: 6, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Militão", number: 3 },
+            { name: "Endrick", number: 9 },
+            { name: "Trent", number: 12 },
+            { name: "Tchouaméni", number: 14 },
+            { name: "Konaté", number: 16 },
+            { name: "Cucurella", number: 17 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Dumfries", number: 24 },
+            { name: "Diomandé", number: 25 },
+            { name: "Thiago", number: 27 }
+        ]
     }
 };
 
@@ -681,6 +802,49 @@ const RM_MATCH_INFO = {
             { minute: "62'", type: "goal", team: "rm", player: "Diomandé" },
             { minute: "74'", type: "red", team: "rm", player: "Vinícius Jr" }
         ]
+    },
+
+    // AS Roma 3-4 Real Madrid, Champions League Matchday 2, Oct 14 2026, Stadio Olimpico. Real Madrid scored three
+    // late goals, all from corners (Espí 83', Endrick 85', Rüdiger 90').
+    "rm-roma-2026-10-14": {
+        opponent: "AS Roma", isHome: false, rmScore: 4, oppScore: 3,
+        competition: "Champions League", matchday: 2, venue: "Stadio Olimpico, Rome",
+        rawDate: "2026-10-14T19:00:00Z",
+        events: [
+            { minute: "20'", type: "goal", team: "opp", player: "De Roon" },
+            { minute: "25'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "51'", type: "goal", team: "opp", player: "Malen" },
+            { minute: "57'", type: "goal", team: "opp", player: "Malen" },
+            { minute: "83'", type: "goal", team: "rm", player: "Carlos Espí" },
+            { minute: "85'", type: "goal", team: "rm", player: "Endrick" },
+            { minute: "90'", type: "goal", team: "rm", player: "Rüdiger" }
+        ]
+    },
+    // Real Madrid 4-1 Sevilla, La Liga Matchday 9, Oct 18 2026, Santiago Bernabéu
+    "rm-sevilla-2026-10-18": {
+        opponent: "Sevilla", isHome: true, rmScore: 4, oppScore: 1,
+        matchday: 9, venue: "Santiago Bernabéu Stadium, Madrid",
+        rawDate: "2026-10-18T19:00:00Z",
+        events: [
+            { minute: "30'", type: "goal", team: "rm", player: "Güler" },
+            { minute: "37'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "63'", type: "goal", team: "rm", player: "Mbappé", penalty: true },
+            { minute: "80'", type: "goal", team: "opp", player: "Manu Bueno" },
+            { minute: "82'", type: "goal", team: "rm", player: "Diomandé" }
+        ]
+    },
+    // Real Madrid 4-1 RB Leipzig, Champions League Matchday 3, Oct 21 2026, Santiago Bernabéu
+    "rm-leipzig-2026-10-21": {
+        opponent: "RB Leipzig", isHome: true, rmScore: 4, oppScore: 1,
+        competition: "Champions League", matchday: 3, venue: "Santiago Bernabéu Stadium, Madrid",
+        rawDate: "2026-10-21T19:00:00Z",
+        events: [
+            { minute: "43'", type: "goal", team: "rm", player: "Bernardo Silva" },
+            { minute: "52'", type: "goal", team: "rm", player: "Güler" },
+            { minute: "83'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "85'", type: "goal", team: "opp", player: "Gomis" },
+            { minute: "87'", type: "goal", team: "rm", player: "Diomandé" }
+        ]
     }
 };
 
@@ -700,19 +864,20 @@ const RM_MATCH_INFO = {
    that's usually the easiest source). New scorer? Add a new line.
    ---------------------------------------------------------------------- */
 const RM_SQUAD_STATS = [
-    // Updated through Real Madrid 1-0 Villarreal (Oct 10 2026). All competitions.
-    { player: "Kylian Mbappé", pos: "FW", goals: 8, assists: 1 }, // UCL: Inter (14'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'). Assist: Espí's winner at Elche
-    { player: "Jude Bellingham", pos: "MF", goals: 3, assists: 1 }, // Espanyol, Málaga, Rayo (35')
-    { player: "Carlos Espí", pos: "FW", goals: 2, assists: 0 }, // Espanyol (90'), Elche (90+1')
-    { player: "Arda Güler", pos: "MF", goals: 1, assists: 2 }, // goal vs Málaga; assists vs Espanyol and Rayo (Mbappé's 4th)
+    // Updated through Real Madrid 4-1 RB Leipzig (Oct 21 2026). All competitions.
+    { player: "Kylian Mbappé", pos: "FW", goals: 12, assists: 2 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen). Assists: Espí's winner at Elche; Güler's goal vs Leipzig
+    { player: "Jude Bellingham", pos: "MF", goals: 3, assists: 2 }, // Espanyol, Málaga, Rayo (35'); assists vs Sevilla (heel pass for Mbappé's 37') and earlier
+    { player: "Arda Güler", pos: "MF", goals: 3, assists: 4 }, // goals vs Málaga, Sevilla (30'), Leipzig (52'); assists vs Espanyol, Rayo (Mbappé's 4th), and two corners at Roma (Endrick 85', Rüdiger 90')
+    { player: "Yan Diomandé", pos: "FW", goals: 3, assists: 4 }, // goals vs Villarreal (62'), Sevilla (82'), Leipzig (87'); assists: Mbappé at Elche (33') and Roma (25'), Güler vs Sevilla (30'), Mbappé vs Leipzig (83')
+    { player: "Carlos Espí", pos: "FW", goals: 3, assists: 0 }, // Espanyol (90'), Elche (90+1'), Roma (83')
     { player: "Vinícius Jr", pos: "FW", goals: 1, assists: 3 }, // goal vs Sociedad; assists vs Málaga (Güler) and Rayo x2 (Carreras 17', Bellingham 35')
     { player: "Fede Valverde", pos: "MF", goals: 1, assists: 2 }, // goal vs Inter (23'); assists vs Sociedad and Villarreal (Diomandé)
-    { player: "Yan Diomandé", pos: "FW", goals: 1, assists: 1 }, // goal vs Villarreal (62'); assist for Mbappé at Elche (33')
     { player: "Álvaro Carreras", pos: "DF", goals: 1, assists: 0 }, // goal vs Rayo (17')
-    { player: "Antonio Rüdiger", pos: "DF", goals: 1, assists: 0 }, // header at Atlético (89')
+    { player: "Antonio Rüdiger", pos: "DF", goals: 2, assists: 0 }, // header at Atlético (89'), winner at Roma (90')
+    { player: "Endrick", pos: "FW", goals: 1, assists: 0 }, // header at Roma (85')
+    { player: "Bernardo Silva", pos: "MF", goals: 1, assists: 1 }, // goal vs Leipzig (43'); cross for Rüdiger's goal at Atlético (89')
     { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 }, // assist vs Málaga (30', to Mbappé)
-    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 1 }, // assist for Mbappé vs Inter (14')
-    { player: "Bernardo Silva", pos: "MF", goals: 0, assists: 1 } // cross for Rüdiger's goal at Atlético (89')
+    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 2 } // assists for Mbappé vs Inter (14') and Diomandé vs Leipzig (87')
 ];
 
 /* ---- LEAGUE TOP SCORERS (manually maintained, one list per league) -------
