@@ -192,7 +192,13 @@ Arda Guler y Diomande son un jugon. Great first half by Arda Guler and great 1st
     "rm-leipzig-2026-10-21": `Real Madrid 4-1 RB Leipzig
 Champions League Matchday 3
 
-Good goal by Bernardo Silva to open the score in the 43rd minute. Arda Guler again scoring, has to be in the right position for the goal. Mbappe great goal in the 83rd, the way the ball curves to get into the net, we know Mbappe can score these goals hundreds of times, we need this in El Clasico. The goal from Yan Diomande wow, the cross from Brahim was good, but the way he shoots the ball with that speed with the goalkeeper having no chance. Yan Diomande reminds me of early Vinicius being able to dribble, but he is even better than early Vinicius, he can score a lot of goals especially from distance. El Clasico should be played with Diomande and Mbappe in attack with Bellingham, and Arda Guler for support.`
+Good goal by Bernardo Silva to open the score in the 43rd minute. Arda Guler again scoring, has to be in the right position for the goal. Mbappe great goal in the 83rd, the way the ball curves to get into the net, we know Mbappe can score these goals hundreds of times, we need this in El Clasico. The goal from Yan Diomande wow, the cross from Brahim was good, but the way he shoots the ball with that speed with the goalkeeper having no chance. Yan Diomande reminds me of early Vinicius being able to dribble, but he is even better than early Vinicius, he can score a lot of goals especially from distance. El Clasico should be played with Diomande and Mbappe in attack with Bellingham, and Arda Guler for support.`,
+
+    // Barcelona 1-2 Real Madrid, La Liga Round 10, Oct 25 2026 (El Clasico, Spotify Camp Nou)
+    "rm-barcelona-2026-10-25": `Barcelona vs Real Madrid
+La Liga Round 10
+El Clasico.
+What a masterclass by Mourinho, he read the match much better Hansi Flick and it was seen throughout the game. Mourinho kept the changes of having Valverde at right back and Diomande on the left, which opened for a Tchouameni and Bernardo Silva double pivot. Very happy for Bernardo he gave so much defensively for the team being able to pressure where others did not. In the first half the match was fairly equal with chances from both sides. I keep liking the way Diomande plays, he shows a lot of courage with the ball and he keeps trying. The first goal of Real Madrid comes from a run into the space by Diomande who does a low cross which reaches Gerard Martin (Barcelona defender) who mistakenly passes the ball to Mbappe who accidentally scores. This was a great start as people (neutrals and Barcelona fans) didn't discuss if Real Madrid or Barcelona would win, it was about by how much will Barcelona win over Real Madrid. The second half was mostly by Barcelona, Barcelona scored from a corner and in the play Pedri passes the ball to Raphinha who scores. After this Barcelona would have a chance with a header by Gerard Martin, but Lunin would save it. Lunin is the best goalkeeper to have on the bench, he is calm and when he needs to play he usually does a great job, really happy for his performance. Real Madrid would score from a great play by Bellingham who would pass the ball to Camavinga, Camavinga would pass the ball to Arda Guler on the wing, Camavinga would run into the space and Arda Guler would give a great trivela pass. Camavinga would take the ball and pass the ball into the ball which Mbappe would score to make it 2-1. Great win by Real Madrid which shows a stronger team on and off the pitch compared to a month ago. Hopefully this leads to trophies in May, this is an important win for the new Mourinho Era.`
 };
 
 /* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
@@ -222,7 +228,8 @@ const RM_MATCH_PHOTOS = {
     "rm-villarreal-2026-10-10": "images/real-madrid-vs-villarreal.jpg",
     "rm-roma-2026-10-14": "images/espi-vs-roma.webp",
     "rm-sevilla-2026-10-18": "images/guler-vs-sevilla.webp",
-    "rm-leipzig-2026-10-21": "images/mbappe-guler-vs-leipzig.webp"
+    "rm-leipzig-2026-10-21": "images/mbappe-guler-vs-leipzig.webp",
+    "rm-barcelona-2026-10-25": "images/mbappe-vs-barcelona.webp"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
@@ -657,6 +664,39 @@ const RM_MATCH_LINEUPS = {
             { name: "Diomandé", number: 25 },
             { name: "Thiago", number: 27 }
         ]
+    },
+
+    // Barcelona 1-2 Real Madrid, La Liga Matchday 10, Oct 25 2026. XI + bench per SI / calciomercato match sheets.
+    // Valverde (injured) came off for Dumfries at 62', Bernardo Silva for Camavinga at 80', Güler and Diomandé for
+    // Trent and Espí at 90+4'. Lunin started in goal. Sources disagree on which pivot sat left/right; Tchouaméni/Silva here.
+    "rm-barcelona-2026-10-25": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Lunin", number: 13, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Valverde", number: 8, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Diomandé", number: 25, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Sergio Mestre" },
+            { name: "Militão", number: 3 },
+            { name: "Camavinga", number: 6 },
+            { name: "Endrick", number: 9 },
+            { name: "Trent", number: 12 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Dumfries", number: 24 },
+            { name: "Thiago", number: 27 }
+        ]
     }
 };
 
@@ -845,6 +885,17 @@ const RM_MATCH_INFO = {
             { minute: "85'", type: "goal", team: "opp", player: "Gomis" },
             { minute: "87'", type: "goal", team: "rm", player: "Diomandé" }
         ]
+    },
+    // Barcelona 1-2 Real Madrid, La Liga Matchday 10, Oct 25 2026, Spotify Camp Nou (21:00 CET = 20:00 UTC)
+    "rm-barcelona-2026-10-25": {
+        opponent: "Barcelona", isHome: false, rmScore: 2, oppScore: 1,
+        matchday: 10, venue: "Spotify Camp Nou, Barcelona",
+        rawDate: "2026-10-25T20:00:00Z",
+        events: [
+            { minute: "41'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "61'", type: "goal", team: "opp", player: "Raphinha" },
+            { minute: "87'", type: "goal", team: "rm", player: "Mbappé" }
+        ]
     }
 };
 
@@ -864,8 +915,8 @@ const RM_MATCH_INFO = {
    that's usually the easiest source). New scorer? Add a new line.
    ---------------------------------------------------------------------- */
 const RM_SQUAD_STATS = [
-    // Updated through Real Madrid 4-1 RB Leipzig (Oct 21 2026). All competitions.
-    { player: "Kylian Mbappé", pos: "FW", goals: 12, assists: 2 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen). Assists: Espí's winner at Elche; Güler's goal vs Leipzig
+    // Updated through Barcelona 1-2 Real Madrid (Oct 25 2026). All competitions.
+    { player: "Kylian Mbappé", pos: "FW", goals: 14, assists: 2 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen), Barcelona x2 (41', 87'). Assists: Espí's winner at Elche; Güler's goal vs Leipzig
     { player: "Jude Bellingham", pos: "MF", goals: 3, assists: 2 }, // Espanyol, Málaga, Rayo (35'); assists vs Sevilla (heel pass for Mbappé's 37') and earlier
     { player: "Arda Güler", pos: "MF", goals: 3, assists: 4 }, // goals vs Málaga, Sevilla (30'), Leipzig (52'); assists vs Espanyol, Rayo (Mbappé's 4th), and two corners at Roma (Endrick 85', Rüdiger 90')
     { player: "Yan Diomandé", pos: "FW", goals: 3, assists: 4 }, // goals vs Villarreal (62'), Sevilla (82'), Leipzig (87'); assists: Mbappé at Elche (33') and Roma (25'), Güler vs Sevilla (30'), Mbappé vs Leipzig (83')
@@ -877,7 +928,8 @@ const RM_SQUAD_STATS = [
     { player: "Endrick", pos: "FW", goals: 1, assists: 0 }, // header at Roma (85')
     { player: "Bernardo Silva", pos: "MF", goals: 1, assists: 1 }, // goal vs Leipzig (43'); cross for Rüdiger's goal at Atlético (89')
     { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 }, // assist vs Málaga (30', to Mbappé)
-    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 2 } // assists for Mbappé vs Inter (14') and Diomandé vs Leipzig (87')
+    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 2 }, // assists for Mbappé vs Inter (14') and Diomandé vs Leipzig (87')
+    { player: "Eduardo Camavinga", pos: "MF", goals: 0, assists: 1 } // assist for Mbappé's winner at Barcelona (87')
 ];
 
 /* ---- LEAGUE TOP SCORERS (manually maintained, one list per league) -------
