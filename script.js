@@ -111,7 +111,7 @@ The start of the second Jose Mourinho era
 
 First half 1-1
 Formation: 4-2-3-1
-Real Madrid debuted with a defense formed by Carreras, Huijsen, Konate, and Dumfries. Through this lineup Mourinho has shown that if you play not a high level you will be benched in the case if Rudiger and Trent. Carreras most likely started because of the break Cucurella had after the World Cup. Mourinho formed a midfield with Bernardo Silva, Fede Valverde, and Bellingham. Valverde showed himself as a defensive pivot while Bernardo controlled the ball. Bellingham played as a box to box midfielder keeping high intensity and pressure while entering the box supporting the attack. Arda Guler most likely played in the right due to Dumfries playing as Arda Guler isn't a winger similar to Vinicus letting Dumfries overlap and progress in attack. Vinicius and Mbappe showed themselves as the stars in attack.
+Real Madrid debuted with a defense formed by Carreras, Huijsen, Konate, and Dumfries. Through this lineup Mourinho has shown that if you play not a high level you will be benched in the case if Rudiger and Trent. Carreras most likely started because of the break Cucurella had after the World Cup. Mourinho formed a midfield with Bernardo Silva, Fede Valverde, and Bellingham. Valverde showed himself as a defensive pivot while Bernardo controlled the ball. Bellingham played as a box to box midfielder keeping high intensity and pressure while entering the box supporting the attack. Arda Guler most likely played in the right due to Dumfries playing as Arda Guler isn't a winger similar to Vinicius letting Dumfries overlap and progress in attack. Vinicius and Mbappe showed themselves as the stars in attack.
 
 The score would be opened by Bellingham with a header after a free kick assist by Arda Guler. The attack flowed through both of them and they were the best players on the pitch. The first half was marked by conflict between Vinicius and the Espanyol fans with many fouls and yellow cards given and not given. Espanyol would score through their striker as Fede Valverde had not followed his mark leaving the striker alone against Courtois.
 
@@ -133,7 +133,7 @@ Real Madrid started the game with the same starting XI that was used against Esp
 
 Second half 4-1
 Formation 4-2-3-1
-In  this second half it became clear that in Mourinho's team the goal scorer is Mbappe. This is shown by Mbappes position when in defense compared to Vinicius. Vinicius is not anymore the player that looks for the balls in the space, now he is the one that passes the ball for Mbappe who is looking for balls in the space with his pace. Vinicius also has a much more defensive role during defense compared to Mbappe. Which can be key in Champions League games where pressure is essential. The combination of Arda Guler and Bellingham in attack is working at least against La Liga teams. Mourinho will have to decide if this approach will continue to be taken in Champions League. Arda Guler has created 12 chances (fotmob) in La Liga the most out of any player in 2 games. Arda Guler is able to make chances for Mbappe, Vinicius, and Bellingham. Bellingham continues to have a high level similar to his World Cup performance. Having a similar role to Guler except that he is able to make plays inside the ball which led to his assist to Vini. Mbappe would do his job with 3 goals scored, HAT-TRICK for Kylian Mbappe.
+In  this second half it became clear that in Mourinho's team the goal scorer is Mbappe. This is shown by Mbappe's position when in defense compared to Vinicius. Vinicius is not anymore the player that looks for the balls in the space, now he is the one that passes the ball for Mbappe who is looking for balls in the space with his pace. Vinicius also has a much more defensive role during defense compared to Mbappe. Which can be key in Champions League games where pressure is essential. The combination of Arda Guler and Bellingham in attack is working at least against La Liga teams. Mourinho will have to decide if this approach will continue to be taken in Champions League. Arda Guler has created 12 chances (fotmob) in La Liga the most out of any player in 2 games. Arda Guler is able to make chances for Mbappe, Vinicius, and Bellingham. Bellingham continues to have a high level similar to his World Cup performance. Having a similar role to Guler except that he is able to make plays inside the ball which led to his assist to Vini. Mbappe would do his job with 3 goals scored, HAT-TRICK for Kylian Mbappe.
 
 Post-Match- Mourinho leaves something clear: Mbappe is the top scorer, but as stated by Mourinho " I prefer for him to score 40 goals with titles than 60 goals without titles." Mourinho expands his win history at the Bernabeu with Real Madrid (75 wins/9 draws/6 losses in 90 games.)`,
 
@@ -173,9 +173,9 @@ Real Madrid Matchday 7
 Real Madrid lost in a awfully played game by Real Madrid, in which the referee also became the protagonist. Not much from many of the players in attack, Real Madrid was dominated in a game in which nothing different was created. Something I have noticed is that players don't know when a red card is worth it and not. A red card at the start of the second half which causes a penalty (and a goal) is not worth it. Huijsen just let him shoot. It's more likely that Courtois saves a shoot from open play and even he doesn't at least it's still a 11v11. In the team all of the fingers point to Vinicius who has not been playing at a high level at all.`,
 
     // Real Madrid 1-0 Villarreal, La Liga Matchday 8, Oct 10 2026
-    "rm-villarreal-2026-10-10": `Real Madrid 1-0 Villareal
+    "rm-villarreal-2026-10-10": `Real Madrid 1-0 Villarreal
 La Liga Matchday 8
-ES INSOLITO y SURREALISTA. I could only describe how i feel about the game using those words. the first half felt like an anime filler episode, what i really liked were Trent's passes and crosses throughout the game. This referee "if i speak I'm in big trouble." Vinicius started the game as a sub, Diomande on the left, and Arda Guler on the right. It didn't seem to work which led to changes in the XI during the 2nd half. Valverde was moved to the right-back position after Vini was substituted for Trent, and Guler was moved to the midfield. This worked much better, the Valverde and Tchouameni double pivot as of now does not work. When Vinicius came on he brought a better atmosphere to the Bernabeu and the squad. Diomande would score from a really good shot and a clever assist by Valverde. Real Madrid seemed it was closer to the 2nd goal than the Villareal equalizer. In a counter attack Bellingham would assist Vinicius and it was all a very nice moment for Vini. The things that happen to Vinicius since the Ballon D'or I can't even explain. The referee gets called for var, Vinicius is seen pulling the hair of the player prior to the goal which equates to a red card as it is seen as physical offense without possession of the ball. The referee with a nice smirk while he sends Vini off, this triggers Vini who will now be sanctioned for 2 matches most likely. The narrative has changed from Vinicus scoring to now Vini most likely not being able to play the next 2 La Liga matches and all of the media will focus on that now. Real Madrid overall did not play a great game. I will like to know how Valverde and Tchouameni not being compatible as a double pivot (as of now) cause changes in the XI. Will this lead to Valverde playing on the right-back and Trent in the midfield, will Trent and Dumfries not play, will either Valverde or Tchouameni not play, or will Mourinho choose to try and make it work. (Deserved red card for Vinicus now reflecting after the game, but it is just so unlucky and partly Vincius fault that these moments happen to only him.)`,
+ES INSOLITO y SURREALISTA. I could only describe how I feel about the game using those words. the first half felt like an anime filler episode, what I really liked were Trent's passes and crosses throughout the game. This referee "if I speak I'm in big trouble." Vinicius started the game as a sub, Diomande on the left, and Arda Guler on the right. It didn't seem to work which led to changes in the XI during the 2nd half. Valverde was moved to the right-back position after Vini was substituted for Trent, and Guler was moved to the midfield. This worked much better, the Valverde and Tchouameni double pivot as of now does not work. When Vinicius came on he brought a better atmosphere to the Bernabeu and the squad. Diomande would score from a really good shot and a clever assist by Valverde. Real Madrid seemed it was closer to the 2nd goal than the Villarreal equalizer. In a counter attack Bellingham would assist Vinicius and it was all a very nice moment for Vini. The things that happen to Vinicius since the Ballon D'or I can't even explain. The referee gets called for var, Vinicius is seen pulling the hair of the player prior to the goal which equates to a red card as it is seen as physical offense without possession of the ball. The referee sends Vini off, this triggers Vini who will now be sanctioned for 2 matches most likely. The narrative has changed from Vinicius scoring to now Vini most likely not being able to play the next 2 La Liga matches and all of the media will focus on that now. Real Madrid overall did not play a great game. I will like to know how Valverde and Tchouameni not being compatible as a double pivot (as of now) cause changes in the XI. Will this lead to Valverde playing on the right-back and Trent in the midfield, will Trent and Dumfries not play, will either Valverde or Tchouameni not play, or will Mourinho choose to try and make it work. (Deserved red card for Vinicius now reflecting after the game, but it is just so unlucky and partly Vinicius' fault that these moments happen to only him.)`,
     // AS Roma 3-4 Real Madrid, Champions League Matchday 2, Oct 14 2026
     "rm-roma-2026-10-14": `AS Roma vs Real Madrid
 Champions League matchday 2
@@ -186,7 +186,7 @@ Real Madrid does it again. From 3-1 at the 82nd minute in favor of Roma to 3-4 i
     "rm-sevilla-2026-10-18": `Real Madrid 4-1 Sevilla
 La Liga matchday 9
 
-Arda Guler y Diomande son un jugon. Great first half by Arda Guler and great 1st half and second half by Diomande. Guler's goal is a magical goal, the way the ball goes in, only a top player can score a goal like that. Mbappe's goal also an amazing goal, the way he turns while having control of the ball, and he scores using "la croqueta" great goal. Diomande who is the player of the match in my opinion, the way he gets the ball and shoots the ball at tha speed, great goal and shows a lot, the 140 million are still not worth but it is a start. Now Mourinho will have to decide who plays on the left Vinicius or Diomande. Diomande is playing much better at the moment, but it is difficult for many coaches to bench a player with hierarchy. Today the Real Madrid stand displayed a sign stating "No es futbol son Tebas y Negreira" It is not football, it is Tebas and Negreira. This is after Tebas compared RMTV to a dictatorship political regime use of media. Also, following a statement by UEFA in which they have received documents provided by Real Madrid over the Negreira case related to the investigation on FC Barcelona.`,
+Arda Guler y Diomande son un jugon. Great first half by Arda Guler and great 1st half and second half by Diomande. Guler's goal is a magical goal, the way the ball goes in, only a top player can score a goal like that. Mbappe's goal also an amazing goal, the way he turns while having control of the ball, and he scores using "la croqueta" great goal. Diomande who is the player of the match in my opinion, the way he gets the ball and shoots the ball at that speed, great goal and shows a lot, the 140 million are still not worth but it is a start. Now Mourinho will have to decide who plays on the left Vinicius or Diomande. Diomande is playing much better at the moment, but it is difficult for many coaches to bench a player with hierarchy. Today the Real Madrid stand displayed a sign stating "No es futbol son Tebas y Negreira" It is not football, it is Tebas and Negreira. This is after Tebas compared RMTV to a dictatorship political regime use of media. Also, following a statement by UEFA in which they have received documents provided by Real Madrid over the Negreira case related to the investigation on FC Barcelona.`,
 
     // Real Madrid 4-1 RB Leipzig, Champions League Matchday 3, Oct 21 2026
     "rm-leipzig-2026-10-21": `Real Madrid 4-1 RB Leipzig
@@ -198,7 +198,7 @@ Good goal by Bernardo Silva to open the score in the 43rd minute. Arda Guler aga
     "rm-barcelona-2026-10-25": `Barcelona vs Real Madrid
 La Liga Round 10
 El Clasico.
-What a masterclass by Mourinho, he read the match much better Hansi Flick and it was seen throughout the game. Mourinho kept the changes of having Valverde at right back and Diomande on the left, which opened for a Tchouameni and Bernardo Silva double pivot. Very happy for Bernardo he gave so much defensively for the team being able to pressure where others did not. In the first half the match was fairly equal with chances from both sides. I keep liking the way Diomande plays, he shows a lot of courage with the ball and he keeps trying. The first goal of Real Madrid comes from a run into the space by Diomande who does a low cross which reaches Gerard Martin (Barcelona defender) who mistakenly passes the ball to Mbappe who accidentally scores. This was a great start as people (neutrals and Barcelona fans) didn't discuss if Real Madrid or Barcelona would win, it was about by how much will Barcelona win over Real Madrid. The second half was mostly by Barcelona, Barcelona scored from a corner and in the play Pedri passes the ball to Raphinha who scores. After this Barcelona would have a chance with a header by Gerard Martin, but Lunin would save it. Lunin is the best goalkeeper to have on the bench, he is calm and when he needs to play he usually does a great job, really happy for his performance. Real Madrid would score from a great play by Bellingham who would pass the ball to Camavinga, Camavinga would pass the ball to Arda Guler on the wing, Camavinga would run into the space and Arda Guler would give a great trivela pass. Camavinga would take the ball and pass the ball into the ball which Mbappe would score to make it 2-1. Great win by Real Madrid which shows a stronger team on and off the pitch compared to a month ago. Hopefully this leads to trophies in May, this is an important win for the new Mourinho Era.`
+What a masterclass by Mourinho, he read the match much better Hansi Flick and it was seen throughout the game. Mourinho kept the changes of having Valverde at right back and Diomande on the left, which opened for a Tchouameni and Bernardo Silva double pivot. Very happy for Bernardo he gave so much defensively for the team being able to pressure where others did not. In the first half the match was fairly equal with chances from both sides. I keep liking the way Diomande plays, he shows a lot of courage with the ball and he keeps trying. The first goal of Real Madrid comes from a run into the space by Diomande who does a low cross which reaches Gerard Martin (Barcelona defender) who mistakenly passes the ball to Mbappe who accidentally scores. This was a great start as people (neutrals and Barcelona fans) didn't discuss if Real Madrid or Barcelona would win, it was about by how much will Barcelona win over Real Madrid. The second half was mostly by Barcelona, Barcelona scored from a corner and in the play Pedri passes the ball to Raphinha who scores. After this Barcelona would have a chance with a header by Gerard Martin, but Lunin would save it. Lunin is the best goalkeeper to have on the bench, he is calm and when he needs to play he usually does a great job, really happy for his performance. Real Madrid would score from a great play by Bellingham who would pass the ball to Camavinga, Camavinga would pass the ball to Arda Guler on the wing, Camavinga would run into the space and Arda Guler would give a great trivela pass. Camavinga would take the ball and pass the ball into the goal which Mbappe would score to make it 2-1. Great win by Real Madrid which shows a stronger team on and off the pitch compared to a month ago. Hopefully this leads to trophies in May, this is an important win for the new Mourinho Era.`
 };
 
 /* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
@@ -944,54 +944,64 @@ const RM_SQUAD_STATS = [
    HOW TO UPDATE THIS: check a source you trust (the Premier League's own
    stats page, LaLiga.com, ESPN's league stats page, etc.), replace the
    "scorers" array for that league with the new top ~10, and update "asOf"
-   to the date you checked. assists are optional — leave a player's
-   assists as null if your source doesn't show them; renderScorersTable
-   shows "—" for that. Ties (several players on the same goal count) can
+   to the date you checked. assists are optional — leave every player's
+   assists as null if your source doesn't show them and the Assists column is
+   hidden automatically (if only some players have a number, a missing one shows "—"). Ties (several players on the same goal count) can
    go in any order. Save, commit, push — no other code changes needed.
    A league with an empty "scorers" array shows "note" instead (used below
    for the Champions League before its league phase has kicked off).
    ---------------------------------------------------------------------- */
 const LEAGUE_TOP_SCORERS = {
-    // Source: NBC Sports (Nicholas Mendola), published Sep 5 2026, 11:53am ET
+    // Source: SoccerNews stats feed (soccernews.com), updated Oct 29 2026, cross-checked with VAVEL's
+    // Premier League stats table. Everyone on 4+ goals is listed; more players are level on 3 goals.
+    // Calvert-Lewin's 4th was his Oct 18 goal vs Man United (confirmed in match coverage).
     "Premier League": {
-        asOf: "Sep 5, 2026 (Matchday 4)",
+        asOf: "Oct 29, 2026",
         scorers: [
-            { player: "Bruno Fernandes", team: "Manchester United", goals: 3, assists: null },
-            { player: "Alexander Isak", team: "Liverpool", goals: 3, assists: null },
-            { player: "Erling Haaland", team: "Manchester City", goals: 3, assists: null },
-            { player: "Jack Hinshelwood", team: "Brighton", goals: 2, assists: null },
-            { player: "Rayan Cherki", team: "Manchester City", goals: 2, assists: null },
-            { player: "Anthony Elanga", team: "Newcastle United", goals: 2, assists: null },
-            { player: "Joao Pedro", team: "Chelsea", goals: 2, assists: null },
-            { player: "Cole Palmer", team: "Chelsea", goals: 2, assists: null },
-            { player: "Bukayo Saka", team: "Arsenal", goals: 2, assists: null },
-            { player: "Marcus Tavernier", team: "Bournemouth", goals: 2, assists: null }
+            { player: "Erling Haaland", team: "Manchester City", goals: 9, assists: null },
+            { player: "Alexander Isak", team: "Liverpool", goals: 6, assists: null },
+            { player: "João Pedro", team: "Chelsea", goals: 5, assists: null },
+            { player: "Marcus Tavernier", team: "Bournemouth", goals: 5, assists: null },
+            { player: "Rayan Cherki", team: "Manchester City", goals: 4, assists: null },
+            { player: "Dominic Calvert-Lewin", team: "Leeds United", goals: 4, assists: null },
+            { player: "Morgan Rogers", team: "Chelsea", goals: 4, assists: null },
+            { player: "Bryan Mbeumo", team: "Manchester United", goals: 4, assists: null },
+            { player: "Nicolas Jackson", team: "Aston Villa", goals: 4, assists: null }
         ]
     },
-    // Source: NBC Sports (Nicholas Mendola), published Sep 4 2026, 3:01pm ET
-    // — reflects Real Madrid's MD4 loss at Betis, but not every MD4 game
-    // (Barcelona hadn't played its round-4 fixture yet at publish time).
+    // Source: SoccerNews stats feed (soccernews.com), updated Oct 28 2026 — includes the Clásico
+    // (Mbappé's two goals at Barcelona). Mbappé's total matches the goals logged in RM_SQUAD_STATS.
     "La Liga": {
-        asOf: "Sep 4, 2026 (Matchday 4)",
+        asOf: "Oct 28, 2026, Matchday 10",
         scorers: [
-            { player: "Raphinha", team: "Barcelona", goals: 5, assists: null },
-            { player: "Kylian Mbappé", team: "Real Madrid", goals: 4, assists: null },
-            { player: "Fermín López", team: "Barcelona", goals: 3, assists: null },
-            { player: "Yassir Zabiri", team: "Racing Santander", goals: 3, assists: null },
-            { player: "Roberto Fernández", team: "Espanyol", goals: 3, assists: null },
-            { player: "Alex Baena", team: "Atlético Madrid", goals: 3, assists: null },
-            { player: "Pierre-Emerick Aubameyang", team: "Deportivo de La Coruña", goals: 3, assists: null },
-            { player: "Sergio Camello", team: "Rayo Vallecano", goals: 3, assists: null },
-            { player: "Mariano Díaz", team: "Alavés", goals: 2, assists: null },
-            { player: "Rodrigo Riquelme", team: "Real Betis", goals: 2, assists: null }
+            { player: "Raphinha", team: "Barcelona", goals: 13, assists: null },
+            { player: "Kylian Mbappé", team: "Real Madrid", goals: 11, assists: null },
+            { player: "Yassir Zabiri", team: "Racing Santander", goals: 8, assists: null },
+            { player: "Lamine Yamal", team: "Barcelona", goals: 8, assists: null },
+            { player: "Sergio Camello", team: "Rayo Vallecano", goals: 7, assists: null },
+            { player: "Ante Budimir", team: "Osasuna", goals: 7, assists: null },
+            { player: "Roberto Fernández", team: "Espanyol", goals: 6, assists: null },
+            { player: "Fer Niño", team: "Elche", goals: 6, assists: null },
+            { player: "Pierre-Emerick Aubameyang", team: "Deportivo de La Coruña", goals: 5, assists: null },
+            { player: "Alex Baena", team: "Atlético Madrid", goals: 5, assists: null }
         ]
     },
-    // League phase began Sep 8 2026 — fill this in with the real top scorers
-    // (the "note" below shows until then).
+    // Source: SoccerNews stats feed (soccernews.com), after league-phase Matchday 3. Top 10 shown;
+    // a few more players may be level on 3 goals. Mbappé's 3 matches RM_SQUAD_STATS (Inter, Roma, Leipzig).
     "UEFA Champions League": {
-        asOf: null,
-        scorers: [],
-        note: "Top scorers for the league phase haven't been added yet."
+        asOf: "Oct 29, 2026, Matchday 3",
+        scorers: [
+            { player: "Nicolò Tresoldi", team: "Club Brugge", goals: 4, assists: null },
+            { player: "Erling Haaland", team: "Manchester City", goals: 4, assists: null },
+            { player: "Serhou Guirassy", team: "Borussia Dortmund", goals: 4, assists: null },
+            { player: "Ermedin Demirović", team: "VfB Stuttgart", goals: 4, assists: null },
+            { player: "Luis Suárez", team: "Sporting CP", goals: 4, assists: null },
+            { player: "Harry Kane", team: "Bayern Munich", goals: 4, assists: null },
+            { player: "Nicolas Jackson", team: "Aston Villa", goals: 3, assists: null },
+            { player: "Kylian Mbappé", team: "Real Madrid", goals: 3, assists: null },
+            { player: "Alexis Mac Allister", team: "Liverpool", goals: 3, assists: null },
+            { player: "Ousmane Dembélé", team: "Paris Saint-Germain", goals: 3, assists: null }
+        ]
     }
 };
 
@@ -2254,11 +2264,13 @@ class Beyond90App {
         if (!scorers.length) {
             return `<div class="empty-state">No scorer data returned right now.</div>`;
         }
+        // If no row has assists data, leave the column out instead of showing a column of dashes.
+        const hasAssists = scorers.some(s => s.assists != null);
         return `
             <div class="table-wrapper">
                 <table class="standings-table">
                     <thead>
-                        <tr><th style="text-align:left;">Player</th><th style="text-align:left;">Team</th><th>Goals</th><th>Assists</th></tr>
+                        <tr><th style="text-align:left;">Player</th><th style="text-align:left;">Team</th><th>Goals</th>${hasAssists ? '<th>Assists</th>' : ''}</tr>
                     </thead>
                     <tbody>
                         ${scorers.map(s => `
@@ -2266,7 +2278,7 @@ class Beyond90App {
                                 <td class="team-cell">${s.player}</td>
                                 <td>${s.team}</td>
                                 <td><strong>${s.goals}</strong></td>
-                                <td>${s.assists ?? '—'}</td>
+                                ${hasAssists ? `<td>${s.assists ?? '—'}</td>` : ''}
                             </tr>
                         `).join('')}
                     </tbody>
