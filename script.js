@@ -198,7 +198,25 @@ Good goal by Bernardo Silva to open the score in the 43rd minute. Arda Guler aga
     "rm-barcelona-2026-10-25": `Barcelona vs Real Madrid
 La Liga Round 10
 El Clasico.
-What a masterclass by Mourinho, he read the match much better Hansi Flick and it was seen throughout the game. Mourinho kept the changes of having Valverde at right back and Diomande on the left, which opened for a Tchouameni and Bernardo Silva double pivot. Very happy for Bernardo he gave so much defensively for the team being able to pressure where others did not. In the first half the match was fairly equal with chances from both sides. I keep liking the way Diomande plays, he shows a lot of courage with the ball and he keeps trying. The first goal of Real Madrid comes from a run into the space by Diomande who does a low cross which reaches Gerard Martin (Barcelona defender) who mistakenly passes the ball to Mbappe who accidentally scores. This was a great start as people (neutrals and Barcelona fans) didn't discuss if Real Madrid or Barcelona would win, it was about by how much will Barcelona win over Real Madrid. The second half was mostly by Barcelona, Barcelona scored from a corner and in the play Pedri passes the ball to Raphinha who scores. After this Barcelona would have a chance with a header by Gerard Martin, but Lunin would save it. Lunin is the best goalkeeper to have on the bench, he is calm and when he needs to play he usually does a great job, really happy for his performance. Real Madrid would score from a great play by Bellingham who would pass the ball to Camavinga, Camavinga would pass the ball to Arda Guler on the wing, Camavinga would run into the space and Arda Guler would give a great trivela pass. Camavinga would take the ball and pass the ball into the goal which Mbappe would score to make it 2-1. Great win by Real Madrid which shows a stronger team on and off the pitch compared to a month ago. Hopefully this leads to trophies in May, this is an important win for the new Mourinho Era.`
+What a masterclass by Mourinho, he read the match much better Hansi Flick and it was seen throughout the game. Mourinho kept the changes of having Valverde at right back and Diomande on the left, which opened for a Tchouameni and Bernardo Silva double pivot. Very happy for Bernardo he gave so much defensively for the team being able to pressure where others did not. In the first half the match was fairly equal with chances from both sides. I keep liking the way Diomande plays, he shows a lot of courage with the ball and he keeps trying. The first goal of Real Madrid comes from a run into the space by Diomande who does a low cross which reaches Gerard Martin (Barcelona defender) who mistakenly passes the ball to Mbappe who accidentally scores. This was a great start as people (neutrals and Barcelona fans) didn't discuss if Real Madrid or Barcelona would win, it was about by how much will Barcelona win over Real Madrid. The second half was mostly by Barcelona, Barcelona scored from a corner and in the play Pedri passes the ball to Raphinha who scores. After this Barcelona would have a chance with a header by Gerard Martin, but Lunin would save it. Lunin is the best goalkeeper to have on the bench, he is calm and when he needs to play he usually does a great job, really happy for his performance. Real Madrid would score from a great play by Bellingham who would pass the ball to Camavinga, Camavinga would pass the ball to Arda Guler on the wing, Camavinga would run into the space and Arda Guler would give a great trivela pass. Camavinga would take the ball and pass the ball into the goal which Mbappe would score to make it 2-1. Great win by Real Madrid which shows a stronger team on and off the pitch compared to a month ago. Hopefully this leads to trophies in May, this is an important win for the new Mourinho Era.`,
+
+    // Racing Santander 0-3 Real Madrid, La Liga Matchday 11, Nov 1 2026 (El Sardinero)
+    "rm-racing-2026-11-01": `Racing Santander vs Real Madrid
+La Liga Round 11
+
+Real Madrid wins with 3 goals and conceding 0 in the first half and keeping the score the same throughout the second half. Real Madrid opened the score with a penalty on Mbappe, which honestly was the wrong call from the referee. Even with the defender putting his arm around Mbappe, it isn't an action that would make Mbappe fall the way he did. In the 21st minute Bellingham would score from a pass from Guler through the space formed by the Racing defenders. In the 36th minute Real Madrid would score the third goal from an amazing volley from Yan Diomande.`,
+
+    // AEK Athens 2-3 Real Madrid, Champions League Matchday 4, Nov 4 2026 (Allwyn Arena)
+    "rm-aek-2026-11-04": `AEK Athens vs Real Madrid
+Champions League Round 4
+
+Not the best game by Real Madrid, but it ends with a win. Real Madrid would concede in the 12th minute, I think that in this moment both center backs do not back up Cucurella at all which leads to the goal. Mourinho chose to start Rudiger and Militao which are currently the substitution center backs, rotating made the game more difficult for a game in which Real Madrid should not struggle as much as the team did. With an assist from Cucurella, and a Bellingham goal de tacon, would score an amazing goal for the 1-1. AEK Athens would score in the 75th minute, but Mbappe would equal the score in the 78th assisted by a low cross into the small box from Dumfries. In the 92nd minute when everything seemed like a draw, Valverde would score a brace which we have seen countless of times and he is always able to score goals like these. I don't understand if Vinicius' performance is a mental thing affecting him. Like the difference between the current Vinicius and Vinicius 23/24 is a crazy change from a talented player as him. What I think is the tries less and less, he used to fail often but he would try every time to dribble past players and shoot, now he fails the same if not more and tries less. Hope he returns to his top level and competes with Diomande and Guler for the starting XI which is healthy for the team.`,
+
+    // Valencia 0-3 Real Madrid, La Liga Matchday 12, Nov 7 2026 (Mestalla)
+    "rm-valencia-2026-11-07": `Valencia vs Real Madrid
+La Liga Round 12
+
+Correct game from Mourinho's Real Madrid, Valencia and Mestalla also did their correct game, the game they do anytime Real Madrid causing polemics more than chances of scoring. Valverde would score a brace again in the 28th minute, Guler would score in the 36th minute, and Mbappe with a good goal in the 75th. All of Mestalla chants and the actions by Pablo "Masfeo" show why their club hasn't progressed in the past 4 seasons. Really happy for Guler's performance throughout the season showing himself as a clear piece of Mourinho's Real Madrid. Good thing Vinicius isn't playing due to suspension because this game could have ended in another way due to how Mestalla sadly affects his mental. Mourinho showing a better side of Real Madrid in away games, compared to the first month and half of the season. Now hoping that somehow both Barcelona and Atletico Madrid both lose somehow tomorrow. (Preferably the always 3rd Atletico Madrid winning against Barca leaving Real Madrid and Barca on 30 points.)`
 };
 
 /* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
@@ -229,7 +247,10 @@ const RM_MATCH_PHOTOS = {
     "rm-roma-2026-10-14": "images/espi-vs-roma.webp",
     "rm-sevilla-2026-10-18": "images/guler-vs-sevilla.webp",
     "rm-leipzig-2026-10-21": "images/mbappe-guler-vs-leipzig.webp",
-    "rm-barcelona-2026-10-25": "images/mbappe-vs-barcelona.webp"
+    "rm-barcelona-2026-10-25": "images/mbappe-vs-barcelona.webp",
+    "rm-racing-2026-11-01": "images/mbappe-vs-racing.webp",
+    "rm-aek-2026-11-04": "images/real-madrid-vs-aek.webp",
+    "rm-valencia-2026-11-07": "images/valencia-vs-real-madrid.webp"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
@@ -697,6 +718,108 @@ const RM_MATCH_LINEUPS = {
             { name: "Dumfries", number: 24 },
             { name: "Thiago", number: 27 }
         ]
+    },
+
+    // Racing Santander 0-3 Real Madrid, La Liga Matchday 11, Nov 1 2026. XI + bench per realmadrid.com's official
+    // "Once inicial" page. Trent started at right-back (Valverde was out). Güler and Diomandé on the wings follows the
+    // earlier lineups; the official list doesn't give left/right.
+    "rm-racing-2026-11-01": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Trent", number: 12, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Diomandé", number: 25, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Mestre", number: 26 },
+            { name: "Militão", number: 3 },
+            { name: "Camavinga", number: 6 },
+            { name: "Endrick", number: 9 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Dumfries", number: 24 },
+            { name: "Thiago", number: 27 }
+        ]
+    },
+
+    // AEK Athens 2-3 Real Madrid, Champions League Matchday 4, Nov 4 2026. XI per realmadrid.com's official page;
+    // bench per the match sheets (Lunin, Mestre, Huijsen, Valverde, Endrick, Trent, Konaté, Carreras, Espí, Brahim,
+    // Thiago, Sergio Martínez). Valverde came on for Diomandé (67'), Espí for Bellingham (86'). Vinícius captained.
+    // Sources disagree on which wing each of Vinícius/Diomandé played; Vinícius left (Mourinho calls him the natural left winger).
+    "rm-aek-2026-11-04": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Rüdiger", number: 22, posClass: "pos-lcb" },
+            { name: "Militão", number: 3, posClass: "pos-rcb" },
+            { name: "Dumfries", number: 24, posClass: "pos-rb" },
+            { name: "Camavinga", number: 6, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Diomandé", number: 25, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Mestre", number: 26 },
+            { name: "Huijsen", number: 4 },
+            { name: "Valverde", number: 8 },
+            { name: "Endrick", number: 9 },
+            { name: "Trent", number: 12 },
+            { name: "Konaté", number: 16 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Thiago", number: 27 },
+            { name: "Sergio Martínez", number: 38 }
+        ]
+    },
+
+    // Valencia 0-3 Real Madrid, La Liga Matchday 12, Nov 7 2026. XI + bench per realmadrid.com's official "Once inicial"
+    // page. Vinícius was suspended. Valverde at right-back; Endrick for Bernardo, Camavinga for Güler (84') and
+    // Brahim for Diomandé came on in the second half.
+    "rm-valencia-2026-11-07": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Valverde", number: 8, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Diomandé", number: 25, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Mestre", number: 26 },
+            { name: "Militão", number: 3 },
+            { name: "Camavinga", number: 6 },
+            { name: "Endrick", number: 9 },
+            { name: "Trent", number: 12 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Dumfries", number: 24 },
+            { name: "Thiago", number: 27 }
+        ]
     }
 };
 
@@ -896,6 +1019,41 @@ const RM_MATCH_INFO = {
             { minute: "61'", type: "goal", team: "opp", player: "Raphinha" },
             { minute: "87'", type: "goal", team: "rm", player: "Mbappé" }
         ]
+    },
+    // Racing Santander 0-3 Real Madrid, La Liga Matchday 11, Nov 1 2026, El Sardinero (16:15 CET = 15:15 UTC)
+    "rm-racing-2026-11-01": {
+        opponent: "Racing Santander", isHome: false, rmScore: 3, oppScore: 0,
+        matchday: 11, venue: "El Sardinero, Santander",
+        rawDate: "2026-11-01T15:15:00Z",
+        events: [
+            { minute: "11'", type: "goal", team: "rm", player: "Mbappé", penalty: true },
+            { minute: "21'", type: "goal", team: "rm", player: "Bellingham" },
+            { minute: "36'", type: "goal", team: "rm", player: "Diomandé" }
+        ]
+    },
+    // AEK Athens 2-3 Real Madrid, Champions League Matchday 4, Nov 4 2026, Allwyn Arena (18:45 CET = 17:45 UTC)
+    "rm-aek-2026-11-04": {
+        opponent: "AEK Athens", isHome: false, rmScore: 3, oppScore: 2,
+        competition: "Champions League", matchday: 4, venue: "Allwyn Arena, Athens",
+        rawDate: "2026-11-04T17:45:00Z",
+        events: [
+            { minute: "12'", type: "goal", team: "opp", player: "Koita" },
+            { minute: "32'", type: "goal", team: "rm", player: "Bellingham" },
+            { minute: "75'", type: "goal", team: "opp", player: "Pilios" },
+            { minute: "78'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "90+2'", type: "goal", team: "rm", player: "Valverde" }
+        ]
+    },
+    // Valencia 0-3 Real Madrid, La Liga Matchday 12, Nov 7 2026, Mestalla (21:00 CET = 20:00 UTC)
+    "rm-valencia-2026-11-07": {
+        opponent: "Valencia", isHome: false, rmScore: 3, oppScore: 0,
+        matchday: 12, venue: "Mestalla, Valencia",
+        rawDate: "2026-11-07T20:00:00Z",
+        events: [
+            { minute: "28'", type: "goal", team: "rm", player: "Valverde" },
+            { minute: "36'", type: "goal", team: "rm", player: "Güler" },
+            { minute: "75'", type: "goal", team: "rm", player: "Mbappé" }
+        ]
     }
 };
 
@@ -915,21 +1073,23 @@ const RM_MATCH_INFO = {
    that's usually the easiest source). New scorer? Add a new line.
    ---------------------------------------------------------------------- */
 const RM_SQUAD_STATS = [
-    // Updated through Barcelona 1-2 Real Madrid (Oct 25 2026). All competitions.
-    { player: "Kylian Mbappé", pos: "FW", goals: 14, assists: 2 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen), Barcelona x2 (41', 87'). Assists: Espí's winner at Elche; Güler's goal vs Leipzig
-    { player: "Jude Bellingham", pos: "MF", goals: 3, assists: 2 }, // Espanyol, Málaga, Rayo (35'); assists vs Sevilla (heel pass for Mbappé's 37') and earlier
-    { player: "Arda Güler", pos: "MF", goals: 3, assists: 4 }, // goals vs Málaga, Sevilla (30'), Leipzig (52'); assists vs Espanyol, Rayo (Mbappé's 4th), and two corners at Roma (Endrick 85', Rüdiger 90')
-    { player: "Yan Diomandé", pos: "FW", goals: 3, assists: 4 }, // goals vs Villarreal (62'), Sevilla (82'), Leipzig (87'); assists: Mbappé at Elche (33') and Roma (25'), Güler vs Sevilla (30'), Mbappé vs Leipzig (83')
+    // Updated through Valencia 0-3 Real Madrid (Nov 7 2026). All competitions.
+    { player: "Kylian Mbappé", pos: "FW", goals: 17, assists: 2 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'), AEK (78'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen), Barcelona x2 (41', 87'), Racing (11' pen), Valencia (75'). Assists: Espí's winner at Elche; Güler's goal vs Leipzig
+    { player: "Jude Bellingham", pos: "MF", goals: 5, assists: 2 }, // Espanyol, Málaga, Rayo (35'), Racing (21'), AEK (32', backheel); assists vs Sevilla (heel pass for Mbappé's 37') and earlier
+    { player: "Arda Güler", pos: "MF", goals: 4, assists: 6 }, // goals vs Málaga, Sevilla (30'), Leipzig (52'), Valencia (36'); assists vs Espanyol, Rayo (Mbappé's 4th), two corners at Roma (Endrick 85', Rüdiger 90'), Bellingham at Racing (21') and Mbappé at Valencia (75')
+    { player: "Yan Diomandé", pos: "FW", goals: 4, assists: 4 }, // goals vs Villarreal (62'), Sevilla (82'), Leipzig (87'), Racing (36', volley); assists: Mbappé at Elche (33') and Roma (25'), Güler vs Sevilla (30'), Mbappé vs Leipzig (83')
     { player: "Carlos Espí", pos: "FW", goals: 3, assists: 0 }, // Espanyol (90'), Elche (90+1'), Roma (83')
     { player: "Vinícius Jr", pos: "FW", goals: 1, assists: 3 }, // goal vs Sociedad; assists vs Málaga (Güler) and Rayo x2 (Carreras 17', Bellingham 35')
-    { player: "Fede Valverde", pos: "MF", goals: 1, assists: 2 }, // goal vs Inter (23'); assists vs Sociedad and Villarreal (Diomandé)
+    { player: "Fede Valverde", pos: "MF", goals: 3, assists: 2 }, // goals vs Inter (23'), AEK (90+2' winner), Valencia (28'); assists vs Sociedad and Villarreal (Diomandé)
     { player: "Álvaro Carreras", pos: "DF", goals: 1, assists: 0 }, // goal vs Rayo (17')
     { player: "Antonio Rüdiger", pos: "DF", goals: 2, assists: 0 }, // header at Atlético (89'), winner at Roma (90')
     { player: "Endrick", pos: "FW", goals: 1, assists: 0 }, // header at Roma (85')
     { player: "Bernardo Silva", pos: "MF", goals: 1, assists: 1 }, // goal vs Leipzig (43'); cross for Rüdiger's goal at Atlético (89')
     { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 }, // assist vs Málaga (30', to Mbappé)
     { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 2 }, // assists for Mbappé vs Inter (14') and Diomandé vs Leipzig (87')
-    { player: "Eduardo Camavinga", pos: "MF", goals: 0, assists: 1 } // assist for Mbappé's winner at Barcelona (87')
+    { player: "Eduardo Camavinga", pos: "MF", goals: 0, assists: 1 }, // assist for Mbappé's winner at Barcelona (87')
+    { player: "Marc Cucurella", pos: "DF", goals: 0, assists: 1 }, // cross for Bellingham's goal at AEK (32')
+    { player: "Denzel Dumfries", pos: "DF", goals: 0, assists: 1 } // low cross for Mbappé's goal at AEK (78')
 ];
 
 /* ---- LEAGUE TOP SCORERS (manually maintained, one list per league) -------
