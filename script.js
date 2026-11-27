@@ -216,7 +216,25 @@ Not the best game by Real Madrid, but it ends with a win. Real Madrid would conc
     "rm-valencia-2026-11-07": `Valencia vs Real Madrid
 La Liga Round 12
 
-Correct game from Mourinho's Real Madrid, Valencia and Mestalla also did their correct game, the game they do anytime Real Madrid causing polemics more than chances of scoring. Valverde would score a brace again in the 28th minute, Guler would score in the 36th minute, and Mbappe with a good goal in the 75th. All of Mestalla chants and the actions by Pablo "Masfeo" show why their club hasn't progressed in the past 4 seasons. Really happy for Guler's performance throughout the season showing himself as a clear piece of Mourinho's Real Madrid. Good thing Vinicius isn't playing due to suspension because this game could have ended in another way due to how Mestalla sadly affects his mental. Mourinho showing a better side of Real Madrid in away games, compared to the first month and half of the season. Now hoping that somehow both Barcelona and Atletico Madrid both lose somehow tomorrow. (Preferably the always 3rd Atletico Madrid winning against Barca leaving Real Madrid and Barca on 30 points.)`
+Correct game from Mourinho's Real Madrid, Valencia and Mestalla also did their correct game, the game they do anytime Real Madrid causing polemics more than chances of scoring. Valverde would score a brace again in the 28th minute, Guler would score in the 36th minute, and Mbappe with a good goal in the 75th. All of Mestalla chants and the actions by Pablo "Masfeo" show why their club hasn't progressed in the past 4 seasons. Really happy for Guler's performance throughout the season showing himself as a clear piece of Mourinho's Real Madrid. Good thing Vinicius isn't playing due to suspension because this game could have ended in another way due to how Mestalla sadly affects his mental. Mourinho showing a better side of Real Madrid in away games, compared to the first month and half of the season. Now hoping that somehow both Barcelona and Atletico Madrid both lose somehow tomorrow. (Preferably the always 3rd Atletico Madrid winning against Barca leaving Real Madrid and Barca on 30 points.)`,
+
+    // Real Madrid 2-1 Celta Vigo, La Liga Matchday 13, Nov 21 2026 (Bernabéu)
+    "rm-celta-2026-11-21": `Real Madrid 2-1 Celta Vigo
+La Liga Round 13
+ESPInazo, DON Carlos Espi does it again as a super sub winning the 3 points for Real Madrid. Pablo Duran would score for Celta de Vigo in the 6th minute, the goal would happen due to a big space on the right favoring a through pass for Swedberg. Swedberg with a good assist which leaves Duran to tap in the ball. The first half for Real Madrid was poor, possession, sometimes lost which led to more chances for Celta de Vigo. Mbappe would miss a penalty which was weird because it felt like he switched last second on where to shoot and ended up skying it. Again Mourinho shows good substitutions that change the game when it isn't going like wanted. On the 57th minute Vinicius who had a good international break with Brazil, Valverde/Cucurella to prevent any other chances as the defense was not doing too well, Endrick who showed a lot of hunger almost scoring, and Carlos Espi who is given the chance after a long time to play. In the 66th minute, Guler passes the ball to Vinicius who needs to demonstrate, well he runs with the ball, passes it to Mbappe who quickly passes it to Bellingham, and Bellingham shoots it to equal the score. In the 85th minute near the edge of the box Bellingham passes the ball to Vini who looks for Espi with a nice cross, Espi's header is saved but he is able to score from the deflection. 2-1 Real Madrid win thanks to this team being able to fight against the trouble it's been facing to score sometimes against "low block" teams. Really happy for Vini's game who will likely be starting next Champions League game against PSV, and this competition between Vini, Guler, and Diomande is really healthy for their progression throughout the rest of the season.`,
+
+    // Real Madrid 5-1 PSV Eindhoven, Champions League Matchday 5, Nov 24 2026 (Bernabéu)
+    "rm-psv-2026-11-24": `Real Madrid 5-1 PSV Eindhoven
+Champions League Matchday 5
+
+2 sides of the same coin.
+
+1st half: DISASTER
+Real Madrid was not able to find their game, as stated by Mourinho after the game SOMETHING WAS NOT RIGHT. Nothing was going Real Madrid's way against an "accessible" team (all games have to be played and there can be surprises). Tchouameni would commit a penalty in the 31st minute and Perisic scores from the penalty spot. The Militao and Rudiger center back duo was kind of weird and felt like it led to more chances for PSV. No Bellingham in the starting XI, with Guler in the middle, Diomande on the right, Vinicius on the left, and Mbappe in the middle. My conclusion from this first half is that Real Madrid  can't play with 3 forwards, Real Madrid lose too much in the formation of plays and lose pressure when the team doesn't have the ball.
+
+2nd half: BEST HALF OF The Second Mourinho Era
+
+Literally such a different team it felt, and it was. Mourinho Changed Militao and Rudiger for Huijsen and Konate, and Bellingham for Tchouameni at the start of the second half. Real Madrid now could hold the ball for longer and actually do something with it. In the 49th minute minute Real Madrid would score with a really nice shot by Valverde. I'm rewatching the clip right now...There is NO MIDFIELDER like Jude Bellingham he is the best in the world without discussion. The volley he scores in the 60th minute nobody scores that it's insane how he even attempts it, 2 kick ups and a beautiful volley just WOW. From this point it felt as a controlled game from Real Madrid. Mbappe would score the 3-1 through a pass by Arda Guler who makes the most out of the bad pass by the PSV defender, Mbappe scores the goal he has to score as a striker and really good for him. In the 84th minute Brahim finds Mbappe running on the space, Mbappe out out paces the PSV center back and dribbles past the goalkeeper to score. 4-1 now, but number 7 needed his goal too. 87th minute, Bellingham finds Vinicius who headers the ball correctly to position himself towards the goal, and he gets his goal which hopefully leads to many more in the future. Amazing from Bellingham, completely changed the game. Mourinho probably now sees how both Bellingham and Arda Guler surprisingly both need to be in the starting XI for Champions League/other important games. Mbappe and Bellingham should have their spot secured, and in my opinion Arda Guler should too, but he might not and then it's between Diomande or Vinicius. Hierarchy wise Mourinho will most likely choose Vinicius. No matter what Mourinho has made Real Madrid a better team compared to last season, and hopefully the positive streak of games translates to titles. Real Madrid are currently first in  the Champions League table. Real Madrid can only draw 1 game out of the remaining games to secure 2nd place which would secure a knockout stage with all 2nd legs at the Bernabeu. The main threat right now is, injuries which can happen at any point and  hurt a team badly as seen by Bayern and PSG, losing games in a dumb way in La Liga which hurt rhythm and ultimately lose the team the league. The next starting XI will show a lot from Mourinho and his plans.`
 };
 
 /* ---- REAL MADRID MATCH PHOTOS (manually maintained, one per match) -------
@@ -250,7 +268,9 @@ const RM_MATCH_PHOTOS = {
     "rm-barcelona-2026-10-25": "images/mbappe-vs-barcelona.webp",
     "rm-racing-2026-11-01": "images/mbappe-vs-racing.webp",
     "rm-aek-2026-11-04": "images/real-madrid-vs-aek.webp",
-    "rm-valencia-2026-11-07": "images/valencia-vs-real-madrid.webp"
+    "rm-valencia-2026-11-07": "images/valencia-vs-real-madrid.webp",
+    "rm-celta-2026-11-21": "images/espi-vs-celta.webp",
+    "rm-psv-2026-11-24": "images/bellingham-vs-psv.webp"
 };
 
 /* ---- REAL MADRID PLAYER PHOTOS (manually maintained, add once per player) ---
@@ -820,6 +840,75 @@ const RM_MATCH_LINEUPS = {
             { name: "Dumfries", number: 24 },
             { name: "Thiago", number: 27 }
         ]
+    },
+
+    // Real Madrid 2-1 Celta Vigo, La Liga Matchday 13, Nov 21 2026. XI per the confirmed lineup (Courtois captain); bench = the
+    // 12 listed on the match sheet. Subs per Foot Mercato's match events: Valverde (for Bernardo), Cucurella (for Carreras) and
+    // Vinícius (for Trent) on at 57'; Endrick for Diomandé (71'); Espí for Camavinga (79'). Güler played all 90.
+    // Wing sides follow the pre-match reports (Diomandé left, Güler right); Foot Mercato labels the shape 4-1-4-1.
+    "rm-celta-2026-11-21": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Carreras", number: 18, posClass: "pos-lb" },
+            { name: "Huijsen", number: 4, posClass: "pos-lcb" },
+            { name: "Konaté", number: 16, posClass: "pos-rcb" },
+            { name: "Trent", number: 12, posClass: "pos-rb" },
+            { name: "Camavinga", number: 6, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Diomandé", number: 25, posClass: "pos-lw" },
+            { name: "Bellingham", number: 5, posClass: "pos-cam" },
+            { name: "Güler", number: 15, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Militão", number: 3 },
+            { name: "Valverde", number: 8 },
+            { name: "Endrick", number: 9 },
+            { name: "Tchouaméni", number: 14 },
+            { name: "Vinícius Jr", number: 7 },
+            { name: "Cucurella", number: 17 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Rüdiger", number: 22 },
+            { name: "Dumfries", number: 24 },
+            { name: "Thiago", number: 27 }
+        ]
+    },
+
+    // Real Madrid 5-1 PSV Eindhoven, Champions League Matchday 5, Nov 24 2026. XI per the confirmed lineup (Goal.com / Foot Mercato);
+    // bench = the official 23-man squad list on realmadrid.com minus the XI (Endrick was left out of the squad). Half-time triple change:
+    // Bellingham for Tchouaméni, Huijsen for Militão, Konaté for Rüdiger. Brahim came on before Mbappé's 84' goal.
+    "rm-psv-2026-11-24": {
+        formation: "4-2-3-1",
+        players: [
+            { name: "Courtois", number: 1, posClass: "pos-gk" },
+            { name: "Cucurella", number: 17, posClass: "pos-lb" },
+            { name: "Rüdiger", number: 22, posClass: "pos-lcb" },
+            { name: "Militão", number: 3, posClass: "pos-rcb" },
+            { name: "Valverde", number: 8, posClass: "pos-rb" },
+            { name: "Tchouaméni", number: 14, posClass: "pos-ldm" },
+            { name: "Bernardo Silva", number: 20, posClass: "pos-rdm" },
+            { name: "Vinícius Jr", number: 7, posClass: "pos-lw" },
+            { name: "Güler", number: 15, posClass: "pos-cam" },
+            { name: "Diomandé", number: 25, posClass: "pos-rw" },
+            { name: "Mbappé", number: 10, posClass: "pos-st" }
+        ],
+        bench: [
+            { name: "Lunin", number: 13 },
+            { name: "Mestre", number: 26 },
+            { name: "Huijsen", number: 4 },
+            { name: "Bellingham", number: 5 },
+            { name: "Camavinga", number: 6 },
+            { name: "Trent", number: 12 },
+            { name: "Konaté", number: 16 },
+            { name: "Carreras", number: 18 },
+            { name: "Carlos Espí", number: 19 },
+            { name: "Brahim Díaz", number: 21 },
+            { name: "Dumfries", number: 24 },
+            { name: "Thiago", number: 27 }
+        ]
     }
 };
 
@@ -1054,6 +1143,32 @@ const RM_MATCH_INFO = {
             { minute: "36'", type: "goal", team: "rm", player: "Güler" },
             { minute: "75'", type: "goal", team: "rm", player: "Mbappé" }
         ]
+    },
+    // Real Madrid 2-1 Celta Vigo, La Liga Matchday 13, Nov 21 2026, Bernabéu (21:00 CET = 20:00 UTC).
+    // Mbappé also missed a penalty (38'/39', skied it) — no "missed penalty" event type, so it's not listed here.
+    "rm-celta-2026-11-21": {
+        opponent: "Celta Vigo", isHome: true, rmScore: 2, oppScore: 1,
+        matchday: 13, venue: "Santiago Bernabéu, Madrid",
+        rawDate: "2026-11-21T20:00:00Z",
+        events: [
+            { minute: "6'", type: "goal", team: "opp", player: "Durán" },
+            { minute: "66'", type: "goal", team: "rm", player: "Bellingham" },
+            { minute: "85'", type: "goal", team: "rm", player: "Espí" }
+        ]
+    },
+    // Real Madrid 5-1 PSV Eindhoven, Champions League Matchday 5, Nov 24 2026, Bernabéu (21:00 CET = 20:00 UTC)
+    "rm-psv-2026-11-24": {
+        opponent: "PSV Eindhoven", isHome: true, rmScore: 5, oppScore: 1,
+        competition: "Champions League", matchday: 5, venue: "Santiago Bernabéu, Madrid",
+        rawDate: "2026-11-24T20:00:00Z",
+        events: [
+            { minute: "31'", type: "goal", team: "opp", player: "Perišić", penalty: true },
+            { minute: "49'", type: "goal", team: "rm", player: "Valverde" },
+            { minute: "60'", type: "goal", team: "rm", player: "Bellingham" },
+            { minute: "64'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "84'", type: "goal", team: "rm", player: "Mbappé" },
+            { minute: "87'", type: "goal", team: "rm", player: "Vinícius Jr" }
+        ]
     }
 };
 
@@ -1073,20 +1188,20 @@ const RM_MATCH_INFO = {
    that's usually the easiest source). New scorer? Add a new line.
    ---------------------------------------------------------------------- */
 const RM_SQUAD_STATS = [
-    // Updated through Valencia 0-3 Real Madrid (Nov 7 2026). All competitions.
-    { player: "Kylian Mbappé", pos: "FW", goals: 17, assists: 2 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'), AEK (78'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen), Barcelona x2 (41', 87'), Racing (11' pen), Valencia (75'). Assists: Espí's winner at Elche; Güler's goal vs Leipzig
-    { player: "Jude Bellingham", pos: "MF", goals: 5, assists: 2 }, // Espanyol, Málaga, Rayo (35'), Racing (21'), AEK (32', backheel); assists vs Sevilla (heel pass for Mbappé's 37') and earlier
-    { player: "Arda Güler", pos: "MF", goals: 4, assists: 6 }, // goals vs Málaga, Sevilla (30'), Leipzig (52'), Valencia (36'); assists vs Espanyol, Rayo (Mbappé's 4th), two corners at Roma (Endrick 85', Rüdiger 90'), Bellingham at Racing (21') and Mbappé at Valencia (75')
+    // Updated through Real Madrid 5-1 PSV (Nov 24 2026). All competitions.
+    { player: "Kylian Mbappé", pos: "FW", goals: 19, assists: 3 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'), AEK (78'), PSV x2 (64', 84'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen), Barcelona x2 (41', 87'), Racing (11' pen), Valencia (75'). Assists: Espí's winner at Elche; Güler's goal vs Leipzig; Bellingham's equalizer vs Celta (66')
+    { player: "Jude Bellingham", pos: "MF", goals: 7, assists: 3 }, // Espanyol, Málaga, Rayo (35'), Racing (21'), AEK (32', backheel), Celta (66'), PSV (60', volley); assists vs Sevilla (heel pass for Mbappé's 37'), earlier, and the pass for Vinícius' goal vs PSV (87')
+    { player: "Arda Güler", pos: "MF", goals: 4, assists: 8 }, // goals vs Málaga, Sevilla (30'), Leipzig (52'), Valencia (36'); assists vs Espanyol, Rayo (Mbappé's 4th), two corners at Roma (Endrick 85', Rüdiger 90'), Bellingham at Racing (21'), Mbappé at Valencia (75'), then Valverde (49') and Mbappé (64') vs PSV
     { player: "Yan Diomandé", pos: "FW", goals: 4, assists: 4 }, // goals vs Villarreal (62'), Sevilla (82'), Leipzig (87'), Racing (36', volley); assists: Mbappé at Elche (33') and Roma (25'), Güler vs Sevilla (30'), Mbappé vs Leipzig (83')
-    { player: "Carlos Espí", pos: "FW", goals: 3, assists: 0 }, // Espanyol (90'), Elche (90+1'), Roma (83')
-    { player: "Vinícius Jr", pos: "FW", goals: 1, assists: 3 }, // goal vs Sociedad; assists vs Málaga (Güler) and Rayo x2 (Carreras 17', Bellingham 35')
-    { player: "Fede Valverde", pos: "MF", goals: 3, assists: 2 }, // goals vs Inter (23'), AEK (90+2' winner), Valencia (28'); assists vs Sociedad and Villarreal (Diomandé)
+    { player: "Carlos Espí", pos: "FW", goals: 4, assists: 0 }, // Espanyol (90'), Elche (90+1'), Roma (83'), Celta (85' winner)
+    { player: "Vinícius Jr", pos: "FW", goals: 2, assists: 3 }, // goals vs Sociedad and PSV (87'); assists vs Málaga (Güler) and Rayo x2 (Carreras 17', Bellingham 35')
+    { player: "Fede Valverde", pos: "MF", goals: 4, assists: 2 }, // goals vs Inter (23'), AEK (90+2' winner), Valencia (28'), PSV (49'); assists vs Sociedad and Villarreal (Diomandé)
     { player: "Álvaro Carreras", pos: "DF", goals: 1, assists: 0 }, // goal vs Rayo (17')
     { player: "Antonio Rüdiger", pos: "DF", goals: 2, assists: 0 }, // header at Atlético (89'), winner at Roma (90')
     { player: "Endrick", pos: "FW", goals: 1, assists: 0 }, // header at Roma (85')
     { player: "Bernardo Silva", pos: "MF", goals: 1, assists: 1 }, // goal vs Leipzig (43'); cross for Rüdiger's goal at Atlético (89')
     { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 }, // assist vs Málaga (30', to Mbappé)
-    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 2 }, // assists for Mbappé vs Inter (14') and Diomandé vs Leipzig (87')
+    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 3 }, // assists for Mbappé vs Inter (14'), Diomandé vs Leipzig (87') and Mbappé vs PSV (84')
     { player: "Eduardo Camavinga", pos: "MF", goals: 0, assists: 1 }, // assist for Mbappé's winner at Barcelona (87')
     { player: "Marc Cucurella", pos: "DF", goals: 0, assists: 1 }, // cross for Bellingham's goal at AEK (32')
     { player: "Denzel Dumfries", pos: "DF", goals: 0, assists: 1 } // low cross for Mbappé's goal at AEK (78')
