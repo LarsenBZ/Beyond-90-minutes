@@ -1188,10 +1188,10 @@ const RM_MATCH_INFO = {
    that's usually the easiest source). New scorer? Add a new line.
    ---------------------------------------------------------------------- */
 const RM_SQUAD_STATS = [
-    // Updated through Real Madrid 5-1 PSV (Nov 24 2026). All competitions.
-    { player: "Kylian Mbappé", pos: "FW", goals: 19, assists: 3 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'), AEK (78'), PSV x2 (64', 84'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen), Barcelona x2 (41', 87'), Racing (11' pen), Valencia (75'). Assists: Espí's winner at Elche; Güler's goal vs Leipzig; Bellingham's equalizer vs Celta (66')
-    { player: "Jude Bellingham", pos: "MF", goals: 7, assists: 3 }, // Espanyol, Málaga, Rayo (35'), Racing (21'), AEK (32', backheel), Celta (66'), PSV (60', volley); assists vs Sevilla (heel pass for Mbappé's 37'), earlier, and the pass for Vinícius' goal vs PSV (87')
-    { player: "Arda Güler", pos: "MF", goals: 4, assists: 8 }, // goals vs Málaga, Sevilla (30'), Leipzig (52'), Valencia (36'); assists vs Espanyol, Rayo (Mbappé's 4th), two corners at Roma (Endrick 85', Rüdiger 90'), Bellingham at Racing (21'), Mbappé at Valencia (75'), then Valverde (49') and Mbappé (64') vs PSV
+    // Updated through Real Madrid 5-1 PSV (Nov 24 2026). All competitions. Cross-checked against SoccerNews (La Liga, Nov 26) and UEFA.com (UCL, Nov 25).
+    { player: "Kylian Mbappé", pos: "FW", goals: 19, assists: 4 }, // UCL: Inter (14'), Roma (25'), Leipzig (83'), AEK (78'), PSV x2 (64', 84'). La Liga: Sociedad x3, Málaga, Rayo x2 (14' pen, 90+1'), Elche (33'), Sevilla x2 (37', 63' pen), Barcelona x2 (41', 87'), Racing (11' pen), Valencia (75'). Assists: 3 in La Liga per SoccerNews (incl. Espí's winner at Elche, Bellingham's equalizer vs Celta) + Güler's goal vs Leipzig in the UCL
+    { player: "Jude Bellingham", pos: "MF", goals: 7, assists: 4 }, // Espanyol, Málaga, Rayo (35'), Racing (21'), AEK (32', backheel), Celta (66'), PSV (60', volley); assists: 3 in La Liga per SoccerNews (incl. the heel pass for Mbappé's 37' vs Sevilla) + the pass for Vinícius' goal vs PSV (87')
+    { player: "Arda Güler", pos: "MF", goals: 4, assists: 9 }, // goals vs Málaga, Sevilla (30'), Leipzig (52'), Valencia (36'); assists vs Espanyol, Rayo (Mbappé's 4th), two corners at Roma (Endrick 85', Rüdiger 90'), Bellingham at Racing (21'), Mbappé at Valencia (75'), then Valverde (49') and Mbappé (64') vs PSV. 4 in La Liga per SoccerNews + 5 in the UCL per UEFA (Roma x2, PSV x2 and one more, probably Leipzig's 43' rebound goal) = 9
     { player: "Yan Diomandé", pos: "FW", goals: 4, assists: 4 }, // goals vs Villarreal (62'), Sevilla (82'), Leipzig (87'), Racing (36', volley); assists: Mbappé at Elche (33') and Roma (25'), Güler vs Sevilla (30'), Mbappé vs Leipzig (83')
     { player: "Carlos Espí", pos: "FW", goals: 4, assists: 0 }, // Espanyol (90'), Elche (90+1'), Roma (83'), Celta (85' winner)
     { player: "Vinícius Jr", pos: "FW", goals: 2, assists: 3 }, // goals vs Sociedad and PSV (87'); assists vs Málaga (Güler) and Rayo x2 (Carreras 17', Bellingham 35')
@@ -1201,7 +1201,7 @@ const RM_SQUAD_STATS = [
     { player: "Endrick", pos: "FW", goals: 1, assists: 0 }, // header at Roma (85')
     { player: "Bernardo Silva", pos: "MF", goals: 1, assists: 1 }, // goal vs Leipzig (43'); cross for Rüdiger's goal at Atlético (89')
     { player: "Trent Alexander-Arnold", pos: "DF", goals: 0, assists: 1 }, // assist vs Málaga (30', to Mbappé)
-    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 3 }, // assists for Mbappé vs Inter (14'), Diomandé vs Leipzig (87') and Mbappé vs PSV (84')
+    { player: "Brahim Díaz", pos: "MF", goals: 0, assists: 4 }, // all UCL (4 per UEFA): Mbappé vs Inter (14'), Diomandé vs Leipzig (87'), Valverde's winner at AEK (90+2') and Mbappé vs PSV (84')
     { player: "Eduardo Camavinga", pos: "MF", goals: 0, assists: 1 }, // assist for Mbappé's winner at Barcelona (87')
     { player: "Marc Cucurella", pos: "DF", goals: 0, assists: 1 }, // cross for Bellingham's goal at AEK (32')
     { player: "Denzel Dumfries", pos: "DF", goals: 0, assists: 1 } // low cross for Mbappé's goal at AEK (78')
@@ -1227,55 +1227,61 @@ const RM_SQUAD_STATS = [
    for the Champions League before its league phase has kicked off).
    ---------------------------------------------------------------------- */
 const LEAGUE_TOP_SCORERS = {
-    // Source: SoccerNews stats feed (soccernews.com), updated Oct 29 2026, cross-checked with VAVEL's
-    // Premier League stats table. Everyone on 4+ goals is listed; more players are level on 3 goals.
-    // Calvert-Lewin's 4th was his Oct 18 goal vs Man United (confirmed in match coverage).
+    // Source: SoccerNews stats feed (soccernews.com), page updated Nov 27 2026 (every club has played 9-11 games).
+    // Everyone on 5+ goals is listed; seven more players are on 4. Assists are SoccerNews's "assists recorded by the data provider".
     "Premier League": {
-        asOf: "Oct 29, 2026",
+        asOf: "Nov 27, 2026",
         scorers: [
-            { player: "Erling Haaland", team: "Manchester City", goals: 9, assists: null },
-            { player: "Alexander Isak", team: "Liverpool", goals: 6, assists: null },
-            { player: "João Pedro", team: "Chelsea", goals: 5, assists: null },
-            { player: "Marcus Tavernier", team: "Bournemouth", goals: 5, assists: null },
-            { player: "Rayan Cherki", team: "Manchester City", goals: 4, assists: null },
-            { player: "Dominic Calvert-Lewin", team: "Leeds United", goals: 4, assists: null },
-            { player: "Morgan Rogers", team: "Chelsea", goals: 4, assists: null },
-            { player: "Bryan Mbeumo", team: "Manchester United", goals: 4, assists: null },
-            { player: "Nicolas Jackson", team: "Aston Villa", goals: 4, assists: null }
+            { player: "Erling Haaland", team: "Manchester City", goals: 9, assists: 0 },
+            { player: "Alexander Isak", team: "Liverpool", goals: 7, assists: 0 },
+            { player: "Evanilson", team: "Bournemouth", goals: 6, assists: 4 },
+            { player: "Nicolas Jackson", team: "Aston Villa", goals: 6, assists: 1 },
+            { player: "Thierno Barry", team: "Everton", goals: 6, assists: 1 },
+            { player: "João Pedro", team: "Chelsea", goals: 5, assists: 3 },
+            { player: "Marcus Tavernier", team: "Bournemouth", goals: 5, assists: 1 },
+            { player: "Morgan Rogers", team: "Chelsea", goals: 5, assists: 2 },
+            { player: "Rayan Cherki", team: "Manchester City", goals: 5, assists: 2 }
         ]
     },
-    // Source: SoccerNews stats feed (soccernews.com), updated Oct 28 2026 — includes the Clásico
-    // (Mbappé's two goals at Barcelona). Mbappé's total matches the goals logged in RM_SQUAD_STATS.
+    // Source: SoccerNews stats feed (soccernews.com), updated Nov 26 2026, after Matchday 13 (includes Real Madrid 2-1 Celta).
+    // Everyone on 6+ goals is listed; Bellingham, Aubameyang, Grimaldo, Brugui and Adrián are on 5.
+    // Mbappé's total matches the La Liga goals logged in RM_SQUAD_STATS (13).
     "La Liga": {
-        asOf: "Oct 28, 2026, Matchday 10",
+        asOf: "Nov 26, 2026, Matchday 13",
         scorers: [
-            { player: "Raphinha", team: "Barcelona", goals: 13, assists: null },
-            { player: "Kylian Mbappé", team: "Real Madrid", goals: 11, assists: null },
-            { player: "Yassir Zabiri", team: "Racing Santander", goals: 8, assists: null },
-            { player: "Lamine Yamal", team: "Barcelona", goals: 8, assists: null },
-            { player: "Sergio Camello", team: "Rayo Vallecano", goals: 7, assists: null },
-            { player: "Ante Budimir", team: "Osasuna", goals: 7, assists: null },
-            { player: "Roberto Fernández", team: "Espanyol", goals: 6, assists: null },
-            { player: "Fer Niño", team: "Elche", goals: 6, assists: null },
-            { player: "Pierre-Emerick Aubameyang", team: "Deportivo de La Coruña", goals: 5, assists: null },
-            { player: "Alex Baena", team: "Atlético Madrid", goals: 5, assists: null }
+            { player: "Raphinha", team: "Barcelona", goals: 15, assists: 2 },
+            { player: "Kylian Mbappé", team: "Real Madrid", goals: 13, assists: 3 },
+            { player: "Yassir Zabiri", team: "Racing Santander", goals: 11, assists: 0 },
+            { player: "Lamine Yamal", team: "Barcelona", goals: 10, assists: 9 },
+            { player: "Ante Budimir", team: "Osasuna", goals: 9, assists: 0 },
+            { player: "Fermín López", team: "Barcelona", goals: 8, assists: 5 },
+            { player: "Roberto Fernández", team: "Espanyol", goals: 7, assists: 0 },
+            { player: "Sergio Camello", team: "Rayo Vallecano", goals: 7, assists: 2 },
+            { player: "Fer Niño", team: "Elche", goals: 6, assists: 0 },
+            { player: "Lucas Boyé", team: "Alavés", goals: 6, assists: 1 },
+            { player: "Alex Baena", team: "Atlético Madrid", goals: 6, assists: 3 }
         ]
     },
-    // Source: SoccerNews stats feed (soccernews.com), after league-phase Matchday 3. Top 10 shown;
-    // a few more players may be level on 3 goals. Mbappé's 3 matches RM_SQUAD_STATS (Inter, Roma, Leipzig).
+    // Source: UEFA.com "Champions League top scorer" article, last updated Nov 25 2026, after league-phase Matchday 5.
+    // Everyone on 4+ goals is listed (UEFA's own cut-off). UEFA doesn't publish assists for this list, so that column is left out.
+    // Mbappé's 6 matches RM_SQUAD_STATS (Inter, Roma, Leipzig, AEK, PSV x2).
     "UEFA Champions League": {
-        asOf: "Oct 29, 2026, Matchday 3",
+        asOf: "Nov 25, 2026, Matchday 5",
         scorers: [
-            { player: "Nicolò Tresoldi", team: "Club Brugge", goals: 4, assists: null },
-            { player: "Erling Haaland", team: "Manchester City", goals: 4, assists: null },
-            { player: "Serhou Guirassy", team: "Borussia Dortmund", goals: 4, assists: null },
+            { player: "Tasos Douvikas", team: "Como", goals: 6, assists: null },
+            { player: "Kylian Mbappé", team: "Real Madrid", goals: 6, assists: null },
+            { player: "Luis Suárez", team: "Sporting CP", goals: 6, assists: null },
+            { player: "Erling Haaland", team: "Manchester City", goals: 5, assists: null },
+            { player: "Donyell Malen", team: "Roma", goals: 5, assists: null },
+            { player: "Nicolò Tresoldi", team: "Club Brugge", goals: 5, assists: null },
+            { player: "Aleksei Batrakov", team: "Galatasaray", goals: 4, assists: null },
+            { player: "Ousmane Dembélé", team: "Paris Saint-Germain", goals: 4, assists: null },
             { player: "Ermedin Demirović", team: "VfB Stuttgart", goals: 4, assists: null },
-            { player: "Luis Suárez", team: "Sporting CP", goals: 4, assists: null },
+            { player: "Bruno Fernandes", team: "Manchester United", goals: 4, assists: null },
+            { player: "Serhou Guirassy", team: "Borussia Dortmund", goals: 4, assists: null },
             { player: "Harry Kane", team: "Bayern Munich", goals: 4, assists: null },
-            { player: "Nicolas Jackson", team: "Aston Villa", goals: 3, assists: null },
-            { player: "Kylian Mbappé", team: "Real Madrid", goals: 3, assists: null },
-            { player: "Alexis Mac Allister", team: "Liverpool", goals: 3, assists: null },
-            { player: "Ousmane Dembélé", team: "Paris Saint-Germain", goals: 3, assists: null }
+            { player: "Raphinha", team: "Barcelona", goals: 4, assists: null },
+            { player: "Fabián Ruiz", team: "Paris Saint-Germain", goals: 4, assists: null }
         ]
     }
 };
